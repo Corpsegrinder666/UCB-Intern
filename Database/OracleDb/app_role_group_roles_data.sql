@@ -1,0 +1,26 @@
+SET DEFINE OFF;
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('SECBR','4001','navid.forhad',to_date('29-JAN-18','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','2001','navid.forhad',to_date('11-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','2002','navid.forhad',to_date('11-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','2003','navid.forhad',to_date('11-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','3001','navid.forhad',to_date('11-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','3002','navid.forhad',to_date('11-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','3004','navid.forhad',to_date('11-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('SECBR','2001','navid.forhad',to_date('29-JAN-18','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('SECBR','2002','navid.forhad',to_date('29-JAN-18','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','2001','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','2002','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','2003','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','DELETE','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','ADMIN','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','3001','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','3002','ovijit.adhikary',to_date('19-AUG-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('CARD','2001','navid.forhad',to_date('14-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('CARD','3003','navid.forhad',to_date('14-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('CARD','3004','navid.forhad',to_date('14-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('CARD','3005','navid.forhad',to_date('14-JUN-15','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','5001','navid.forhad',to_date('25-NOV-21','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','5001','navid.forhad',to_date('25-NOV-21','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('BRANCH','5002','navid.forhad',to_date('25-NOV-21','DD-MON-RR'));
+Insert into APP_ROLE_GROUP_ROLES (GROUP_CODE,ROLE_CODE,MAKE_BY,MAKE_DATE) values ('HO','5002','navid.forhad',to_date('25-NOV-21','DD-MON-RR'));
+
