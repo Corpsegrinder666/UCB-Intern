@@ -1,0 +1,115 @@
+﻿@page
+@model CIBnext.Pages.HomeModel
+
+<style>
+
+    .welcome-banner {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    .dashboard-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 40px 36px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        text-align: center;
+        min-height: 560px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard-card-header {
+        text-align: left;
+    }
+
+    .dashboard-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #17202a;
+        margin-bottom: 12px;
+    }
+
+    .title-underline {
+        width: 70px;
+        height: 4px;
+        background: #E31B23;
+        border-radius: 3px;
+        margin-bottom: 34px;
+    }
+
+    .illustration-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 26px;
+    }
+
+    .illustration-circle {
+        width: 340px;
+        height: 340px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, #fdecec 0%, #fbe0e0 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .helper-text {
+        color: #4b5563;
+        font-size: 15px;
+    }
+
+</style>
+
+<div id="welcomeMessage" class="welcome-banner">
+    Welcome, <b>@Model.UserName</b>
+</div>
+
+<div class="dashboard-card">
+
+    <div class="dashboard-card-header">
+        <div class="dashboard-title">Welcome To CIB Next</div>
+        <div class="title-underline"></div>
+    </div>
+
+    <div class="illustration-wrap">
+
+        <div class="illustration-circle">
+            <svg width="220" height="180" viewBox="0 0 220 180" fill="none">
+                <rect x="10" y="10" width="200" height="140" rx="10" fill="#ffffff" stroke="#f3c9c9" stroke-width="2" />
+                <circle cx="26" cy="26" r="3" fill="#f3c9c9" />
+                <circle cx="38" cy="26" r="3" fill="#f3c9c9" />
+                <circle cx="50" cy="26" r="3" fill="#f3c9c9" />
+
+                
+                <rect x="26" y="90" width="14" height="40" rx="2" fill="#f7b9b9" />
+                <rect x="46" y="75" width="14" height="55" rx="2" fill="#f29a9a" />
+                <rect x="66" y="60" width="14" height="70" rx="2" fill="#E31B23" />
+                <rect x="86" y="82" width="14" height="48" rx="2" fill="#f29a9a" />
+
+                
+                <circle cx="160" cy="95" r="34" fill="none" stroke="#f7c9c9" stroke-width="14" />
+                <path d="M160 61 A34 34 0 0 1 190 100" fill="none" stroke="#E31B23" stroke-width="14" stroke-linecap="round" />
+
+                
+                <rect x="26" y="140" width="60" height="6" rx="3" fill="#f3d5d5" />
+                <rect x="26" y="152" width="90" height="6" rx="3" fill="#f7e6e6" />
+
+                
+                <rect x="150" y="140" width="40" height="26" rx="4" fill="#ffffff" stroke="#f3c9c9" stroke-width="2" />
+                <circle cx="159" cy="149" r="3" fill="#f3c9c9" />
+                <path d="M152 162l9-9 6 6 8-8 9 11" stroke="#f3c9c9" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <div class="helper-text">
+            Select an option from the menu to continue.
+        </div>
+
+    </div>
+
+</div>

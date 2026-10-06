@@ -1,0 +1,206 @@
+﻿@page
+@model CIBnext.Pages.Subject.AddInstitutionInformationModel
+
+<style>
+    body {
+        font-family: Tahoma;
+        font-size: 13px;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px;
+        border-bottom: 1px solid #999;
+        background: #f4f4ee;
+    }
+
+    fieldset {
+        border: 1px solid #b5b5a5;
+        margin-top: 5px;
+        background: #edf4ef;
+    }
+
+    legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    td {
+        padding: 3px;
+    }
+
+    input, select {
+        width: 180px;
+        height: 22px;
+    }
+
+    .address-box {
+        border: 1px solid #b5b5a5;
+        padding: 5px;
+        width: 48%;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .btn {
+        margin-top: 10px;
+        padding: 3px 10px;
+    }
+
+    .auto-code {
+        display: inline-block;
+        width: 180px;
+        height: 22px;
+        line-height: 22px;
+        padding: 0 3px;
+        background: #eee;
+        color: #666;
+        border: 1px solid #999;
+    }
+
+    .label-hint {
+        color: #06c;
+    }
+</style>
+
+<div class="title">@(Model.IsEdit ? "Edit" : "Add") Institution</div>
+
+<form method="post">
+    @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+    {
+        <div style="color:red; font-weight:bold;">
+            @Html.Raw(Model.ValidationMessage)
+        </div>
+    }
+
+    <input asp-for="Subject.FISubjectCode" type="hidden" />
+
+    <fieldset>
+        <legend>General</legend>
+        <table>
+            <tr>
+                <td>Branch</td>
+                <td>
+                    <select asp-for="Subject.BranchCode" asp-items="Model.BranchCodeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+                <td>Cif No</td>
+                <td><input asp-for="Subject.CifNo" /></td>
+            </tr>
+            <tr>
+                <td class="label-hint">F.I. Subject Code</td>
+                <td>
+                    @if (Model.IsEdit)
+                    {
+                        <span class="auto-code">@Model.Subject.FISubjectCode</span>
+                    }
+                    else
+                    {
+                        <span class="auto-code">[AUTO]</span>
+                    }
+                </td>
+                <td class="label-hint">Trade Name</td>
+                <td><input asp-for="Subject.TradeName" /></td>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td><input asp-for="Subject.Title" /></td>
+                <td class="label-hint">Legal Form</td>
+                <td>
+                    <select asp-for="Subject.LegalForm" asp-items="Model.LegalFormList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label-hint">Sector Type</td>
+                <td>
+                    <select asp-for="Subject.SectorType" asp-items="Model.SectorTypeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+                <td>Sector Code</td>
+                <td>
+                    <select asp-for="Subject.SectorCode" asp-items="Model.SectorCodeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>TIN (eTIN)</td>
+                <td><input asp-for="Subject.TIN" /></td>
+                <td>Phone Nr.</td>
+                <td><input asp-for="Subject.PhoneNumber" /></td>
+            </tr>
+            <tr>
+                <td>Registration Number (RJSC)</td>
+                <td><input asp-for="Subject.RegistrationNumberRJSC" /></td>
+                <td>Registration Date (RJSC)</td>
+                <td><input asp-for="Subject.RegistrationDateRJSC" type="date" /></td>
+            </tr>
+        </table>
+
+        <div class="address-box">
+            <h4>Business Address</h4>
+            Street<br />
+            <input asp-for="Subject.BusinessAddress.Street" /><br />
+            Postal Code<br />
+            <input asp-for="Subject.BusinessAddress.PostalCode" /><br />
+            District<br />
+            <select asp-for="Subject.BusinessAddress.District" asp-items="Model.DistrictList">
+                <option value="">--Select--</option>
+            </select><br />
+            Country<br />
+            <select asp-for="Subject.BusinessAddress.CountryCode" asp-items="Model.CountryList">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+
+        <div class="address-box">
+            <h4>Factory Address</h4>
+            Street<br />
+            <input asp-for="Subject.FactoryAddress.Street" /><br />
+            Postal Code<br />
+            <input asp-for="Subject.FactoryAddress.PostalCode" /><br />
+            District<br />
+            <select asp-for="Subject.FactoryAddress.District" asp-items="Model.DistrictList">
+                <option value="">--Select--</option>
+            </select><br />
+            Country<br />
+            <select asp-for="Subject.FactoryAddress.CountryCode" asp-items="Model.CountryList">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Other</legend>
+        <table>
+            <tr>
+                <td>CRG Scoring</td>
+                <td><input asp-for="Subject.CRGScoring" /></td>
+                <td>Credit Rating</td>
+                <td><input asp-for="Subject.CreditRating" /></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>Record Info</legend>
+        <table>
+            <tr><td>Maker</td><td>@Model.Subject.MakeBy</td></tr>
+            <tr><td>Last Update Date</td><td>@(Model.Subject.MakeDate == default(DateTime) ? "" : Model.Subject.MakeDate.ToString("dd-MMM-yyyy"))</td></tr>
+            <tr><td>Record Status</td><td>@Model.Subject.RecordStatus</td></tr>
+        </table>
+    </fieldset>
+
+    <button type="submit" class="btn">Save</button>
+    <a href="/Subject/InstitutionInformation" class="btn">Exit</a>
+
+</form>

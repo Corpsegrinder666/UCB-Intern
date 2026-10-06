@@ -1,0 +1,197 @@
+﻿@page
+@model CIBnext.Pages.Subject.InstitutionInformationModel
+<style>
+    .page-title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
+    }
+
+    .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
+
+    legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    th {
+        background: #cdd8ea;
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    td {
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    .btn-small {
+        padding: 2px 8px;
+        font-size: 12px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 2px 8px;
+        margin-right: 3px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        color: #06c;
+    }
+
+    .pagination span.current {
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+
+<div class="page-title">
+    Institution Information
+</div>
+<form method="get">
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+            <table style="border:none">
+                <tr>
+                    <td style="border:none">Branch Code:</td>
+                    <td style="border:none">
+                        <select asp-for="Subject.BranchCode" asp-items="Model.BranchCodeList">
+                            <option value="">All Branch</option>
+                        </select>
+                    </td>
+                    <td style="border:none">F.I. Subject Code:</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.FISubjectCode" />
+                    </td>
+                    <td style="border:none">Institution Name:</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.TradeName" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:none">Business Address</td>
+                    <td style="border:none">
+                        <input name="Subject.BusinessAddress.Street" value="@Model.Subject.BusinessAddress?.Street" />
+                    </td>
+                    <td style="border:none">CIF No</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.CifNo" />
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" class="btn-small">Search</button>
+            <a href="/Subject/InstitutionInformation" class="btn-small">Clear</a>
+            <a href="#">Go To Error List</a>
+        </fieldset>
+    </div>
+</form>
+
+<div class="section">
+    <fieldset>
+        <legend>Institution Information</legend>
+
+        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
+        {
+            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
+        }
+
+        <h3>Total Count: @Model.TotalCount</h3>
+
+        <form method="post" asp-page-handler="Delete">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Action</th>
+                    <th>Branch</th>
+                    <th>Subject Code</th>
+                    <th>Title</th>
+                    <th>Trade Name</th>
+                    <th>Legal Form</th>
+                    <th>CIF No</th>
+                    <th>Address</th>
+                </tr>
+
+                @if (Model.InstitutionList != null && Model.InstitutionList.Any())
+                {
+                    @foreach (var inst in Model.InstitutionList)
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="SelectedCodes" value="@inst.FISubjectCode" /></td>
+                            <td><a href="/Subject/AddInstitutionInformation?fiSubjectCode=@inst.FISubjectCode">Edit/View</a></td>
+                            <td>@inst.BranchCode</td>
+                            <td>@inst.FISubjectCode</td>
+                            <td>@inst.Title</td>
+                            <td>@inst.TradeName</td>
+                            <td>@inst.LegalFormText</td>
+                            <td>@inst.CifNo</td>
+                            <td>@(inst.BusinessAddress != null ? inst.BusinessAddress.Street : "")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" style="text-align:center;">No records found</td>
+                    </tr>
+                }
+            </table>
+
+            <div class="pagination" style="margin-top:8px">
+                @{ var lastDisplayedPage = 0; }
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    var displayPage = i <= 3
+                        || i > Model.TotalPages - 3
+                        || Math.Abs(i - Model.PageIndex) <= 2;
+
+                    if (!displayPage)
+                    {
+                        continue;
+                    }
+
+                    if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                    {
+                        <span class="ellipsis">...</span>
+                    }
+
+                    if (i == Model.PageIndex)
+                    {
+                        <span class="current">@i</span>
+                    }
+                    else
+                    {
+                        <a href="/Subject/InstitutionInformation?PageIndex=@i&Subject.BranchCode=@Model.Subject.BranchCode&Subject.FISubjectCode=@Model.Subject.FISubjectCode&Subject.TradeName=@Model.Subject.TradeName&Subject.CifNo=@Model.Subject.CifNo">@i</a>
+                    }
+
+                    lastDisplayedPage = i;
+                }
+            </div>
+
+            <br />
+
+            <a href="/Subject/AddInstitutionInformation" class="btn-small">Add</a>
+            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
+            <button type="submit" class="btn-small" onclick="return confirm('are you delete Selected record ?');">Delete</button>
+        </form>
+
+    </fieldset>
+</div>

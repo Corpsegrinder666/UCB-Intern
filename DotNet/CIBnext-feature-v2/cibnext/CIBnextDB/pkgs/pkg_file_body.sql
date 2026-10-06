@@ -1,0 +1,545 @@
+create or replace PACKAGE BODY PKG_FILE AS
+  PROCEDURE SP_GET_SUBJECT_FILE_DATA(IN_REPORTING_PERIOD IN DATE, REF_CURSOR OUT SYS_REFCURSOR) AS
+  repDate date;
+  BEGIN
+    open REF_CURSOR for
+    -- header
+    SELECT 'H'||'046'||to_char(IN_REPORTING_PERIOD,'DDMMYYYY')||to_char(sysdate,'DDMMYYYY')||'XXX'||LPAD(' ',1077) FROM dual
+    -- person
+    UNION ALL
+    SELECT
+      RECORD_TYPE
+      ||FI_CODE
+      ||BRANCH_CODE
+      ||A.FI_SUBJECT_CODE
+      ||RPAD(' ',20) -- TITLE
+      ||RPAD(NAME,70)
+      ||RPAD(' ',20) -- FATHERS_TITLE
+      ||RPAD(FATHERS_NAME,70)
+      ||RPAD(' ' ,20) -- MOTHERS_TITLE
+      ||RPAD(MOTHERS_NAME,70)
+      ||RPAD(' ' ,20) -- SPOUSES_TITLE
+      ||RPAD(NVL(SPOUSES_NAME,' '),70)
+      ||LPAD(NVL(SECTOR_TYPE,'0'),1,'0')
+      ||LPAD(NVL(SECTOR_CODE,'0'),6,'0')
+      ||GENDER
+      ||decode(TO_CHAR(DATE_OF_BIRTH,'DDMMYYYY'),'01011800','00000000',TO_CHAR(DATE_OF_BIRTH,'DDMMYYYY'))
+      ||RPAD(NVL(PLACE_OF_BIRTH,' '),20)
+      ||COUNTRY_OF_BIRTH
+      ||LPAD(NVL(NATIONAL_ID_NUMBER,' '),17)
+      ||NVL(NATIONAL_ID_AVAILABLE,'0')
+      ||LPAD(NVL(TIN,' '),12)
+      ||RPAD(PERMANENT_ADDRESS_STREET,100)
+      ||LPAD(NVL(PERMANENT_ADDRESS_POSTAL_CODE,'0'),4,'0')
+      ||RPAD(PERMANENT_ADDRESS_DISTRICT,20)
+      ||PERMANENT_ADDRESS_COUNTRY
+      ||RPAD(NVL(PRESENT_ADDRESS_STREET,' '),100)
+      ||LPAD(NVL(PRESENT_ADDRESS_POSTAL_CODE,'0'),4,'0')
+      ||RPAD(NVL(PRESENT_ADDRESS_DISTRICT,' '),20)
+      ||RPAD(NVL(PRESENT_ADDRESS_COUNTRY,' '),2)
+      ||RPAD(NVL(BUSINESS_ADDRESS_STREET,' '),100)
+      ||LPAD(NVL(BUSINESS_ADDRESS_POSTAL_CODE,'0'),4,'0')
+      ||RPAD(NVL(BUSINESS_ADDRESS_DISTRICT,' '),20)
+      ||RPAD(NVL(BUSINESS_ADDRESS_COUNTRY,' '),2)
+      ||NVL(ID_TYPE,' ')
+      ||RPAD(NVL(ID_NUMBER,' '),20)
+      ||RPAD(NVL(TO_CHAR(ID_ISSUE_DATE,'DDMMYYYY'),'0'),8,'0')
+      ||NVL(ID_ISSUE_COUNTRY,'  ')
+      ||RPAD(NVL(PHONE_NUMBER,' '),40)
+      ||RPAD(' ',199)
+      FROM PERSONAL_DATA A JOIN PERSONAL_DATA_REPORT B
+      ON A.FI_SUBJECT_CODE = B.FI_SUBJECT_CODE
+      where b.reporting_period = IN_REPORTING_PERIOD
+    -- instituions
+    UNION ALL
+    SELECT
+    RECORD_TYPE ||
+    FI_CODE ||
+    BRANCH_CODE ||
+    A.FI_SUBJECT_CODE ||
+    RPAD(' ',20) || -- TITLE
+    RPAD(TRADE_NAME,130) ||
+    NVL(SECTOR_TYPE,'0') ||
+    LPAD(NVL(SECTOR_CODE,'0'),6,'0') ||
+    LPAD(LEGAL_FORM,2,'0') ||
+    RPAD(NVL(REGISTRATION_NUMBER_RJSC,' '),15) ||
+    RPAD(NVL(TO_CHAR(REGISTRATION_DATE_RJSC,'DDMMYYYY'),'0'),8,'0') ||
+    LPAD(NVL(TIN,' '),12) ||
+    RPAD(BUSINESS_ADDRESS_STREET,100)||
+    LPAD(NVL(BUSINESS_ADDRESS_POSTAL_CODE,'0'),4,'0')||
+    RPAD(BUSINESS_ADDRESS_DISTRICT,20)||
+    RPAD(BUSINESS_ADDRESS_COUNTRY,2)||
+    RPAD(NVL(FACTORY_ADDRESS_STREET,' '),100)||
+    LPAD(NVL(FACTORY_ADDRESS_POSTAL_CODE,'0'),4,'0')||
+    RPAD(NVL(FACTORY_ADDRESS_DISTRICT,' '),20)||
+    RPAD(NVL(FACTORY_ADDRESS_COUNTRY,' '),2)||
+    LPAD(NVL(CRG_SCORING,'0'),3,'0') ||
+    LPAD(NVL(CREDIT_RATING,'0'),3,'0') ||
+    RPAD(NVL(PHONE_NUMBER ,' '),40)||
+    RPAD(' ',584)
+    FROM INSTITUTIONS A
+    JOIN INSTITUTION_REPORT B ON A.FI_SUBJECT_CODE = B.FI_SUBJECT_CODE
+    where b.reporting_period = IN_REPORTING_PERIOD
+    --owner link
+    UNION ALL
+    SELECT
+      RECORD_TYPE||
+      FI_CODE||
+      BRANCH_CODE||
+      A.INSTITUTION_FI_SUBJECT_CODE||
+      RPAD(ROLE,2)||
+      A.OWNER_FI_SUBJECT_CODE||
+      RPAD(' ',1058)
+    FROM
+      INSTITUTION_OWNER_LINKS A JOIN INSTITUTION_REPORT b on a.INSTITUTION_FI_SUBJECT_CODE = b.FI_SUBJECT_CODE
+      --join VW_SUBJECT_REPORT c  on A.OWNER_FI_SUBJECT_CODE = C.FI_SUBJECT_CODE
+      WHERE A.RECORD_STATUS not in ('D','R','E')
+      and b.reporting_period = IN_REPORTING_PERIOD
+      --and c.reporting_period = '30 apr 2016'
+    -- footer
+    UNION ALL
+    SELECT 'Q'||'046'||to_char(IN_REPORTING_PERIOD,'DDMMYYYY')||to_char(sysdate,'DDMMYYYY')||LPAD('XXXXX',7,'0')||LPAD(' ',1073) FROM dual;
+  END SP_GET_SUBJECT_FILE_DATA;
+
+  PROCEDURE SP_GET_CONTRACT_FILE_DATA(IN_REPORTING_PERIOD IN DATE, REF_CURSOR OUT SYS_REFCURSOR) IS
+  BEGIN
+    open REF_CURSOR for
+    -- header
+    SELECT 'H'||'046'||'DDMMYYYY'||to_char(sysdate,'DDMMYYYY')||'XXX'||LPAD(' ',577) FROM dual
+    -- intalment contract
+    UNION ALL
+    SELECT
+      RECORD_TYPE||
+      FI_CODE||
+      BRANCH_CODE||
+      FI_SUBJECT_CODE||
+      RPAD(A.FI_CONTRACT_CODE,16)||
+      RPAD(CONTRACT_TYPE,2)||
+      RPAD(CONTRACT_PHASE,2)||
+      DECODE(CONTRACT_STATUS,'U',' ',CONTRACT_STATUS)||
+      CURRENCY_CODE||
+      LPAD(NVL(TO_CHAR(STARTING_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(REQUEST_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(PLANNED_END_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(ACTUAL_END_DATE,'DDMMYYYY'),'0'),8,'0')||
+      DEFAULTER_STATUS||
+      LPAD(NVL(TO_CHAR(LAST_PAYMENT_DATE,'DDMMYYYY'),'0'),8,'0')||
+      NVL(SUBSIDIZED_CREDIT,'0')||
+      NVL(PRE_FINANCE_LOAN,'0')||
+      NVL(REORGANIZED_CREDIT,'0')||
+      RPAD(NVL(THIRD_PARTY_GUARANTEE_TYPE,' '),3)||
+      RPAD(NVL(SECURITY_TYPE,' '),3)||
+      LPAD(NVL(AMOUNT_GURANTEED_THIRD_PARTY,'0'),12,'0')||
+      LPAD(NVL(AMOUNT_GUARANTEED_SECURITY,'0'),12,'0')||
+      NVL(QUALIFICATION_JUDGEMENT,' ')||
+      RPAD(' ',127)||
+      LPAD(SANCTION_LIMIT,12,'0')||
+      LPAD(TOTAL_DISBURSED_AMOUNT,12,'0')||
+      LPAD(TOTAL_OUTSTANDING_AMOUNT,12,'0')||
+      LPAD(TOTAL_NUMBER_INSTALMENTS,3,'0')||
+      PERIODICITY_PAYMENT||
+      RPAD(NVL(METHOD_PAYMENT,' '),3)||
+      LPAD(NVL(INSTALMENT_AMOUNT,'0'),12,'0')||
+      LPAD(NVL(TO_CHAR(EXPIRATION_DATE_NEXT_INST,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(AMOUNT_NEXT_EXPIRING_INST,'0'),12,'0')||
+      LPAD(NVL(NO_OF_REMAINING_INSTALMENT,'0'),3,'0')||
+      LPAD(NVL(REMAINING_AMOUNT,'0'),12,'0')||
+      LPAD(NVL(NO_OF_OVERDUE_INSTALMENT,0),3,'0')||
+      LPAD(NVL(OVERDUE_AMOUNT,0),12,'0')||
+      LPAD(NVL(NO_OF_DAYS_PAYMENT_DELAY,0),3,'0')||
+      NVL(TYPE_OF_LEASED_GOOD,' ')||
+      LPAD(NVL(VALUE_OF_LEASED_GOOD,0),12,'0')||
+      RPAD(NVL(REGISTRATION_NUMBER,' '),40)||
+      LPAD(NVL(TO_CHAR(DATE_OF_MANUFACTURING,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(DUE_FOR_RECOVERY,0),12,'0')||
+      LPAD(NVL(RECOVERY_DURING_REPORTING,0),12,'0')||
+      LPAD(NVL(CUMULATIVE_RECOVERY,0),12,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_LAW_SUIT,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_CLASSIFICATION,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(NO_TIMES_RESCHEDULING,0),6,'0')||
+      LPAD(NVL(TO_CHAR(DATE_LAST_RESCHEDULING,'DDMMYYYY'),'0'),8,'0')||
+      RPAD(NVL(ECONOMIC_PURPOSE_CODE,' '),4)||
+      NVL(SME,' ')||
+      RPAD(NVL(ENTERPRISE_TYPE,' '),2)||
+      RPAD(' ',108)
+    FROM
+      INSTALMENT_CONTRACTS A JOIN INSTALMENT_CONTRACT_REPORT B
+      ON A.FI_CONTRACT_CODE = B.FI_CONTRACT_CODE
+      where b.reporting_period = IN_REPORTING_PERIOD
+    --non instalment contract
+    UNION ALL
+    SELECT
+      RECORD_TYPE||
+      FI_CODE||
+      BRANCH_CODE||
+      FI_SUBJECT_CODE||
+      RPAD(A.FI_CONTRACT_CODE,16)||
+      RPAD(CONTRACT_TYPE,2)||
+      RPAD(CONTRACT_PHASE,2)||
+      DECODE(CONTRACT_STATUS,'U',' ',CONTRACT_STATUS)||
+      CURRENCY_CODE||
+      LPAD(NVL(TO_CHAR(STARTING_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(REQUEST_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(PLANNED_END_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(ACTUAL_END_DATE,'DDMMYYYY'),'0'),8,'0')||
+      DEFAULTER_STATUS||
+      LPAD(NVL(TO_CHAR(DATE_OF_LAST_PAYMENT,'DDMMYYYY'),'0'),8,'0')||
+      NVL(SUBSIDIZED_CREDIT,'0')||
+      NVL(PRE_FINANCE_LOAN,'0')||
+      NVL(REORGANIZED_CREDIT,'0')||
+      RPAD(NVL(THIRD_PARTY_GUARANTEE_TYPE,' '),3)||
+      RPAD(NVL(SECURITY_TYPE,' '),3)||
+      LPAD(NVL(AMOUNT_GUARANTEED_THIRD_PARTY,'0'),12,'0')||
+      LPAD(NVL(AMOUNT_GUARANTEED_SECURITY,'0'),12,'0')||
+      NVL(QUALITATIVE_JUDGEMENT,' ')||
+      RPAD(' ',127)||
+      LPAD(SANCTION_LIMIT,12,'0')||
+      LPAD(TOTAL_OUTSTANDING_AMOUNT,12,'0')||
+      LPAD(NVL(NO_OF_DAYS_PAYMENT_DELAY,0),3,'0')||
+      LPAD(NVL(DUE_FOR_RECOVERY,0),12,'0')||
+      LPAD(NVL(RECOVERY_DURING_REPORTING,0),12,'0')||
+      LPAD(NVL(CUMULATIVE_RECOVERY,0),12,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_LAW_SUIT,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_CLASSIFICATION,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(NO_OF_TIMES_RESCHEDULING,0),6,'0')||
+      LPAD(NVL(TO_CHAR(DATE_LAST_RESCHEDULING,'DDMMYYYY'),'0'),8,'0')||
+      RPAD(NVL(ECONOMIC_PURPOSE_CODE,' '),4)||
+      NVL(SME,' ')||
+      RPAD(NVL(ENTERPRISE_TYPE,' '),2)||
+      RPAD(' ',250)
+    FROM
+      NON_INSTALMENT_CONTRACTS A JOIN NON_INSTALMENT_CONTRACT_REPORT B
+      ON A.FI_CONTRACT_CODE = B.FI_CONTRACT_CODE
+      where b.reporting_period = IN_REPORTING_PERIOD
+    union all
+    --card contract
+    SELECT
+      RECORD_TYPE||
+      FI_CODE||
+      BRANCH_CODE||
+      FI_SUBJECT_CODE||
+      RPAD(A.FI_CONTRACT_CODE,16)||
+      RPAD(CONTRACT_TYPE,2)||
+      RPAD(CONTRACT_PHASE,2)||
+      DECODE(CONTRACT_STATUS,'U',' ',CONTRACT_STATUS)||
+      CURRENCY_CODE||
+      LPAD(NVL(TO_CHAR(STARTING_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(REQUEST_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(PLANNED_END_DATE,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(ACTUAL_END_DATE,'DDMMYYYY'),'0'),8,'0')||
+      DEFAULTER_STATUS||
+      LPAD(NVL(TO_CHAR(DATE_LAST_PAYMENT,'DDMMYYYY'),'0'),8,'0')||
+      NVL(SUBSIDIZED_CREDIT,'0')||
+      NVL(PRE_FINANCE_OF_LOAN,'0')||
+      NVL(REORGANIZED_CREDIT,'0')||
+      RPAD(NVL(THIRD_PARTY_GUARANTEE_TYPE,' '),3)||
+      RPAD(NVL(SECURITY_TYPE,' '),3)||
+      LPAD(NVL(AMOUNT_GUARANTEED_THIRD_PARTY,'0'),12,'0')||
+      LPAD(NVL(AMOUNT_GUARANTEED_SECURITY,'0'),12,'0')||
+      NVL(QUALITATIVE_JUDGEMENT,' ')||
+      RPAD(' ',127)||
+      NVL(PERIODICITY_PAYMENT,' ')||
+      RPAD(NVL(METHOD_OF_PAYMENT, ' '),3,' ')||
+      LPAD(nvl(INSTALMENT_AMOUNT,0),12,'0')||
+      LPAD(CREDIT_LIMIT,12,'0')||
+      LPAD(TOTAL_OUTSTANDING_AMOUNT,12,'0')||
+      LPAD(NVL(TO_CHAR(EXPIRATION_DATE_NEXT_INST,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(REMAINING_AMOUNT, 0),12,'0')||
+      LPAD(NVL(NUMBER_OF_OVERDUE,0),3,'0')||
+      LPAD(NVL(OVERDUE_AMOUNT,0),12,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_LAST_CHARGE,'DDMMYYYY'),'0'),8,'0')||
+      TYPE_OF_INSTALMENT||
+      LPAD(NVL(NO_OF_DAYS_PAYMENT_DELAY,0),3,'0')||
+      LPAD(NVL(DUE_FOR_RECOVERY,0),12,'0')||
+      LPAD(NVL(RECOVERY_DURING_REPORTING,0),12,'0')||
+      LPAD(NVL(CUMULATIVE_RECOVERY,0),12,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_LAW_SUIT,'DDMMYYYY'),'0'),8,'0')||
+      LPAD(NVL(TO_CHAR(DATE_OF_CLASSIFICATION,'DDMMYYYY'),'0'),8,'0')||
+      RPAD(NVL(ECONOMIC_PURPOSE_CODE,' '),4)||
+      RPAD(' ',207)
+    FROM
+      CARD_CONTRACTS A JOIN CARD_CONTRACT_REPORT B
+      ON A.FI_CONTRACT_CODE = B.FI_CONTRACT_CODE
+      where b.reporting_period = IN_REPORTING_PERIOD
+    -- contract link
+    -- UNION ALL
+    -- SELECT
+    --   RECORD_TYPE||
+    --   FI_CODE||
+    --   BRANCH_CODE||
+    --   TYPE_OF_LINK||
+    --   A.FI_PRIMARY_CODE||
+    --   A.FI_SECONDARY_CODE||
+    --   RPAD(A.FI_CONTRACT_CODE,16)||
+    --   RPAD(' ',543)
+    -- FROM
+    --   CONTRACT_LINKS A
+    --   JOIN VW_CONTRACT_REPORT D ON A.FI_CONTRACT_CODE = D.FI_CONTRACT_CODE
+    -- WHERE A.RECORD_STATUS not in ('D','R','E')
+    -- and d.reporting_period = repDate
+    -- and trunc(a.make_date) <= repDate + 13 -- first file submission timeline
+    --footer
+    UNION ALL
+    SELECT 'Q'||'046'||'DDMMYYYY'||to_char(sysdate,'DDMMYYYY')||'XXXXXXX'||LPAD(' ',573) FROM dual;
+  END SP_GET_CONTRACT_FILE_DATA;
+
+  PROCEDURE SP_GET_SECURITY_FILE_DATA(REF_CURSOR OUT SYS_REFCURSOR)
+  AS
+  repDate date;
+  BEGIN
+    select to_date(value) into repDate from REPORTING_PARAMETERS where key = 'SEC_REP_PERIOD';
+    open REF_CURSOR for
+    -- header
+    SELECT 'H'||'046'||to_char(repDate,'DDMMYYYY')||to_char(sysdate,'DDMMYYYY')||'XXX'||'RRRRRRRR'||LPAD(' ',1169) FROM dual
+    UNION ALL
+    -- land building
+    select
+      A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.SECURITY_VALUE_CODE ||
+      A.SECURITY_CATEGORY ||
+      A.FI_SECURITY_CODE ||
+      A.TYPE_DEED ||
+      RPAD(NVL(A.TITLE_DEED_POA_NO, ' '), 8) ||
+      LPAD(NVL(A.DATE_REGISTRATION,'00000000'), 8, '0') ||
+      RPAD(A.NAME_SUB_REGISTRY_OFFICE,30) ||
+      RPAD(A.DISTRICT, 20) ||
+      RPAD(A.THANA, 20) ||
+      RPAD(A.MOUZA, 20) ||
+      LPAD(A.AREA_LAND, 8, '0') ||
+      RPAD(NVL(A.PLOT_NO, ' '), 12) ||
+      RPAD(NVL(A.HOLDING_NO, ' '), 9) ||
+      RPAD(NVL(A.ADDRESS, ' '), 120) ||
+      RPAD(NVL(A.JOTE_NO, ' '), 8) ||
+      RPAD(NVL(A.DAG_NO_CS, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_SA, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_RS, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_BS, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_CITY_JORIP, ' '), 100) ||
+      RPAD(NVL(A.KHATIAN_NO_CS, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_SA, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_RS, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_BS, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_CITY_JORIP, ' '), 30) ||
+      RPAD(NVL(A.MUTATION_KHATIAN_NO, ' '), 8) ||
+      A.LEASEHOLD_PROPERTY ||
+      A.BUILDING_EXISTS_IN_LAND ||
+      LPAD(NVL(A.SIZE_AREA_BUILDING, '0'), 8, '0') ||
+      LPAD(NVL(A.NUMBER_FLOOR, '0'), 3, '0') ||
+      RPAD(' ', 237)
+    from
+      LAND_BUILDINGS a join LAND_BUILDING_REPORT b on A.FI_SECURITY_CODE = B.FI_SECURITY_CODE
+    where
+      B.REPORTING_PERIOD = repDate
+    UNION ALL
+    -- flats
+    SELECT
+      A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.SECURITY_VALUE_CODE ||
+      A.SECURITY_CATEGORY ||
+      A.FI_SECURITY_CODE ||
+      A.TYPE_DEED ||
+      RPAD(NVL(A.TITLE_DEED_POA_NO, ' '), 8) ||
+      LPAD(A.DATE_REGISTRATION, 8, '0') ||
+      RPAD(A.NAME_SUB_REGISTRY_OFFICE, 30) ||
+      RPAD(A.DISTRICT, 20) ||
+      RPAD(A.THANA, 20) ||
+      RPAD(A.MOUZA, 20) ||
+      A.TRIPARTITE_AGREEMENT ||
+      LPAD(A.AREA_FLAT, 8, '0') ||
+      LPAD(NVL(A.UNDEMARCATED_TOTAL_LAND_AREA, '0'), 8, '0') ||
+      RPAD(A.APARTMENT_FLAT_NO, 8) ||
+      LPAD(A.FLOOR_NO, 2, '0') ||
+      RPAD(A.LOCATION_FLAT, 20) ||
+      RPAD(NVL(A.CITY_CORPRATION_HOLDING_NO, ' '), 12) ||
+      RPAD(NVL(A.NAME_BUILDING, ' '), 40) ||
+      RPAD(NVL(A.NAME_PROJECT, ' '), 40) ||
+      RPAD(NVL(A.NAME_DEVELOPER, ' '), 40) ||
+      RPAD(NVL(A.REHAB_MEMBER_NO_DEVELOPER, ' '), 6) ||
+      RPAD(A.ADDRESS, 120) ||
+      RPAD(NVL(A.JOTE_NO, ' '), 8) ||
+      RPAD(NVL(A.DAG_NO_CS, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_SA, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_RS, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_BS, ' '), 100) ||
+      RPAD(NVL(A.DAG_NO_CITY_JORIP, ' '), 100) ||
+      RPAD(NVL(A.KHATIAN_NO_CS, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_SA, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_RS, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_BS, ' '), 30) ||
+      RPAD(NVL(A.KHATIAN_NO_CITY_JORIP, ' '), 30) ||
+      RPAD(NVL(A.MUTATION_KHATIAN_NO, ' '), 8) ||
+      A.LEASEHOLD_PROPERTY ||
+      RPAD(' ', 93)
+    FROM
+      FLATS a join FLAT_REPORT b on A.FI_SECURITY_CODE = B.FI_SECURITY_CODE
+    WHERE
+      B.REPORTING_PERIOD = repDate
+    UNION ALL
+    -- machineries
+    SELECT
+      A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.SECURITY_VALUE_CODE ||
+      A.SECURITY_CATEGORY ||
+      A.FI_SECURITY_CODE ||
+      RPAD(A.NAME_MACHINERY, 70) ||
+      RPAD(A.NAME_FACTORY, 70) ||
+      RPAD(A.ADDRESS_FACTORY, 120) ||
+      RPAD(A.MFG_CO_BRAND_NAME, 30) ||
+      RPAD(A.MFG_COUNTRY, 30) ||
+      A.MFG_YEAR ||
+      RPAD(A.MODEL_NO, 20) ||
+      LPAD(A.NO_UNIT, 6, '0') ||
+      RPAD(NVL(A.LC_NO, ' '), 16) ||
+      NVL(LPAD(A.LC_DATE, 8, ' '), '00000000') ||
+      LPAD(NVL(A.VALUE_LC, '0'), 12) ||
+      RPAD(NVL(A.LADING_AIR_WAY_BILL_NO, ' '), 25) ||
+      LPAD(NVL(A.PRESENT_VALUE, '0'), 12) ||
+      LPAD(NVL(A.BOOK_INVOICE_VALUE, '0'), 12) ||
+      RPAD(' ', 738)
+    FROM
+      MACHINERIES a join MACHINERY_REPORT b on A.FI_SECURITY_CODE = B.FI_SECURITY_CODE
+    where
+      B.REPORTING_PERIOD = repDate
+    UNION ALL
+    -- mortgages
+    SELECT
+      A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.FI_MORTGAGE_CODE ||
+      A.MORTGAGE_TYPE ||
+      RPAD(NVL(A.MORTGAGE_DEED_NO, ' '), 15) ||
+      LPAD(A.MORTGAGE_DATE, 8, '0') ||
+      LPAD(A.MORTGAGE_VALUE, 12, '0') ||
+      LPAD(A.MARKET_VALUE, 12, '0') ||
+      RPAD(NVL(A.RJSC_FILLING_NO, ' '), 8) ||
+      LPAD(NVL(A.RJSC_FILLING_DATE, '0'), 8, '0') ||
+      RPAD(nvl(A.RANKING_CHARGE, ' '), 3) ||
+      RPAD(nvl(A.PARI_PASSU_CHARGE, ' '), 3) ||
+      RPAD(NVL(A.RIGPA_NO, ' '), 12) ||
+      LPAD(NVL(A.RIGPA_DATE, '0'), 8, '0') ||
+      A.MORTGAGE_PHASE ||
+      RPAD(' ', 1084)
+    FROM
+      MORTGAGES a join MORTGAGE_REPORT b on A.FI_MORTGAGE_CODE = B.FI_MORTGAGE_CODE
+    WHERE
+      B.REPORTING_PERIOD = repDate
+    UNION ALL
+    -- hypothecation
+    SELECT
+      A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.FI_HYPOTHECATION_CODE ||
+      LPAD(NVL(A.DATE_HYPOTHECATION, '0'), 8, '0') ||
+      RPAD(NVL(A.RJSC_FILLING_NO, ' '), 8) ||
+      LPAD(NVL(A.RJSC_FILLING_DATE, '0'), 8, '0') ||
+      RPAD(NVL(A.RANKING_CHARGE, ' '), 3) ||
+      RPAD(NVL(A.PARI_PASSU_CHARGE, ' '), 3) ||
+      A.HYPOTHECATION_PHASE ||
+      RPAD(' ', 1144)
+    FROM
+      HYPOTHECATIONS a join HYPOTHECATION_REPORT b on A.FI_HYPOTHECATION_CODE = B.FI_HYPOTHECATION_CODE
+    WHERE
+      B.REPORTING_PERIOD = repDate
+    UNION ALL
+    -- links
+    SELECT
+      A.RECORD_TYPE||
+      A.FI_CODE||
+      A.BRANCH_CODE||
+      A.LINK_TYPE||
+      A.FI_SECURITY_CODE||
+      A.FI_MORT_HYPO_CODE ||
+      RPAD(' ', 1159)
+    FROM
+      SECURITY_LINKS A
+      JOIN VW_SECURITY_REPORT D ON A.FI_SECURITY_CODE = D.FI_SECURITY_CODE
+    WHERE A.RECORD_STATUS not in ('D','R','E')
+    and d.reporting_period = repDate
+    --footer
+    UNION ALL
+    SELECT 'F'||'046'||to_char(repDate,'DDMMYYYY')||to_char(sysdate,'DDMMYYYY')||'XXXXXXXX'||LPAD(' ',1172) FROM dual;
+  END SP_GET_SECURITY_FILE_DATA;
+  PROCEDURE SP_GET_SEC_SUBJECT_FILE_DATA(REF_CURSOR OUT SYS_REFCURSOR)
+  AS
+    repDate date;
+  BEGIN
+    select to_date(value) into repDate from REPORTING_PARAMETERS where key = 'SEC_REP_PERIOD';
+    open REF_CURSOR for
+    -- header
+    SELECT 'H'||'046'||to_char(repDate,'DDMMYYYY')||to_char(sysdate,'DDMMYYYY')||'XXX'||'RRRRRRRR'||LPAD(' ',1169) FROM dual
+    -- person
+    union all
+    select
+      'S' || -- A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.FI_SUBJECT_CODE ||
+      '1' || --subject type
+      RPAD(A.NAME , 70) ||
+      RPAD(NVL(A.FATHERS_NAME, ' '), 70) ||
+      RPAD(NVL(A.MOTHERS_NAME, ' '), 70) ||
+      rpad(nvl(A.NATIONAL_ID_NUMBER, ' '), 17) ||
+      nvl(to_char(A.DATE_OF_BIRTH, 'DDMMYYYY'), '00000000') ||
+      rpad(nvl(A.PERMANENT_ADDRESS_STREET || ', ', '') ||
+      nvl(A.PERMANENT_ADDRESS_POSTAL_CODE || ', ', '') ||
+      nvl(A.PERMANENT_ADDRESS_DISTRICT || ', ', '') ||
+      nvl(A.PERMANENT_ADDRESS_COUNTRY || ', ', ''), 120) ||
+      rpad(' ', 820)
+    from
+      personal_data a join SECURITY_PERSON_REPORT b on a.fi_subject_code = b.fi_subject_code
+    where
+      b.reporting_period = repdate
+    UNION ALL
+    -- institution
+    select
+      'S' || -- A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.FI_SUBJECT_CODE ||
+      decode(substr(a.FI_SUBJECT_CODE, 1, 1), 'I', '2', 'C', '3', '3') ||
+      RPAD(A.TRADE_NAME, 70) ||
+      RPAD(' ', 70) ||
+      RPAD(' ', 70) ||
+      RPAD(' ', 17) ||
+      '00000000' ||
+      rpad(nvl(A.BUSINESS_ADDRESS_STREET || ', ', '') ||
+      nvl(A.BUSINESS_ADDRESS_POSTAL_CODE || ', ', '') ||
+      nvl(A.BUSINESS_ADDRESS_DISTRICT || ', ', '') ||
+      nvl(A.BUSINESS_ADDRESS_COUNTRY || ', ', ''), 120) ||
+      rpad(' ', 820)
+    from
+      institutions a join SECURITY_INSTITUTION_REPORT b on A.FI_SUBJECT_CODE = B.FI_SUBJECT_CODE
+    where
+      b.REPORTING_PERIOD = repDate
+    union all
+    -- link
+    select
+      A.RECORD_TYPE ||
+      A.FI_CODE ||
+      A.BRANCH_CODE ||
+      A.LINK_TYPE ||
+      A.FI_SUBJECT_CODE ||
+      A.FI_SEC_MORT_HYPO_CODE ||
+      A.ROLE ||
+      rpad(' ', 1158)
+    from
+      SUBJECT_LINKS a join VW_SECUIRY_SUBJECT_REPORT b on a.fi_subject_code = b.fi_subject_code
+    where
+      b.reporting_period = repDate
+    and
+      A.RECORD_STATUS not in ('D','R','E')
+    and
+      trunc(a.make_date) <= trunc(repDate)
+    --footer
+    UNION ALL
+    SELECT 'F'||'046'||to_char(repDate,'DDMMYYYY')||to_char(sysdate,'DDMMYYYY')||'XXXXXXXX'||LPAD(' ',1172) FROM dual;
+  END SP_GET_SEC_SUBJECT_FILE_DATA;
+END PKG_FILE;

@@ -1,0 +1,34 @@
+CREATE OR REPLACE VIEW VW_CONTRACT_REPORT
+(
+    VERSION_NO,
+    REPORTING_PERIOD,
+    FI_CONTRACT_CODE,
+    MAKE_BY,
+    MAKE_DATE
+) AS
+SELECT
+    VERSION_NO,
+    REPORTING_PERIOD,
+    FI_CONTRACT_CODE,
+    MAKE_BY,
+    MAKE_DATE
+FROM
+    instalment_contract_report
+UNION ALL
+SELECT
+    VERSION_NO,
+    REPORTING_PERIOD,
+    FI_CONTRACT_CODE,
+    MAKE_BY,
+    MAKE_DATE
+FROM
+    non_instalment_contract_report
+UNION ALL
+SELECT
+    VERSION_NO,
+    REPORTING_PERIOD,
+    FI_CONTRACT_CODE,
+    MAKE_BY,
+    MAKE_DATE
+FROM
+    card_contract_report;

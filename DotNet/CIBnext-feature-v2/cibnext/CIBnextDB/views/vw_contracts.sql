@@ -1,0 +1,50 @@
+CREATE OR REPLACE VIEW VW_CONTRACTS
+(
+    CONTRACT_CATEGORY,
+    FI_CONTRACT_CODE,
+    FI_SUBJECT_CODE,
+    CONTRACT_PHASE,
+    DEFAULTER_STATUS,
+    RECORD_STATUS,
+    UBS_ACCOUNT_NO,
+    BRANCH_CODE,
+    CONTRACT_STATUS
+) AS
+SELECT
+    'Instalment' contract_category,
+    fi_contract_code,
+    FI_SUBJECT_CODE,
+    CONTRACT_phase,
+    DEFAULTER_STATUS,
+    record_status,
+    UBS_ACCOUNT_NO,
+    BRANCH_CODE,
+    CONTRACT_STATUS
+FROM
+    instalment_contracts
+UNION
+SELECT
+    'NonInstalment',
+    fi_contract_code,
+    FI_SUBJECT_CODE,
+    CONTRACT_phase,
+    DEFAULTER_STATUS,
+    record_status,
+    UBS_ACCOUNT_NO,
+    BRANCH_CODE,
+    CONTRACT_STATUS
+FROM
+    non_instalment_contracts
+UNION
+SELECT
+    'Card',
+    fi_contract_code,
+    FI_SUBJECT_CODE,
+    CONTRACT_phase,
+    DEFAULTER_STATUS,
+    record_status,
+    NULL,
+    BRANCH_CODE,
+    CONTRACT_STATUS
+FROM
+    card_contracts

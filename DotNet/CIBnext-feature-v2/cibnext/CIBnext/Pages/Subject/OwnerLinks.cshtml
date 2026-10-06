@@ -1,0 +1,244 @@
+﻿@page
+@model CIBnext.Pages.Subject.OwnerLinksModel
+<style>
+    .page-title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
+    }
+
+    .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
+
+    legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    th {
+        background: #cdd8ea;
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    td {
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    .btn-small {
+        padding: 2px 8px;
+        font-size: 12px;
+    }
+
+    .label-hint {
+        color: #06c;
+    }
+
+    .form-row {
+        margin-bottom: 6px;
+    }
+
+        .form-row label {
+            display: inline-block;
+            width: 220px;
+        }
+
+    input, select {
+        width: 180px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 2px 8px;
+        margin-right: 3px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        color: #06c;
+    }
+
+    .pagination span.current {
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+
+<div class="page-title">Owner Link Information</div>
+
+<form method="get">
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+            <table style="border:none">
+                <tr>
+                    <td style="border:none">Branch Code:</td>
+                    <td style="border:none">
+                        <select asp-for="Subject.CibBranchCode" asp-items="Model.BranchCodeList">
+                            <option value="">--Select--</option>
+                        </select>
+                    </td>
+                    <td style="border:none">Owner Subject Code:</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.OwnerFiSubjectCode" />
+                    </td>
+                    <td style="border:none">Owner Name:</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.OwnerName" />
+                    </td>
+                    <td style="border:none">Inst. Subject Code:</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.InstitutionFiSubjectCode" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:none">Inst. Name:</td>
+                    <td style="border:none">
+                        <input asp-for="Subject.InstitutionName" />
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" class="btn-small">Search</button>
+            <a href="/Subject/OwnerLinks" class="btn-small">Clear</a>
+        </fieldset>
+    </div>
+</form>
+
+<form method="post" asp-page-handler="Save">
+    <div class="section">
+        <fieldset>
+            <legend>Add Owner Link Information</legend>
+
+            @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+            {
+                <div style="color:red; font-weight:bold;">@Html.Raw(Model.ValidationMessage)</div>
+            }
+
+            <div class="form-row">
+                <label>Branch</label>
+                <select asp-for="AddLink.CibBranchCode" asp-items="Model.BranchCodeList">
+                    <option value="">--Select--</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label class="label-hint">F.I. Subject Code of Institution</label>
+                <input asp-for="AddLink.InstitutionFiSubjectCode" />
+            </div>
+            <div class="form-row">
+                <label class="label-hint">Role</label>
+                <select asp-for="AddLink.Role" asp-items="Model.RoleList">
+                    <option value="">--Select--</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label class="label-hint">F.I. Subject Code of Owner</label>
+                <input asp-for="AddLink.OwnerFiSubjectCode" />
+            </div>
+
+            <button type="submit" class="btn-small">Save</button>
+        </fieldset>
+    </div>
+</form>
+
+<div class="section">
+    <fieldset>
+        <legend>Owner Information</legend>
+
+        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
+        {
+            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
+        }
+
+        <h3>Total Count: @Model.TotalCount</h3>
+
+        <form method="post" asp-page-handler="Delete">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Actions</th>
+                    <th>Branch Code</th>
+                    <th>Inst. Subject Code</th>
+                    <th>Inst. Name</th>
+                    <th>Owner Subject Code</th>
+                    <th>Owner Name</th>
+                </tr>
+
+                @if (Model.LinkList != null && Model.LinkList.Any())
+                {
+                    @foreach (var link in Model.LinkList)
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="SelectedLinks" value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" /></td>
+                            <td>
+                                <a href="/Subject/OwnerLinks?instSubjectCode=@link.InstitutionFiSubjectCode&ownerSubjectCode=@link.OwnerFiSubjectCode&branchCode=@link.CibBranchCode&role=@link.Role">Edit</a>
+                            </td>
+                            <td>@link.CibBranchCode</td>
+                            <td>@link.InstitutionFiSubjectCode</td>
+                            <td>@link.InstitutionName</td>
+                            <td>@link.OwnerFiSubjectCode</td>
+                            <td>@link.OwnerName</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" style="text-align:center;">No records found</td>
+                    </tr>
+                }
+            </table>
+
+            <div class="pagination" style="margin-top:8px">
+                @{ var lastDisplayedPage = 0; }
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    var displayPage = i <= 3
+                        || i > Model.TotalPages - 3
+                        || Math.Abs(i - Model.PageIndex) <= 2;
+
+                    if (!displayPage)
+                    {
+                        continue;
+                    }
+
+                    if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                    {
+                        <span class="ellipsis">...</span>
+                    }
+
+                    if (i == Model.PageIndex)
+                    {
+                        <span class="current">@i</span>
+                    }
+                    else
+                    {
+                        <a href="/Subject/OwnerLinks?PageIndex=@i&Subject.CibBranchCode=@Model.Subject.CibBranchCode&Subject.OwnerFiSubjectCode=@Model.Subject.OwnerFiSubjectCode&Subject.OwnerName=@Model.Subject.OwnerName&Subject.InstitutionFiSubjectCode=@Model.Subject.InstitutionFiSubjectCode&Subject.InstitutionName=@Model.Subject.InstitutionName">@i</a>
+                    }
+
+                    lastDisplayedPage = i;
+                }
+            </div>
+
+            <br />
+            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
+            <button type="submit" class="btn-small" onclick="return confirm('are you delete Selected record?');">Delete</button>
+        </form>
+
+    </fieldset>
+</div>

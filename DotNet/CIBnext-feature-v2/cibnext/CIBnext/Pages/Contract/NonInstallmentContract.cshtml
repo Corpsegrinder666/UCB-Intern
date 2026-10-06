@@ -1,0 +1,200 @@
+﻿@page
+@model CIBnext.Pages.Contract.NonInstallmentContractModel
+<style>
+    .page-title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
+    }
+
+    .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
+
+    legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    th {
+        background: #cdd8ea;
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    td {
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    .btn-small {
+        padding: 2px 8px;
+        font-size: 12px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 2px 8px;
+        margin-right: 3px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        color: #06c;
+    }
+
+    .pagination span.current {
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+
+<div class="page-title">Non Installment Contract List</div>
+
+<form method="get">
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+            <table style="border:none">
+                <tr>
+                    <td style="border:none">Branch Code:</td>
+                    <td style="border:none">
+                        <select asp-for="BranchCode" asp-items="Model.BranchCodeList">
+                            <option value="">All Branch</option>
+                        </select>
+                    </td>
+                    <td style="border:none">Contract Code:</td>
+                    <td style="border:none">
+                        <input asp-for="ContractCode" />
+                    </td>
+                    <td style="border:none">F.I. Subject Code:</td>
+                    <td style="border:none">
+                        <input asp-for="FISubjectCode" />
+                    </td>
+                    <td style="border:none">Contract Phase</td>
+                    <td style="border:none">
+                        <select asp-for="ContractPhase" asp-items="Model.ContractPhaseList">
+                            <option value="">--Select--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:none">UBS Account No:</td>
+                    <td style="border:none">
+                        <input asp-for="UbsAcNo" />
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" class="btn-small">Search</button>
+            <a href="/Contract/NonInstallmentContract" class="btn-small">Clear</a>
+            <a href="#">Go to Error List</a>
+        </fieldset>
+    </div>
+</form>
+
+<div class="section">
+    <fieldset>
+        <legend>Non Installment Contract Information</legend>
+
+        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
+        {
+            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
+        }
+
+        <h3>Total Count: @Model.TotalCount</h3>
+
+        <form method="post" asp-page-handler="Delete">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Action</th>
+                    <th>Branch</th>
+                    <th>Subject Code</th>
+                    <th>Borrower Name</th>
+                    <th>Contract Code</th>
+                    <th>Contract Type</th>
+                    <th>Contract Phase</th>
+                    <th>Contract Status</th>
+                    <th>Currency</th>
+                    <th>Sanction Limit</th>
+                </tr>
+
+                @if (Model.ContractList != null && Model.ContractList.Any())
+                {
+                    @foreach (var c in Model.ContractList)
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="SelectedCodes" value="@c.FIContractCode" /></td>
+                            <td><a href="/Contract/AddNonInstallmentContract?contractCode=@c.FIContractCode">View/Edit</a></td>
+                            <td>@c.BranchCode</td>
+                            <td>@c.FISubjectCode</td>
+                            <td>@c.BorrowerName</td>
+                            <td>@c.FIContractCode</td>
+                            <td>@c.ContractType</td>
+                            <td>@c.ContractPhase</td>
+                            <td>@c.ContractStatus</td>
+                            <td>@c.CurrencyCode</td>
+                            <td>@c.SanctionLimit</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="11" style="text-align:center;">No records found</td>
+                    </tr>
+                }
+            </table>
+
+            <div class="pagination" style="margin-top:8px">
+                @{ var lastDisplayedPage = 0; }
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    var displayPage = i <= 3
+                        || i > Model.TotalPages - 3
+                        || Math.Abs(i - Model.PageIndex) <= 2;
+
+                    if (!displayPage)
+                    {
+                        continue;
+                    }
+
+                    if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                    {
+                        <span class="ellipsis">...</span>
+                    }
+
+                    if (i == Model.PageIndex)
+                    {
+                        <span class="current">@i</span>
+                    }
+                    else
+                    {
+                        <a href="/Contract/NonInstallmentContract?PageIndex=@i&BranchCode=@Model.BranchCode&ContractCode=@Model.ContractCode&FISubjectCode=@Model.FISubjectCode&ContractPhase=@Model.ContractPhase&UbsAcNo=@Model.UbsAcNo">@i</a>
+                    }
+
+                    lastDisplayedPage = i;
+                }
+            </div>
+
+            <br />
+            <a href="/Contract/AddNonInstallmentContract" class="btn-small">Add</a>
+            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
+            <button type="submit" class="btn-small" onclick="return confirm('Are you sure you want to delete the selected record?');">Delete</button>
+        </form>
+    </fieldset>
+</div>

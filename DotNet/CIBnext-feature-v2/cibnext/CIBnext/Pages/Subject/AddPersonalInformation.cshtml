@@ -1,0 +1,279 @@
+﻿@page
+@model CIBnext.Pages.Subject.AddPersonalInformationModel
+
+<style>
+    body {
+        font-family: Tahoma;
+        font-size: 13px;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px;
+        border-bottom: 1px solid #999;
+        background: #f4f4ee;
+    }
+
+    fieldset {
+        border: 1px solid #b5b5a5;
+        margin-top: 5px;
+        background: #edf4ef;
+    }
+
+    legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    td {
+        padding: 3px;
+    }
+
+    input, select {
+        width: 180px;
+        height: 22px;
+    }
+
+    .address-box {
+        border: 1px solid #b5b5a5;
+        padding: 5px;
+        width: 32%;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .btn {
+        margin-top: 10px;
+        padding: 3px 10px;
+    }
+
+    .auto-code {
+        display: inline-block;
+        width: 180px;
+        height: 22px;
+        line-height: 22px;
+        padding: 0 3px;
+        background: #eee;
+        color: #666;
+        border: 1px solid #999;
+    }
+
+    .label-hint {
+        color: #06c;
+    }
+
+    .search-btn {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="title">@(Model.IsEdit ? "Edit" : "Add") Personal Information</div>
+
+<form method="post">
+    @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+    {
+        <div style="color:red; font-weight:bold;">
+            @Html.Raw(Model.ValidationMessage)
+        </div>
+    }
+
+    <input asp-for="Subject.FISubjectCode" type="hidden" />
+
+    <fieldset>
+        <legend>General</legend>
+        <table>
+            <tr>
+                <td>Branch</td>
+                <td colspan="3">
+                    <select asp-for="Subject.BranchCode" style="width:450px" asp-items="Model.BranchCodeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>FI Subject Code</td>
+                <td>
+                    @if (Model.IsEdit)
+                    {
+                        <span class="auto-code">@Model.Subject.FISubjectCode</span>
+                    }
+                    else
+                    {
+                        <span class="auto-code">[AUTO]</span>
+                    }
+                </td>
+                <td>Cif No</td>
+                <td><input asp-for="Subject.CifNo" /></td>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td><input asp-for="Subject.Title" /></td>
+                <td>Name</td>
+                <td><input asp-for="Subject.Name" /></td>
+            </tr>
+            <tr>
+                <td>Sector Type</td>
+                <td>
+                    <select asp-for="Subject.SectorType" asp-items="Model.SectorTypeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+                <td>Sector Code</td>
+                <td>
+                    <select asp-for="Subject.SectorCode" asp-items="Model.SectorCodeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>TIN (eTIN)</td>
+                <td><input asp-for="Subject.TIN" /></td>
+                <td>Phone Nr.</td>
+                <td><input asp-for="Subject.PhoneNumber" /></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>Personal</legend>
+        <table>
+            <tr>
+                <td>Father's Title</td>
+                <td><input asp-for="Subject.FathersTitle" /></td>
+                <td class="label-hint">Father's Name</td>
+                <td><input asp-for="Subject.FathersName" /></td>
+                <td class="label-hint">Date of Birth</td>
+                <td><input asp-for="Subject.DateOfBirth" type="date" /></td>
+            </tr>
+            <tr>
+                <td>Mother's Title</td>
+                <td><input asp-for="Subject.MothersTitle" /></td>
+                <td class="label-hint">Mother's Name</td>
+                <td><input asp-for="Subject.MothersName" /></td>
+                <td class="label-hint">Country of Birth</td>
+                <td>
+                    <select asp-for="Subject.CountryOfBirth" asp-items="Model.CountryList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Spouse's Title</td>
+                <td><input asp-for="Subject.SpousesTitle" /></td>
+                <td>Spouse's Name</td>
+                <td><input asp-for="Subject.SpousesName" /></td>
+                <td class="label-hint">Place of Birth</td>
+                <td><input asp-for="Subject.PlaceOfBirth" /></td>
+            </tr>
+            <tr>
+                <td>Gender</td>
+                <td>
+                    <select asp-for="Subject.Gender" asp-items="Model.GenderList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+                <td>National ID</td>
+                <td><input asp-for="Subject.NationalIDNumber" /></td>
+                <td>Smart ID</td>
+                <td>
+                    <input asp-for="Subject.SmartIDNumber" style="width:150px" />
+                    <button type="button" class="search-btn" title="Search by Smart ID">🔍</button>
+                </td>
+            </tr>
+        </table>
+
+        <div class="address-box">
+            <h4>Permanent Address</h4>
+            Street<br />
+            <input asp-for="Subject.PermanentAddress.Street" /><br />
+            Postal Code<br />
+            <input asp-for="Subject.PermanentAddress.PostalCode" /><br />
+            District<br />
+            <select asp-for="Subject.PermanentAddress.District" asp-items="Model.DistrictList">
+                <option value="">--Select--</option>
+            </select><br />
+            Country<br />
+            <select asp-for="Subject.PermanentAddress.CountryCode" asp-items="Model.CountryList">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+
+        <div class="address-box">
+            <h4>Present Address</h4>
+            Street<br />
+            <input asp-for="Subject.PresentAddress.Street" /><br />
+            Postal Code<br />
+            <input asp-for="Subject.PresentAddress.PostalCode" /><br />
+            District<br />
+            <select asp-for="Subject.PresentAddress.District" asp-items="Model.DistrictList">
+                <option value="">--Select--</option>
+            </select><br />
+            Country<br />
+            <select asp-for="Subject.PresentAddress.CountryCode" asp-items="Model.CountryList">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+
+        <div class="address-box">
+            <h4>Business Address</h4>
+            Street<br />
+            <input asp-for="Subject.BusinessAddress.Street" /><br />
+            Postal Code<br />
+            <input asp-for="Subject.BusinessAddress.PostalCode" /><br />
+            District<br />
+            <select asp-for="Subject.BusinessAddress.District" asp-items="Model.DistrictList">
+                <option value="">--Select--</option>
+            </select><br />
+            Country<br />
+            <select asp-for="Subject.BusinessAddress.CountryCode" asp-items="Model.CountryList">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Other Document</legend>
+        <table>
+            <tr>
+                <td>ID Type</td>
+                <td>
+                    <select asp-for="Subject.IDType" asp-items="Model.IdTypeList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+                <td>ID Nr.</td>
+                <td><input asp-for="Subject.IDNumber" /></td>
+            </tr>
+            <tr>
+                <td>ID Issue Country</td>
+                <td>
+                    <select asp-for="Subject.IDIssueCountryCode" asp-items="Model.CountryList">
+                        <option value="">--Select--</option>
+                    </select>
+                </td>
+                <td>ID Issue Date</td>
+                <td><input asp-for="Subject.IDIssueDate" type="date" /></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>Record Info</legend>
+        <table>
+            <tr><td>Maker</td><td>@Model.Subject.MakeBy</td></tr>
+            <tr><td>Last Update Date</td><td>@(Model.Subject.MakeDate == default(DateTime) ? "" : Model.Subject.MakeDate.ToString("dd-MMM-yyyy"))</td></tr>
+            <tr><td>Record Status</td><td>@Model.Subject.RecordStatus</td></tr>
+        </table>
+    </fieldset>
+
+    <button type="submit" class="btn">Save</button>
+    <a href="/Subject/PersonalInformation" class="btn">Exit</a>
+
+</form>

@@ -1,0 +1,225 @@
+﻿@page
+@model CIBnext.Pages.Subject.PersonalInformationModel
+<style>
+    .page-title {
+        font-weight: bold;
+        font-size: 28px;
+        padding: 5px;
+        border-bottom: 1px solid #999;
+        margin-bottom: 10px;
+    }
+
+    .section {
+        border: 1px solid #b5b5a5;
+        background: #edf4ef;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    fieldset {
+        border: 1px solid #b5b5a5;
+        padding: 10px;
+    }
+
+    legend {
+        padding: 0 5px;
+        font-size: 14px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        table th {
+            background: #c9d5e8;
+            border: 1px solid #666;
+            padding: 3px;
+        }
+
+        table td {
+            border: 1px solid #666;
+            padding: 3px;
+        }
+
+    .btn-small {
+        padding: 2px 8px;
+        font-size: 12px;
+    }
+
+    input, select {
+        width: 120px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 2px 8px;
+        margin-right: 3px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        color: #06c;
+    }
+
+    .pagination span.current {
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+
+<div class="page-title">
+    Personal Information List
+</div>
+
+<form method="get">
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+
+            <table>
+                <tr>
+                    <td>Branch Code:</td>
+                    <td>
+                        <select asp-for="Subject.BranchCode"
+                                asp-items="Model.BranchCodeList">
+                            <option value="">All Branch</option>
+                        </select>
+                    </td>
+
+                    <td>F.I. Subject Code:</td>
+                    <td>
+                        <input asp-for="Subject.FISubjectCode" />
+                    </td>
+
+                    <td>F.I. Subject Name:</td>
+                    <td>
+                        <input asp-for="Subject.Name" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Fathers Name</td>
+                    <td>
+                        <input asp-for="Subject.FathersName" />
+                    </td>
+
+                    <td>Date Of Birth</td>
+                    <td>
+                        <input asp-for="Subject.DateOfBirth" type="date" />
+                    </td>
+
+                    <td>Cif No</td>
+                    <td>
+                        <input asp-for="Subject.CifNo" />
+                    </td>
+                </tr>
+            </table>
+
+            <button type="submit" class="btn-small">Search</button>
+            <a href="/Subject/PersonalInformation" class="btn-small">Clear</a>
+            <a href="#">Goto Error List</a>
+        </fieldset>
+    </div>
+</form>
+
+<div class="section">
+    <fieldset>
+        <legend>Personal Information</legend>
+
+        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
+        {
+            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
+        }
+
+        <h3>Total Count: @Model.TotalCount</h3>
+
+        <form method="post" asp-page-handler="Delete">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Action</th>
+                        <th>Branch Code</th>
+                        <th>Subject Code</th>
+                        <th>Title</th>
+                        <th>Name</th>
+                        <th>Father's Title</th>
+                        <th>Father's Name</th>
+                        <th>Mother's Title</th>
+                        <th>Mother's Name</th>
+                        <th>Date Of Birth</th>
+                        <th>CIF No</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.PersonList != null && Model.PersonList.Any())
+                    {
+                        @foreach (var person in Model.PersonList)
+                        {
+                            <tr>
+                                <td><input type="checkbox" name="SelectedCodes" value="@person.FISubjectCode" /></td>
+                                <td><a href="/Subject/AddPersonalInformation?fiSubjectCode=@person.FISubjectCode">Edit/View</a></td>
+                                <td>@person.BranchCode</td>
+                                <td>@person.FISubjectCode</td>
+                                <td>@person.Title</td>
+                                <td>@person.Name</td>
+                                <td>@person.FathersTitle</td>
+                                <td>@person.FathersName</td>
+                                <td>@person.MothersTitle</td>
+                                <td>@person.MothersName</td>
+                                <td>@person.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                                <td>@person.CifNo</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="12" style="text-align:center;">No records found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pagination" style="margin-top:8px">
+                @{ var lastDisplayedPage = 0; }
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    var displayPage = i <= 3
+                        || i > Model.TotalPages - 3
+                        || Math.Abs(i - Model.PageIndex) <= 2;
+
+                    if (!displayPage)
+                    {
+                        continue;
+                    }
+
+                    if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                    {
+                        <span class="ellipsis">...</span>
+                    }
+
+                    if (i == Model.PageIndex)
+                    {
+                        <span class="current">@i</span>
+                    }
+                    else
+                    {
+                        <a href="/Subject/PersonalInformation?PageIndex=@i&Subject.BranchCode=@Model.Subject.BranchCode&Subject.FISubjectCode=@Model.Subject.FISubjectCode&Subject.Name=@Model.Subject.Name&Subject.FathersName=@Model.Subject.FathersName&Subject.CifNo=@Model.Subject.CifNo">@i</a>
+                    }
+
+                    lastDisplayedPage = i;
+                }
+            </div>
+
+            <br />
+
+            <a href="/Subject/AddPersonalInformation" class="btn-small">Add</a>
+            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
+            <button type="submit" class="btn-small" onclick="return confirm('are you delete Selected?');">Delete</button>
+        </form>
+
+    </fieldset>
+</div>

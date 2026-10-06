@@ -1,0 +1,477 @@
+﻿@using Microsoft.AspNetCore.Http
+@using CIBnext.LIB
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CIB Reporting System</title>
+    <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: 'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+                font-size: 14px;
+                background: #f4f6f9;
+                color: #333;
+            }
+       
+            .header {
+                height: 72px;
+                background: linear-gradient(90deg, #d81e26 0%, #a3141b 100%);
+                color: white;
+                padding: 0 28px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+                .header-left img {
+                    width: 42px;
+                    height: 42px;
+                    background: #fff;
+                    border-radius: 8px;
+                    padding: 5px;
+                    object-fit: contain;
+                }
+                .header-left .titles h1 {
+                    font-size: 21px;
+                    font-weight: 700;
+                    line-height: 1.25;
+                }
+                .header-left .titles p {
+                    font-size: 12.5px;
+                    color: #ffd9d9;
+                    font-weight: 400;
+                }
+            .logout-btn {
+                color: white;
+                text-decoration: none;
+                font-size: 13.5px;
+                font-weight: 600;
+                border: 1px solid rgba(255,255,255,.7);
+                padding: 9px 18px;
+                border-radius: 6px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: .15s;
+            }
+                .logout-btn:hover {
+                    background: white;
+                    color: #C40F1E;
+                }
+       
+            .info-bar {
+                background: #ffffff;
+                min-height: 48px;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 34px;
+                padding: 10px 28px;
+                border-bottom: 1px solid #ececec;
+            }
+            .info-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                color: #374151;
+            }
+                .info-item svg {
+                    flex-shrink: 0;
+                    color: #d81e26;
+                }
+                .info-item b {
+                    color: #17202a;
+                    font-weight: 600;
+                }
+            .wrapper {
+                display: flex;
+                min-height: calc(100vh - 160px);
+                position: relative;
+            }
+            .sidebar {
+                width: 280px;
+                background: #ffffff;
+                border-right: 1px solid #eef0f2;
+                padding: 18px 12px;
+                position: relative;
+                flex-shrink: 0;
+                transition: width .2s ease, padding .2s ease;
+                overflow: visible;
+            }
+                .sidebar.collapsed {
+                    width: 74px;
+                    padding: 18px 10px;
+                }
+            .sidebar-inner {
+                overflow-x: hidden;
+            }
+       
+            .sidebar-toggle {
+                position: absolute;
+                top: 18px;
+                right: -15px;
+                width: 30px;
+                height: 30px;
+                background: #E31B23;
+                border: 2px solid #ffffff;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 20;
+                box-shadow: 0 2px 8px rgba(0,0,0,.25);
+                transition: transform .2s ease, background .15s ease;
+                color: #ffffff;
+            }
+                .sidebar-toggle:hover {
+                    background: #a3141b;
+                    transform: scale(1.08);
+                }
+                .sidebar-toggle svg {
+                    width: 16px;
+                    height: 16px;
+                    stroke: #ffffff;
+                    stroke-width: 3;
+                    transition: transform .2s ease;
+                }
+            .sidebar.collapsed .sidebar-toggle svg {
+                transform: rotate(180deg);
+            }
+            .tree ul {
+                list-style: none;
+                padding-left: 14px;
+            }
+            .tree > ul {
+                padding-left: 0;
+            }
+            .tree li {
+                margin: 4px 0;
+                line-height: 1.5;
+            }
+            .tree a,
+            .toggle {
+                text-decoration: none;
+                color: #4a5568;
+                cursor: pointer;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 9px 12px;
+                border-radius: 8px;
+                width: 100%;
+                font-size: 13.8px;
+                transition: .12s;
+                white-space: nowrap;
+            }
+            .tree .main-link {
+                color: #1f2937 !important;
+                font-weight: 600 !important;
+            }
+            .tree a:hover,
+            .toggle:hover {
+                background: #fdecec;
+                color: #C40F1E !important;
+            }
+            .icon {
+                flex-shrink: 0;
+                width: 17px;
+                height: 17px;
+                stroke: currentColor;
+            }
+            .toggle .chev {
+                margin-left: auto;
+                width: 14px;
+                height: 14px;
+                transition: transform .15s;
+                flex-shrink: 0;
+            }
+            .toggle.open .chev {
+                transform: rotate(90deg);
+            }
+            .submenu {
+                display: block;
+                border-left: 2px dashed #e2e5ea;
+                margin-left: 20px;
+                padding-left: 4px;
+                padding-top: 2px;
+            }
+                .submenu a {
+                    font-size: 13.2px;
+                    color: #6b7280;
+                    font-weight: 500;
+                }
+                .submenu .dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: #cbd5e1;
+                    flex-shrink: 0;
+                }
+       
+            .sidebar.collapsed .label,
+            .sidebar.collapsed .chev,
+            .sidebar.collapsed .submenu {
+                display: none !important;
+            }
+            .sidebar.collapsed .tree a,
+            .sidebar.collapsed .toggle {
+                justify-content: center;
+                padding: 10px 0;
+            }
+       
+            .content {
+                flex: 1;
+                background: #f8fafc;
+                padding: 26px;
+                min-width: 0;
+            }
+            .footer {
+                height: 42px;
+                background: #1a202c;
+                color: #a0aec0;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="~/images/logo.jpg">
+            <div class="titles">
+                <h1>CIB Next</h1>
+                <p>Credit Information Bureau</p>
+            </div>
+        </div>
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <a href="/Logout" class="logout-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
+                Logout
+            </a>
+        }
+    </div>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <div class="info-bar">
+            <div class="info-item">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+                Reporting Period : <b>@User.FindFirst("ReportingPeriod")?.Value</b>
+            </div>
+            <div class="info-item">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                Role Name : <b>@User.FindFirst("FullName")?.Value</b>
+            </div>
+            <div class="info-item">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21h18" /><path d="M5 21V7l7-4 7 4v14" /><path d="M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1" /></svg>
+                Branch : <b>@User.FindFirst("BranchName")?.Value</b>
+            </div>
+            <div class="info-item">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                Login Time : <b>@Context.Session.GetString("LoginTime")</b>
+            </div>
+        </div>
+    }
+    <div class="wrapper">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-toggle" id="sidebarToggle" title="Collapse / Expand menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" /></svg>
+            </div>
+            <div class="sidebar-inner">
+                <div class="tree">
+                    <ul>
+                        <li>
+                            <a href="/Home" class="main-link">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7" /><path d="M9 22V12h6v10" /><path d="M5 10v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10" /></svg>
+                                <span class="label">Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Admin" class="main-link">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg>
+                                <span class="label">Admin</span>
+                            </a>
+                        </li>
+                        <li>
+                            <span class="toggle open" onclick="toggleMenu('cib', this)">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21h18" /><path d="M5 21V7l7-4 7 4v14" /><path d="M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1" /></svg>
+                                <span class="label">CIB</span>
+                                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                            </span>
+                            <ul id="cib" class="submenu">
+                                <li>
+                                    <a href="#">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                                        <span class="label">Back Office</span>
+                                    </a>
+                                </li>
+                                @if (User.IsInRoles("2001", "2002", "2003", "ADMIN"))
+                                {
+                                    <li>
+                                        <span class="toggle open" onclick="toggleMenu('subject', this)">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" /></svg>
+                                            <span class="label">Subject</span>
+                                            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                                        </span>
+                                        <ul id="subject" class="submenu">
+                                            @if (User.IsInRoles("2001", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Subject/PersonalInformation">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Personal Information</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (User.IsInRoles("2002", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Subject/InstitutionInformation">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Institution Information</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (User.IsInRoles("2003", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Subject/OwnerLinks">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Owner Links</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                @if (User.IsInRoles("3001", "3002", "3003", "3004", "3005", "ADMIN"))
+                                {
+                                    <li>
+                                        <span class="toggle open" onclick="toggleMenu('contract', this)">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" /></svg>
+                                            <span class="label">Contract</span>
+                                            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                                        </span>
+                                        <ul id="contract" class="submenu">
+                                            @if (User.IsInRoles("3001", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Contract/InstallmentContract">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Installment Contract</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (User.IsInRoles("3002", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Contract/NonInstallmentContract">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Non-Installment Contract</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (User.IsInRoles("3004", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Contract/ContractLinks">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Contract Links</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                @if (User.IsInRoles("5001", "5002", "5002", "5003", "ADMIN"))
+                                {
+                                    <li>
+                                        <span class="toggle open" onclick="toggleMenu('report', this)">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" /></svg>
+                                            <span class="label">Reports</span>
+                                            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                                        </span>
+                                        <ul id="report" class="submenu">
+                                            @if (User.IsInRoles("5001", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Reports/ContractsReadyToReport">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Contracts Ready To Report</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (User.IsInRoles("5002", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Reports/ContractsNeedToBeReported">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Contracts Need To Be Reported</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (User.IsInRoles("5003", "ADMIN"))
+                                            {
+                                                <li>
+                                                    <a href="/Reports/BorrowerWithoutSubjectCode">
+                                                        <span class="dot"></span>
+                                                        <span class="label">Borrower Without Subject Code</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            @RenderBody()
+        </div>
+    </div>
+    <div class="footer">
+        &copy; @DateTime.Now.Year CIB Reporting System
+    </div>
+    <script>
+            function toggleMenu(id, el) {
+                var menu = document.getElementById(id);
+                if (menu.style.display === "none") {
+                    menu.style.display = "block";
+                    if (el) el.classList.add("open");
+                }
+                else {
+                    menu.style.display = "none";
+                    if (el) el.classList.remove("open");
+                }
+            }
+   
+            var sidebar = document.getElementById("sidebar");
+            var sidebarToggle = document.getElementById("sidebarToggle");
+            if (localStorage.getItem("cibSidebarCollapsed") === "true") {
+                sidebar.classList.add("collapsed");
+            }
+            sidebarToggle.addEventListener("click", function() {
+                sidebar.classList.toggle("collapsed");
+                localStorage.setItem("cibSidebarCollapsed", sidebar.classList.contains("collapsed"));
+            });
+    </script>
+</body>
+</html>

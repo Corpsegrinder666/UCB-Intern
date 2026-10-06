@@ -1,0 +1,271 @@
+﻿@page
+@model CIBnext.Pages.Contract.ContractLinksModel
+<style>
+    .page-title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
+    }
+
+    .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
+
+    legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    th {
+        background: #cdd8ea;
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    td {
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    .btn-small {
+        padding: 2px 8px;
+        font-size: 12px;
+    }
+
+    .label-hint {
+        color: #06c;
+    }
+
+    .form-row {
+        margin-bottom: 6px;
+    }
+
+        .form-row label {
+            display: inline-block;
+            width: 150px;
+        }
+
+    input, select {
+        width: 180px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 2px 8px;
+        margin-right: 3px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        color: #06c;
+    }
+
+    .pagination span.current {
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+
+<div class="page-title">Contract Link List</div>
+
+<form method="get">
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+            <table style="border:none">
+                <tr>
+                    <td style="border:none">Branch Code:</td>
+                    <td style="border:none">
+                        <select asp-for="SearchBranchCode" asp-items="Model.BranchCodeList">
+                            <option value="">--Select--</option>
+                        </select>
+                    </td>
+                    <td style="border:none">Primary Sub. Code:</td>
+                    <td style="border:none"><input asp-for="SearchPrimaryCode" /></td>
+                    <td style="border:none">Primary Sub. Name:</td>
+                    <td style="border:none"><input asp-for="SearchPrimaryName" /></td>
+                    <td style="border:none">Secondary Sub. Code:</td>
+                    <td style="border:none"><input asp-for="SearchSecondaryCode" /></td>
+                </tr>
+                <tr>
+                    <td style="border:none">Secondary Sub. Name:</td>
+                    <td style="border:none"><input asp-for="SearchSecondaryName" /></td>
+                    <td style="border:none">Contract Code:</td>
+                    <td style="border:none"><input asp-for="SearchContractCode" /></td>
+                </tr>
+            </table>
+            <button type="submit" class="btn-small">Search</button>
+            <a href="/Contract/ContractLinks" class="btn-small">Clear</a>
+        </fieldset>
+    </div>
+</form>
+
+<form method="post" asp-page-handler="Save">
+    <div class="section">
+        <fieldset id="add-edit-fieldset">
+            <legend>@(Model.IsEdit ? "Edit Contract Link" : "Add Contract Link")</legend>
+
+            @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+            {
+                <div style="color:red; font-weight:bold;">@Html.Raw(Model.ValidationMessage)</div>
+            }
+
+            @if (Model.IsEdit)
+            {
+                <input type="hidden" asp-for="EditContract" />
+                <input type="hidden" asp-for="EditSecondary" />
+            }
+
+            <div class="form-row">
+                <label class="label-hint">Branch</label>
+                <select asp-for="AddLink.BranchCode" asp-items="Model.BranchCodeList">
+                    <option value="">--Select--</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>Type of Link</label>
+                <select asp-for="AddLink.TypeOfLink" asp-items="Model.LinkTypeList">
+                    <option value="">--Select--</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label class="label-hint">F.I. Contract Code</label>
+                @if (Model.IsEdit)
+                {
+                    <input asp-for="AddLink.FIContractCode" readonly />
+                }
+                else
+                {
+                    <input asp-for="AddLink.FIContractCode" />
+                }
+            </div>
+            <div class="form-row">
+                <label class="label-hint">F.I. Primary Code</label>
+                <input asp-for="AddLink.FIPrimaryCode" />
+            </div>
+            <div class="form-row">
+                <label class="label-hint">F.I. Secondary Code</label>
+                @if (Model.IsEdit)
+                {
+                    <input asp-for="AddLink.FISecondaryCode" readonly />
+                }
+                else
+                {
+                    <input asp-for="AddLink.FISecondaryCode" />
+                }
+            </div>
+
+            <button type="submit" class="btn-small">@(Model.IsEdit ? "Update" : "Save")</button>
+            @if (Model.IsEdit)
+            {
+                <a href="/Contract/ContractLinks" class="btn-small">Cancel Edit</a>
+            }
+        </fieldset>
+    </div>
+</form>
+
+<div class="section">
+    <fieldset>
+        <legend>Contract Link Information</legend>
+
+        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
+        {
+            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
+        }
+
+        <h3>Total Count: @Model.TotalCount</h3>
+
+        <form method="post" asp-page-handler="Delete">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Action</th>
+                    <th>Branch Code</th>
+                    <th>Type</th>
+                    <th>Primary Sub. Code</th>
+                    <th>Primary Sub. Name</th>
+                    <th>Secondary Sub. Code</th>
+                    <th>Secondary Sub. Name</th>
+                    <th>Contract Code</th>
+                </tr>
+
+                @if (Model.LinkList != null && Model.LinkList.Any())
+                {
+                    @foreach (var link in Model.LinkList)
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="SelectedLinks" value="@(link.FIContractCode)|@(link.FISecondaryCode)" /></td>
+                            <td>
+                                <a href="/Contract/ContractLinks?EditContract=@Uri.EscapeDataString(link.FIContractCode)&EditSecondary=@Uri.EscapeDataString(link.FISecondaryCode ?? "")">Edit</a>
+                            </td>
+                            <td>@link.BranchCode</td>
+                            <td>@link.TypeOfLink</td>
+                            <td>@link.FIPrimaryCode</td>
+                            <td>@link.FIPrimaryName</td>
+                            <td>@link.FISecondaryCode</td>
+                            <td>@link.FISecondaryName</td>
+                            <td>@link.FIContractCode</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" style="text-align:center;">No records found</td>
+                    </tr>
+                }
+            </table>
+
+            <div class="pagination" style="margin-top:8px">
+                @{ var lastDisplayedPage = 0; }
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    var displayPage = i <= 3
+                        || i > Model.TotalPages - 3
+                        || Math.Abs(i - Model.PageIndex) <= 2;
+
+                    if (!displayPage)
+                    {
+                        continue;
+                    }
+
+                    if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                    {
+                        <span class="ellipsis">...</span>
+                    }
+
+                    if (i == Model.PageIndex)
+                    {
+                        <span class="current">@i</span>
+                    }
+                    else
+                    {
+                        <a href="/Contract/ContractLinks?PageIndex=@i&SearchBranchCode=@Model.SearchBranchCode&SearchPrimaryCode=@Model.SearchPrimaryCode&SearchPrimaryName=@Model.SearchPrimaryName&SearchSecondaryCode=@Model.SearchSecondaryCode&SearchSecondaryName=@Model.SearchSecondaryName&SearchContractCode=@Model.SearchContractCode">@i</a>
+                    }
+
+                    lastDisplayedPage = i;
+                }
+            </div>
+
+            <br />
+            <a href="/Contract/ContractLinks" class="btn-small">Add</a>
+            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
+            <button type="submit" class="btn-small" onclick="return confirm(' are you delete Selected record?');">Delete</button>
+        </form>
+
+    </fieldset>
+</div>

@@ -1,0 +1,71 @@
+﻿@page
+@model CIBnext.Pages.Reports.BorrowerWithoutSubjectCodeInfoModel
+<style>
+    .page-title {
+        font-size: 22px;
+        font-weight: bold;
+        background: #fffbe6;
+        padding: 8px;
+        border-bottom: 1px solid #999;
+    }
+
+    .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 15px;
+        margin-top: 10px;
+        width: 350px;
+    }
+
+    fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
+
+    legend {
+        font-size: 16px;
+        padding: 0 5px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-top: 8px;
+        margin-bottom: 3px;
+    }
+
+    select, input {
+        width: 100%;
+        height: 26px;
+    }
+
+    .btn {
+        margin-top: 10px;
+        padding: 4px 14px;
+    }
+</style>
+
+<div class="page-title">Borrowers Without Subject Codes</div>
+
+@if (!string.IsNullOrEmpty(Model.ValidationMessage))
+{
+    <div style="color:red; font-weight:bold;">@Model.ValidationMessage</div>
+}
+
+<form method="post" asp-page-handler="Download">
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+
+            <label>Branch</label>
+            <select asp-for="BranchCode" asp-items="Model.BranchCodeList">
+                <option value="">All Branch</option>
+            </select>
+
+            <label>Loan List Date</label>
+            <input asp-for="LoanListDate" type="date" />
+
+            <button type="submit" class="btn">Download</button>
+        </fieldset>
+    </div>
+</form>
