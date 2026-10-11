@@ -17,11 +17,13 @@ namespace CIBnext.Pages.Subject
     public class AddPersonalInformationModel : PageModel
     {
         private readonly ListOfValuesBLL _lovBLL;
+        private readonly MiscBLL _miscBll;
         private readonly IConfiguration _configuration;
 
-        public AddPersonalInformationModel(ListOfValuesBLL lovBLL, IConfiguration configuration)
+        public AddPersonalInformationModel(ListOfValuesBLL lovBLL, MiscBLL mscBll, IConfiguration configuration)
         {
             _lovBLL = lovBLL;
+            _miscBll = mscBll;
             _configuration = configuration;
         }
 
@@ -39,11 +41,11 @@ namespace CIBnext.Pages.Subject
 
         private void LoadDropdowns()
         {
-            BranchCodeList = _lovBLL.GetListOfValues(LovTypes.BRANCHES)
+            BranchCodeList = _miscBll.GetBranches().Result
     .Select(x => new SelectListItem
     {
-        Value = x.Key,
-        Text = x.Value
+        Value = x.CibBranchCode,
+        Text = x.BranchName
     }).ToList();
             GenderList = _lovBLL.GetListOfValues(LovTypes.GENDER)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
