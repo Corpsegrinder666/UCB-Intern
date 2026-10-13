@@ -1,3 +1,4 @@
+
 using CIBnext.BLL;
 using CIBnext.DAL;
 using CIBnext.DAO;
@@ -17,18 +18,25 @@ namespace CIBnext.Pages.Subject
     public class AddInstitutionInformationModel : PageModel
     {
         private readonly ListOfValuesBLL _lovBLL;
+        private readonly MiscBLL _miscBll;
         private readonly IConfiguration _configuration;
 
-        public AddInstitutionInformationModel(ListOfValuesBLL lovBLL, IConfiguration configuration)
+        public AddInstitutionInformationModel(
+            ListOfValuesBLL lovBLL,
+            MiscBLL miscBll,
+            IConfiguration configuration)
         {
             _lovBLL = lovBLL;
+            _miscBll = miscBll;
             _configuration = configuration;
         }
 
         [BindProperty]
         public Institution Subject { get; set; } = new Institution();
+
         public string ValidationMessage { get; set; }
         public bool IsEdit { get; set; }
+
         public List<SelectListItem> BranchCodeList { get; set; }
         public List<SelectListItem> CountryList { get; set; }
         public List<SelectListItem> SectorTypeList { get; set; }
@@ -38,18 +46,47 @@ namespace CIBnext.Pages.Subject
 
         private void LoadDropdowns()
         {
-            BranchCodeList = _lovBLL.GetListOfValues(LovTypes.BRANCHES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+            BranchCodeList = _miscBll.GetBranches().Result
+                .Select(x => new SelectListItem
+                {
+                    Value = x.CibBranchCode,
+                    Text = x.BranchName
+                }).ToList();
+
             CountryList = _lovBLL.GetListOfValues(LovTypes.COUNTRIES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             SectorTypeList = _lovBLL.GetListOfValues(LovTypes.SECTOR_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             SectorCodeList = _lovBLL.GetListOfValues(LovTypes.SECTOR_CODES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             LegalFormList = _lovBLL.GetListOfValues(LovTypes.INSTITUTION_LEGAL_FORMS)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             DistrictList = _lovBLL.GetDistrictsByCountryCode("BD")
-                .Select(x => new SelectListItem { Value = x, Text = x }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x,
+                    Text = x
+                }).ToList();
         }
 
         public void OnGet(string fiSubjectCode)
@@ -72,8 +109,11 @@ namespace CIBnext.Pages.Subject
                 }
             }
 
-            if (Subject.BusinessAddress == null) Subject.BusinessAddress = new Address();
-            if (Subject.FactoryAddress == null) Subject.FactoryAddress = new Address();
+            if (Subject.BusinessAddress == null)
+                Subject.BusinessAddress = new Address();
+
+            if (Subject.FactoryAddress == null)
+                Subject.FactoryAddress = new Address();
 
             if (!IsEdit)
                 Subject.MakeDate = DateTime.Now;
@@ -116,14 +156,17 @@ namespace CIBnext.Pages.Subject
         {
             var iv = new InstitutionValidator();
             var res = iv.Validate(institution);
+
             if (!res.IsValid)
             {
-                return "- " + string.Join("<br/>- ", res.Errors.Select(e => e.ErrorMessage).Distinct());
+                return "- " + string.Join(
+                    "<br/>- ",
+                    res.Errors.Select(e => e.ErrorMessage).Distinct());
             }
             else
             {
                 return string.Empty;
             }
         }
-    }   
+    }
 }
