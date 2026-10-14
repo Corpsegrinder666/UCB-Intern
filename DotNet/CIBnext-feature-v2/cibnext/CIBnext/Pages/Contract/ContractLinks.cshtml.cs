@@ -16,37 +16,50 @@ namespace CIBnext.Pages.Contract
     public class ContractLinksModel : PageModel
     {
         private readonly ListOfValuesBLL _lovBLL;
+        private readonly MiscBLL _miscBLL;
         private readonly IConfiguration _configuration;
+
         private const int PageSize = 10;
 
-        public ContractLinksModel(ListOfValuesBLL lovBLL, IConfiguration configuration)
+        public ContractLinksModel(
+            ListOfValuesBLL lovBLL,
+            MiscBLL miscBLL,
+            IConfiguration configuration)
         {
             _lovBLL = lovBLL;
+            _miscBLL = miscBLL;
             _configuration = configuration;
         }
 
-        
+        // Search filters
         [BindProperty(SupportsGet = true)]
         public string SearchBranchCode { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string SearchPrimaryCode { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string SearchPrimaryName { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string SearchSecondaryCode { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string SearchSecondaryName { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string SearchContractCode { get; set; }
 
-        
+        // Edit
         [BindProperty(SupportsGet = true)]
         public string EditContract { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string EditSecondary { get; set; }
+
         public bool IsEdit { get; set; }
 
-       
+        // Add/Edit contract link
         [BindProperty]
         public ContractLink AddLink { get; set; } = new ContractLink();
 
@@ -57,26 +70,44 @@ namespace CIBnext.Pages.Contract
         public List<string> SelectedLinks { get; set; } = new List<string>();
 
         public string ValidationMessage { get; set; }
+
         public string DeleteMessage { get; set; }
 
+        // Search dropdown: branch code
         public List<SelectListItem> BranchCodeList { get; set; }
+            = new List<SelectListItem>();
+
+        // Add Contract Link dropdown: branch name
+        public List<SelectListItem> BranchNameList { get; set; }
+            = new List<SelectListItem>();
+
+        // Link type dropdown
         public List<SelectListItem> LinkTypeList { get; set; }
-        public List<ContractLink> LinkList { get; set; } = new List<ContractLink>();
+            = new List<SelectListItem>();
+
+        public List<ContractLink> LinkList { get; set; }
+            = new List<ContractLink>();
+
         public int TotalCount { get; set; }
+
         public int TotalPages { get; set; }
 
         public void OnGet()
         {
             LoadDropdowns();
             LoadLinkList();
+
             if (!string.IsNullOrEmpty(EditContract))
             {
                 var contractBLL = new ContractBLL(_configuration);
-                var all = contractBLL.GetContractLinksFiltered(null, null, null, null, null, null);
+
+                var all = contractBLL.GetContractLinksFiltered(
+                    null, null, null, null, null, null);
 
                 var existing = all.FirstOrDefault(l =>
                     l.FIContractCode == EditContract &&
-                    (l.FISecondaryCode ?? string.Empty) == (EditSecondary ?? string.Empty));
+                    (l.FISecondaryCode ?? string.Empty) ==
+                    (EditSecondary ?? string.Empty));
 
                 if (existing != null)
                 {
@@ -85,7 +116,8 @@ namespace CIBnext.Pages.Contract
                 }
                 else
                 {
-                    ValidationMessage = "Selected record could not be found - it may have been deleted.";
+                    ValidationMessage =
+                        "Selected record could not be found - it may have been deleted.";
                 }
             }
         }
@@ -95,9 +127,17 @@ namespace CIBnext.Pages.Contract
             LoadDropdowns();
 
             var subjectBLL = new SubjectBLL(_configuration);
-            var secondaryPerson = subjectBLL.GetPerson(AddLink.FISecondaryCode);
-            var secondaryInst = subjectBLL.GetInstitution(AddLink.FISecondaryCode);
-            AddLink.FISecondaryName = secondaryPerson?.Name ?? secondaryInst?.TradeName ?? "Not found";
+
+            var secondaryPerson =
+                subjectBLL.GetPerson(AddLink.FISecondaryCode);
+
+            var secondaryInst =
+                subjectBLL.GetInstitution(AddLink.FISecondaryCode);
+
+            AddLink.FISecondaryName =
+                secondaryPerson?.Name ??
+                secondaryInst?.TradeName ??
+                "Not found";
 
             ValidationMessage = ValidateContractLink(AddLink);
 
@@ -114,11 +154,14 @@ namespace CIBnext.Pages.Contract
             AddLink.RecordStatus = "C";
 
             var contractBLL = new ContractBLL(_configuration);
+
             bool success = contractBLL.SaveContractLink(AddLink);
 
             if (!success)
             {
-                ValidationMessage = "Save failed. Please check the values and try again.";
+                ValidationMessage =
+                    "Save failed. Please check the values and try again.";
+
                 LoadLinkList();
                 return Page();
             }
@@ -132,16 +175,19 @@ namespace CIBnext.Pages.Contract
 
             if (SelectedLinks == null || !SelectedLinks.Any())
             {
-                DeleteMessage = "Please select at least one record to delete.";
+                DeleteMessage =
+                    "Please select at least one record to delete.";
+
                 LoadLinkList();
                 return Page();
             }
 
             var toDelete = new List<ContractLink>();
+
             foreach (var item in SelectedLinks)
             {
-               
                 var parts = item.Split('|');
+
                 if (parts.Length == 2)
                 {
                     toDelete.Add(new ContractLink
@@ -155,7 +201,9 @@ namespace CIBnext.Pages.Contract
             }
 
             var contractBLL = new ContractBLL(_configuration);
-            bool success = contractBLL.FlagDeleteContractLinks(toDelete);
+
+            bool success =
+                contractBLL.FlagDeleteContractLinks(toDelete);
 
             if (!success)
             {
@@ -168,38 +216,87 @@ namespace CIBnext.Pages.Contract
 
         private string ValidateContractLink(ContractLink link)
         {
-            var v = new ContractLinkValidator();
-            var res = v.Validate(link);
-            if (!res.IsValid)
+            var validator = new ContractLinkValidator();
+            var result = validator.Validate(link);
+
+            if (!result.IsValid)
             {
-                return "- " + string.Join("<br/>- ", res.Errors.Select(e => e.ErrorMessage).Distinct());
+                return "- " + string.Join(
+                    "<br/>- ",
+                    result.Errors
+                        .Select(e => e.ErrorMessage)
+                        .Distinct());
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return string.Empty;
         }
 
         private void LoadDropdowns()
         {
-            BranchCodeList = _lovBLL.GetListOfValues(LovTypes.BRANCHES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
-            LinkTypeList = _lovBLL.GetListOfValues(LovTypes.LINK_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+            // Retrieve branch records from MiscBLL.
+            var branches = _miscBLL.GetBranches().Result;
+
+            // Search Option: show branch codes.
+            BranchCodeList = branches
+                .Select(x => new SelectListItem
+                {
+                    Value = x.CibBranchCode,
+                    Text = x.CibBranchCode
+                })
+                .ToList();
+
+            // Add Contract Link: show branch names.
+            // The selected value remains the regular branch code.
+            BranchNameList = branches
+                .Select(x => new SelectListItem
+                {
+                    Value = x.BranchCode,
+                    Text = x.BranchName
+                })
+                .ToList();
+
+            // Keep the existing link type dropdown source.
+            LinkTypeList = _lovBLL
+                .GetListOfValues(LovTypes.LINK_TYPES)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                })
+                .ToList();
         }
 
         private void LoadLinkList()
         {
             var contractBLL = new ContractBLL(_configuration);
+
             var allResults = contractBLL.GetContractLinksFiltered(
-                SearchBranchCode, SearchPrimaryCode, SearchPrimaryName,
-                SearchSecondaryCode, SearchSecondaryName, SearchContractCode);
+                SearchBranchCode,
+                SearchPrimaryCode,
+                SearchPrimaryName,
+                SearchSecondaryCode,
+                SearchSecondaryName,
+                SearchContractCode);
 
             TotalCount = allResults.Count;
-            TotalPages = (int)Math.Ceiling(TotalCount / (double)PageSize);
-            if (TotalPages < 1) TotalPages = 1;
-            if (PageIndex < 1) PageIndex = 1;
-            if (PageIndex > TotalPages) PageIndex = TotalPages;
+
+            TotalPages = (int)Math.Ceiling(
+                TotalCount / (double)PageSize);
+
+            if (TotalPages < 1)
+            {
+                TotalPages = 1;
+            }
+
+            if (PageIndex < 1)
+            {
+                PageIndex = 1;
+            }
+
+            if (PageIndex > TotalPages)
+            {
+                PageIndex = TotalPages;
+            }
 
             LinkList = allResults
                 .Skip((PageIndex - 1) * PageSize)

@@ -1,5 +1,6 @@
 ﻿@page
 @model CIBnext.Pages.Subject.OwnerLinksModel
+
 <style>
     .page-title {
         font-size: 30px;
@@ -86,27 +87,33 @@
     <div class="section">
         <fieldset>
             <legend>Search Option</legend>
+
             <table style="border:none">
                 <tr>
                     <td style="border:none">Branch Code:</td>
                     <td style="border:none">
-                        <select asp-for="Subject.CibBranchCode" asp-items="Model.BranchCodeList">
+                        <select asp-for="Subject.CibBranchCode"
+                                asp-items="Model.BranchCodeList">
                             <option value="">--Select--</option>
                         </select>
                     </td>
+
                     <td style="border:none">Owner Subject Code:</td>
                     <td style="border:none">
                         <input asp-for="Subject.OwnerFiSubjectCode" />
                     </td>
+
                     <td style="border:none">Owner Name:</td>
                     <td style="border:none">
                         <input asp-for="Subject.OwnerName" />
                     </td>
+
                     <td style="border:none">Inst. Subject Code:</td>
                     <td style="border:none">
                         <input asp-for="Subject.InstitutionFiSubjectCode" />
                     </td>
                 </tr>
+
                 <tr>
                     <td style="border:none">Inst. Name:</td>
                     <td style="border:none">
@@ -114,6 +121,7 @@
                     </td>
                 </tr>
             </table>
+
             <button type="submit" class="btn-small">Search</button>
             <a href="/Subject/OwnerLinks" class="btn-small">Clear</a>
         </fieldset>
@@ -127,25 +135,32 @@
 
             @if (!string.IsNullOrEmpty(Model.ValidationMessage))
             {
-                <div style="color:red; font-weight:bold;">@Html.Raw(Model.ValidationMessage)</div>
+                <div style="color:red; font-weight:bold;">
+                    @Html.Raw(Model.ValidationMessage)
+                </div>
             }
 
             <div class="form-row">
-                <label>Branch</label>
-                <select asp-for="AddLink.CibBranchCode" asp-items="Model.BranchCodeList">
-                    <option value="">--Select--</option>
+                <label>Branch Name</label>
+                <select asp-for="AddLink.CibBranchCode"
+                        asp-items="Model.BranchNameList">
+                    <option value="">--Select Branch Name--</option>
                 </select>
             </div>
+
             <div class="form-row">
                 <label class="label-hint">F.I. Subject Code of Institution</label>
                 <input asp-for="AddLink.InstitutionFiSubjectCode" />
             </div>
+
             <div class="form-row">
                 <label class="label-hint">Role</label>
-                <select asp-for="AddLink.Role" asp-items="Model.RoleList">
+                <select asp-for="AddLink.Role"
+                        asp-items="Model.RoleList">
                     <option value="">--Select--</option>
                 </select>
             </div>
+
             <div class="form-row">
                 <label class="label-hint">F.I. Subject Code of Owner</label>
                 <input asp-for="AddLink.OwnerFiSubjectCode" />
@@ -162,7 +177,9 @@
 
         @if (!string.IsNullOrEmpty(Model.DeleteMessage))
         {
-            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
+            <div style="color:red; font-weight:bold;">
+                @Model.DeleteMessage
+            </div>
         }
 
         <h3>Total Count: @Model.TotalCount</h3>
@@ -184,10 +201,18 @@
                     @foreach (var link in Model.LinkList)
                     {
                         <tr>
-                            <td><input type="checkbox" name="SelectedLinks" value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" /></td>
                             <td>
-                                <a href="/Subject/OwnerLinks?instSubjectCode=@link.InstitutionFiSubjectCode&ownerSubjectCode=@link.OwnerFiSubjectCode&branchCode=@link.CibBranchCode&role=@link.Role">Edit</a>
+                                <input type="checkbox"
+                                       name="SelectedLinks"
+                                       value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" />
                             </td>
+
+                            <td>
+                                <a href="/Subject/OwnerLinks?instSubjectCode=@link.InstitutionFiSubjectCode&ownerSubjectCode=@link.OwnerFiSubjectCode&branchCode=@link.CibBranchCode&role=@link.Role">
+                                    Edit
+                                </a>
+                            </td>
+
                             <td>@link.CibBranchCode</td>
                             <td>@link.InstitutionFiSubjectCode</td>
                             <td>@link.InstitutionName</td>
@@ -199,13 +224,18 @@
                 else
                 {
                     <tr>
-                        <td colspan="7" style="text-align:center;">No records found</td>
+                        <td colspan="7" style="text-align:center;">
+                            No records found
+                        </td>
                     </tr>
                 }
             </table>
 
             <div class="pagination" style="margin-top:8px">
-                @{ var lastDisplayedPage = 0; }
+                @{
+                    var lastDisplayedPage = 0;
+                }
+
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     var displayPage = i <= 3
@@ -236,9 +266,18 @@
             </div>
 
             <br />
-            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
-            <button type="submit" class="btn-small" onclick="return confirm('are you delete Selected record?');">Delete</button>
-        </form>
 
+            <button class="btn-small"
+                    onclick="location.reload();"
+                    type="button">
+                Refresh
+            </button>
+
+            <button type="submit"
+                    class="btn-small"
+                    onclick="return confirm('are you delete Selected record?');">
+                Delete
+            </button>
+        </form>
     </fieldset>
 </div>

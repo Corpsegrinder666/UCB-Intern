@@ -17,25 +17,31 @@ namespace CIBnext.Pages.Contract
     public class AddInstalmentContractModel : PageModel
     {
         private readonly ListOfValuesBLL _lovBLL;
+        private readonly MiscBLL _miscBll;
         private readonly IConfiguration _configuration;
 
-        public AddInstalmentContractModel(ListOfValuesBLL lovBLL, IConfiguration configuration)
+        public AddInstalmentContractModel(
+            ListOfValuesBLL lovBLL,
+            MiscBLL miscBll,
+            IConfiguration configuration)
         {
             _lovBLL = lovBLL;
+            _miscBll = miscBll;
             _configuration = configuration;
         }
-
 
         [BindProperty]
         public InstalmentContract Contract { get; set; } = new InstalmentContract();
 
-
         [BindProperty]
         public bool SubsidizedCreditFlag { get; set; }
+
         [BindProperty]
         public bool PreFinanceFlag { get; set; }
+
         [BindProperty]
         public bool QualitativeJudgementFlag { get; set; }
+
         [BindProperty]
         public bool SmeFlag { get; set; }
 
@@ -61,32 +67,49 @@ namespace CIBnext.Pages.Contract
 
         private void LoadDropdowns()
         {
-            BranchCodeList = _lovBLL.GetListOfValues(LovTypes.BRANCHES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+            BranchCodeList = _miscBll.GetBranches().Result
+                .Select(x => new SelectListItem
+                {
+                    Value = x.CibBranchCode,
+                    Text = x.BranchName
+                }).ToList();
+
             ContractTypeList = _lovBLL.GetListOfValues(LovTypes.CONTRACT_TYPES_INST)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             ContractPhaseList = _lovBLL.GetListOfValues(LovTypes.CONTRACT_PHASES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             ContractStatusList = _lovBLL.GetListOfValues(LovTypes.CONTRACT_STATUS)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             CurrencyList = _lovBLL.GetListOfValues(LovTypes.CURRENCIES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             ReorganizedCreditList = _lovBLL.GetListOfValues(LovTypes.REORGANIZED_CREDIT)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             ThirdPartyGuaranteeTypeList = _lovBLL.GetListOfValues(LovTypes.THIRD_PARTY_GUARANTEE_TYPES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             SecurityTypeList = _lovBLL.GetListOfValues(LovTypes.SECURITY_TYPES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             PeriodicityOfPaymentList = _lovBLL.GetListOfValues(LovTypes.PERIODICITY_OF_PAYMENT)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             MethodOfPaymentList = _lovBLL.GetListOfValues(LovTypes.PAYMENT_METHODS)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             NoOfDaysPaymentDelayList = _lovBLL.GetListOfValues(LovTypes.NO_OF_DAYS)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             TypeOfLeasedGoodList = _lovBLL.GetListOfValues(LovTypes.LEASED_GOOD_TYPES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             EconomicPurposeCodeList = _lovBLL.GetListOfValues(LovTypes.ECONOMIC_PURPOSE_CODES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+
             EnterpriseTypeList = _lovBLL.GetListOfValues(LovTypes.ENTERPRISE_TYPES)
                 .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
 
@@ -126,7 +149,6 @@ namespace CIBnext.Pages.Contract
             if (!IsEdit)
                 Contract.MakeDate = DateTime.Now;
         }
-
 
         public IActionResult OnPostLookupBorrower()
         {
@@ -196,9 +218,11 @@ namespace CIBnext.Pages.Contract
         {
             var v = new InstalmentContractValidator();
             var res = v.Validate(contract);
+
             if (!res.IsValid)
             {
-                return "- " + string.Join("<br/>- ", res.Errors.Select(e => e.ErrorMessage).Distinct());
+                return "- " + string.Join("<br/>- ",
+                    res.Errors.Select(e => e.ErrorMessage).Distinct());
             }
             else
             {

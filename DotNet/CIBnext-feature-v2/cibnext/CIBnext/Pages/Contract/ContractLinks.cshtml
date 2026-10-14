@@ -55,10 +55,10 @@
         margin-bottom: 6px;
     }
 
-        .form-row label {
-            display: inline-block;
-            width: 150px;
-        }
+    .form-row label {
+        display: inline-block;
+        width: 150px;
+    }
 
     input, select {
         width: 180px;
@@ -90,7 +90,8 @@
                 <tr>
                     <td style="border:none">Branch Code:</td>
                     <td style="border:none">
-                        <select asp-for="SearchBranchCode" asp-items="Model.BranchCodeList">
+                        <select asp-for="SearchBranchCode"
+                                asp-items="Model.BranchCodeList">
                             <option value="">--Select--</option>
                         </select>
                     </td>
@@ -132,16 +133,19 @@
 
             <div class="form-row">
                 <label class="label-hint">Branch</label>
-                <select asp-for="AddLink.BranchCode" asp-items="Model.BranchCodeList">
+                <select asp-for="AddLink.BranchCode"
+                        asp-items="Model.BranchNameList">
                     <option value="">--Select--</option>
                 </select>
             </div>
+
             <div class="form-row">
                 <label>Type of Link</label>
                 <select asp-for="AddLink.TypeOfLink" asp-items="Model.LinkTypeList">
                     <option value="">--Select--</option>
                 </select>
             </div>
+
             <div class="form-row">
                 <label class="label-hint">F.I. Contract Code</label>
                 @if (Model.IsEdit)
@@ -153,10 +157,12 @@
                     <input asp-for="AddLink.FIContractCode" />
                 }
             </div>
+
             <div class="form-row">
                 <label class="label-hint">F.I. Primary Code</label>
                 <input asp-for="AddLink.FIPrimaryCode" />
             </div>
+
             <div class="form-row">
                 <label class="label-hint">F.I. Secondary Code</label>
                 @if (Model.IsEdit)
@@ -170,6 +176,7 @@
             </div>
 
             <button type="submit" class="btn-small">@(Model.IsEdit ? "Update" : "Save")</button>
+
             @if (Model.IsEdit)
             {
                 <a href="/Contract/ContractLinks" class="btn-small">Cancel Edit</a>
@@ -208,7 +215,11 @@
                     @foreach (var link in Model.LinkList)
                     {
                         <tr>
-                            <td><input type="checkbox" name="SelectedLinks" value="@(link.FIContractCode)|@(link.FISecondaryCode)" /></td>
+                            <td>
+                                <input type="checkbox"
+                                       name="SelectedLinks"
+                                       value="@(link.FIContractCode)|@(link.FISecondaryCode)" />
+                            </td>
                             <td>
                                 <a href="/Contract/ContractLinks?EditContract=@Uri.EscapeDataString(link.FIContractCode)&EditSecondary=@Uri.EscapeDataString(link.FISecondaryCode ?? "")">Edit</a>
                             </td>
@@ -232,6 +243,7 @@
 
             <div class="pagination" style="margin-top:8px">
                 @{ var lastDisplayedPage = 0; }
+
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     var displayPage = i <= 3
@@ -266,6 +278,5 @@
             <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
             <button type="submit" class="btn-small" onclick="return confirm(' are you delete Selected record?');">Delete</button>
         </form>
-
     </fieldset>
 </div>
