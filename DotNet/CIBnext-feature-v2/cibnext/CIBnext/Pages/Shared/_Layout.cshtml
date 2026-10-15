@@ -450,28 +450,36 @@
     <div class="footer">
         &copy; @DateTime.Now.Year CIB Reporting System
     </div>
+    
     <script>
-            function toggleMenu(id, el) {
-                var menu = document.getElementById(id);
-                if (menu.style.display === "none") {
-                    menu.style.display = "block";
-                    if (el) el.classList.add("open");
-                }
-                else {
-                    menu.style.display = "none";
-                    if (el) el.classList.remove("open");
-                }
+        function toggleMenu(id, el) {
+            var menu = document.getElementById(id);
+            if (menu.style.display === "none") {
+                menu.style.display = "block";
+                if (el) el.classList.add("open");
             }
-   
-            var sidebar = document.getElementById("sidebar");
-            var sidebarToggle = document.getElementById("sidebarToggle");
-            if (localStorage.getItem("cibSidebarCollapsed") === "true") {
-                sidebar.classList.add("collapsed");
+            else {
+                menu.style.display = "none";
+                if (el) el.classList.remove("open");
             }
-            sidebarToggle.addEventListener("click", function() {
-                sidebar.classList.toggle("collapsed");
-                localStorage.setItem("cibSidebarCollapsed", sidebar.classList.contains("collapsed"));
-            });
+        }
+
+        var sidebar = document.getElementById("sidebar");
+        var sidebarToggle = document.getElementById("sidebarToggle");
+
+        if (localStorage.getItem("cibSidebarCollapsed") === "true") {
+            sidebar.classList.add("collapsed");
+        }
+
+        sidebarToggle.addEventListener("click", function() {
+            sidebar.classList.toggle("collapsed");
+            localStorage.setItem(
+                "cibSidebarCollapsed",
+                sidebar.classList.contains("collapsed")
+            );
+        });
     </script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>

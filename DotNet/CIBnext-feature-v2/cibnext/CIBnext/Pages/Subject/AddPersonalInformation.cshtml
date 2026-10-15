@@ -74,15 +74,63 @@
     }
 </style>
 
-<div class="title">@(Model.IsEdit ? "Edit" : "Add") Personal Information</div>
+<div class="title">
+    @(Model.IsEdit ? "Edit" : "Add") Personal Information
+</div>
 
 <form method="post">
+
+    
     @if (!string.IsNullOrEmpty(Model.ValidationMessage))
     {
-        <div style="color:red; font-weight:bold;">
-            @Html.Raw(Model.ValidationMessage)
+        <div id="validationModal"
+             style="position:fixed; inset:0; z-index:99999;
+            display:flex; align-items:center; justify-content:center;
+            background:rgba(0,0,0,0.55); padding:20px;">
+
+            <div style="background:#fff; width:100%; max-width:500px;
+                border-radius:6px; box-shadow:0 8px 30px rgba(0,0,0,0.3);
+                overflow:hidden; font-family:Tahoma,sans-serif;">
+
+                <div style="display:flex; justify-content:space-between;
+                    align-items:center; padding:15px 20px;
+                    background:#f2dede; border-bottom:1px solid #e5c6c6;">
+
+                    <h3 style="margin:0; padding:0; color:#a94442;
+                        font-size:18px;">
+                        Validation Messages
+                    </h3>
+
+                    <button type="button"
+                            onclick="document.getElementById('validationModal').style.display='none';"
+                            style="border:none; background:transparent;
+                        color:#555; font-size:28px; cursor:pointer;
+                        line-height:1;">
+                        &times;
+                    </button>
+                </div>
+
+                <div style="padding:20px; color:#c00; font-size:14px;
+                    line-height:1.8; background:#fff;">
+                    @Html.Raw(Model.ValidationMessage)
+                </div>
+
+                <div style="padding:12px 20px; text-align:right;
+                    border-top:1px solid #ddd; background:#fafafa;">
+
+                    <button type="button"
+                            onclick="document.getElementById('validationModal').style.display='none';"
+                            style="padding:8px 22px; background:#c62828;
+                        color:#fff; border:none; border-radius:4px;
+                        cursor:pointer; font-size:14px;">
+                        OK
+                    </button>
+                </div>
+
+            </div>
         </div>
     }
+
 
     <input asp-for="Subject.FISubjectCode" type="hidden" />
 
@@ -92,7 +140,9 @@
             <tr>
                 <td>Branch</td>
                 <td colspan="3">
-                    <select asp-for="Subject.BranchCode" style="width:450px" asp-items="Model.BranchCodeList">
+                    <select asp-for="Subject.BranchCode"
+                            style="width:450px"
+                            asp-items="Model.BranchCodeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
@@ -267,9 +317,22 @@
     <fieldset>
         <legend>Record Info</legend>
         <table>
-            <tr><td>Maker</td><td>@Model.Subject.MakeBy</td></tr>
-            <tr><td>Last Update Date</td><td>@(Model.Subject.MakeDate == default(DateTime) ? "" : Model.Subject.MakeDate.ToString("dd-MMM-yyyy"))</td></tr>
-            <tr><td>Record Status</td><td>@Model.Subject.RecordStatus</td></tr>
+            <tr>
+                <td>Maker</td>
+                <td>@Model.Subject.MakeBy</td>
+            </tr>
+            <tr>
+                <td>Last Update Date</td>
+                <td>
+                    @(Model.Subject.MakeDate == default(DateTime)
+                        ? ""
+                        : Model.Subject.MakeDate.ToString("dd-MMM-yyyy"))
+                </td>
+            </tr>
+            <tr>
+                <td>Record Status</td>
+                <td>@Model.Subject.RecordStatus</td>
+            </tr>
         </table>
     </fieldset>
 
