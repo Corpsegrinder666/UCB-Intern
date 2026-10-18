@@ -20,7 +20,10 @@ namespace CIBnext.Pages.Subject
         private readonly MiscBLL _miscBll;
         private readonly IConfiguration _configuration;
 
-        public AddPersonalInformationModel(ListOfValuesBLL lovBLL, MiscBLL mscBll, IConfiguration configuration)
+        public AddPersonalInformationModel(
+            ListOfValuesBLL lovBLL,
+            MiscBLL mscBll,
+            IConfiguration configuration)
         {
             _lovBLL = lovBLL;
             _miscBll = mscBll;
@@ -29,8 +32,10 @@ namespace CIBnext.Pages.Subject
 
         [BindProperty]
         public PersonalData Subject { get; set; } = new PersonalData();
+
         public string ValidationMessage { get; set; }
         public bool IsEdit { get; set; }
+
         public List<SelectListItem> BranchCodeList { get; set; }
         public List<SelectListItem> GenderList { get; set; }
         public List<SelectListItem> CountryList { get; set; }
@@ -42,32 +47,61 @@ namespace CIBnext.Pages.Subject
         private void LoadDropdowns()
         {
             BranchCodeList = _miscBll.GetBranches().Result
-    .Select(x => new SelectListItem
-    {
-        Value = x.CibBranchCode,
-        Text = x.BranchName
-    }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.CibBranchCode,
+                    Text = x.BranchName
+                }).ToList();
+
             GenderList = _lovBLL.GetListOfValues(LovTypes.GENDER)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             CountryList = _lovBLL.GetListOfValues(LovTypes.COUNTRIES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             SectorTypeList = _lovBLL.GetListOfValues(LovTypes.SECTOR_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             SectorCodeList = _lovBLL.GetListOfValues(LovTypes.SECTOR_CODES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             IdTypeList = _lovBLL.GetListOfValues(LovTypes.ID_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Key,
+                    Text = x.Value
+                }).ToList();
+
             DistrictList = _lovBLL.GetDistrictsByCountryCode("BD")
-                .Select(x => new SelectListItem { Value = x, Text = x }).ToList();
+                .Select(x => new SelectListItem
+                {
+                    Value = x,
+                    Text = x
+                }).ToList();
         }
 
         public void OnGet(string fiSubjectCode)
         {
             LoadDropdowns();
 
-            if (!string.IsNullOrEmpty(fiSubjectCode))
+            if (!string.IsNullOrWhiteSpace(fiSubjectCode))
             {
-                
                 var subjectBLL = new SubjectBLL(_configuration);
                 var existing = subjectBLL.GetPerson(fiSubjectCode);
 
@@ -78,13 +112,19 @@ namespace CIBnext.Pages.Subject
                 }
                 else
                 {
-                    ValidationMessage = "Person not found for subject code: " + fiSubjectCode;
+                    ValidationMessage =
+                        $"Person not found for subject code: {fiSubjectCode}";
                 }
             }
 
-            if (Subject.PermanentAddress == null) Subject.PermanentAddress = new Address();
-            if (Subject.PresentAddress == null) Subject.PresentAddress = new Address();
-            if (Subject.BusinessAddress == null) Subject.BusinessAddress = new Address();
+            if (Subject.PermanentAddress == null)
+                Subject.PermanentAddress = new Address();
+
+            if (Subject.PresentAddress == null)
+                Subject.PresentAddress = new Address();
+
+            if (Subject.BusinessAddress == null)
+                Subject.BusinessAddress = new Address();
 
             if (!IsEdit)
                 Subject.MakeDate = DateTime.Now;
@@ -94,46 +134,65 @@ namespace CIBnext.Pages.Subject
         {
             LoadDropdowns();
 
-            IsEdit = !string.IsNullOrEmpty(Subject.FISubjectCode);
+            IsEdit = !string.IsNullOrWhiteSpace(Subject.FISubjectCode);
 
+            // Use the existing custom validator for this form.
             ModelState.Clear();
 
             ValidationMessage = ValidatePerson(Subject);
 
-            if (!string.IsNullOrEmpty(ValidationMessage))
-            {
+            if (!string.IsNullOrWhiteSpace(ValidationMessage))
                 return Page();
-            }
 
             Subject.RecordType = "P";
             Subject.FICode = "046";
-            Subject.MakeBy = User.Identity.Name;
+            Subject.MakeBy = User.Identity?.Name;
             Subject.MakeDate = DateTime.Now;
             Subject.RecordStatus = "C";
 
-            var subjectDAL = new SubjectDAL(_configuration);
-            string newSubjectCode = subjectDAL.InsertPersonalData(Subject);
-
-            if (string.IsNullOrEmpty(newSubjectCode))
+            try
             {
-                
+                var subjectDAL = new SubjectDAL(_configuration);
+                string newSubjectCode = subjectDAL.InsertPersonalData(Subject);
+
+                if (string.IsNullOrWhiteSpace(newSubjectCode))
+                {
+                    ValidationMessage =
+                        "Personal information could not be saved. Please check your information and try again.";
+
+                    return Page();
+                }
+
+                TempData["SuccessMessage"] =
+    $"Personal information saved successfully. Subject code: {newSubjectCode}";
+
+                return RedirectToPage("/Subject/PersonalInformation");
+            }
+            catch
+            {
+                // Do not expose database or internal exception details to the user.
+                ValidationMessage =
+                    "An unexpected error occurred while saving personal information. Please try again.";
+
                 return Page();
             }
-
-            return RedirectToPage("/Subject/PersonalInformation");
         }
+
         private string ValidatePerson(PersonalData personal)
         {
-            var pdv = new PersonalDataValidator();
-            var res = pdv.Validate(personal);
-            if (!res.IsValid)
+            var validator = new PersonalDataValidator();
+            var result = validator.Validate(personal);
+
+            if (!result.IsValid)
             {
-                return "- " + string.Join("<br/>- ", res.Errors.Select(e => e.ErrorMessage).Distinct());
+                return "- " + string.Join(
+                    Environment.NewLine + "- ",
+                    result.Errors
+                        .Select(error => error.ErrorMessage)
+                        .Distinct());
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return string.Empty;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page
 @model CIBnext.Pages.Contract.ContractLinksModel
+
 <style>
     .page-title {
         font-size: 30px;
@@ -64,7 +65,8 @@
         width: 180px;
     }
 
-    .pagination a, .pagination span {
+    .pagination a,
+    .pagination span {
         padding: 2px 8px;
         margin-right: 3px;
         text-decoration: none;
@@ -80,12 +82,42 @@
     }
 </style>
 
+@{
+    var popupType = "info";
+    var popupTitle = "Information";
+    var popupMessage = string.Empty;
+    var showPopup = false;
+
+    if (!string.IsNullOrEmpty(Model.DeleteMessage))
+    {
+        popupType = Model.DeleteMessageType ?? "info";
+        popupTitle = Model.DeleteMessageTitle ?? "Delete";
+        popupMessage = Model.DeleteMessage;
+        showPopup = true;
+    }
+    else if (!string.IsNullOrEmpty(Model.ValidationMessage))
+    {
+        popupType = Model.ValidationMessageType ?? "warning";
+        popupTitle = Model.ValidationMessageTitle ?? "Validation";
+        popupMessage = Model.ValidationMessage;
+        showPopup = true;
+    }
+    else if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        popupType = "success";
+        popupTitle = "Success";
+        popupMessage = Model.SuccessMessage;
+        showPopup = true;
+    }
+}
+
 <div class="page-title">Contract Link List</div>
 
 <form method="get">
     <div class="section">
         <fieldset>
             <legend>Search Option</legend>
+
             <table style="border:none">
                 <tr>
                     <td style="border:none">Branch Code:</td>
@@ -95,20 +127,36 @@
                             <option value="">--Select--</option>
                         </select>
                     </td>
+
                     <td style="border:none">Primary Sub. Code:</td>
-                    <td style="border:none"><input asp-for="SearchPrimaryCode" /></td>
+                    <td style="border:none">
+                        <input asp-for="SearchPrimaryCode" />
+                    </td>
+
                     <td style="border:none">Primary Sub. Name:</td>
-                    <td style="border:none"><input asp-for="SearchPrimaryName" /></td>
+                    <td style="border:none">
+                        <input asp-for="SearchPrimaryName" />
+                    </td>
+
                     <td style="border:none">Secondary Sub. Code:</td>
-                    <td style="border:none"><input asp-for="SearchSecondaryCode" /></td>
+                    <td style="border:none">
+                        <input asp-for="SearchSecondaryCode" />
+                    </td>
                 </tr>
+
                 <tr>
                     <td style="border:none">Secondary Sub. Name:</td>
-                    <td style="border:none"><input asp-for="SearchSecondaryName" /></td>
+                    <td style="border:none">
+                        <input asp-for="SearchSecondaryName" />
+                    </td>
+
                     <td style="border:none">Contract Code:</td>
-                    <td style="border:none"><input asp-for="SearchContractCode" /></td>
+                    <td style="border:none">
+                        <input asp-for="SearchContractCode" />
+                    </td>
                 </tr>
             </table>
+
             <button type="submit" class="btn-small">Search</button>
             <a href="/Contract/ContractLinks" class="btn-small">Clear</a>
         </fieldset>
@@ -118,12 +166,9 @@
 <form method="post" asp-page-handler="Save">
     <div class="section">
         <fieldset id="add-edit-fieldset">
-            <legend>@(Model.IsEdit ? "Edit Contract Link" : "Add Contract Link")</legend>
-
-            @if (!string.IsNullOrEmpty(Model.ValidationMessage))
-            {
-                <div style="color:red; font-weight:bold;">@Html.Raw(Model.ValidationMessage)</div>
-            }
+            <legend>
+                @(Model.IsEdit ? "Edit Contract Link" : "Add Contract Link")
+            </legend>
 
             @if (Model.IsEdit)
             {
@@ -141,13 +186,15 @@
 
             <div class="form-row">
                 <label>Type of Link</label>
-                <select asp-for="AddLink.TypeOfLink" asp-items="Model.LinkTypeList">
+                <select asp-for="AddLink.TypeOfLink"
+                        asp-items="Model.LinkTypeList">
                     <option value="">--Select--</option>
                 </select>
             </div>
 
             <div class="form-row">
                 <label class="label-hint">F.I. Contract Code</label>
+
                 @if (Model.IsEdit)
                 {
                     <input asp-for="AddLink.FIContractCode" readonly />
@@ -165,6 +212,7 @@
 
             <div class="form-row">
                 <label class="label-hint">F.I. Secondary Code</label>
+
                 @if (Model.IsEdit)
                 {
                     <input asp-for="AddLink.FISecondaryCode" readonly />
@@ -175,11 +223,15 @@
                 }
             </div>
 
-            <button type="submit" class="btn-small">@(Model.IsEdit ? "Update" : "Save")</button>
+            <button type="submit" class="btn-small">
+                @(Model.IsEdit ? "Update" : "Save")
+            </button>
 
             @if (Model.IsEdit)
             {
-                <a href="/Contract/ContractLinks" class="btn-small">Cancel Edit</a>
+                <a href="/Contract/ContractLinks" class="btn-small">
+                    Cancel Edit
+                </a>
             }
         </fieldset>
     </div>
@@ -189,14 +241,12 @@
     <fieldset>
         <legend>Contract Link Information</legend>
 
-        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
-        {
-            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
-        }
-
         <h3>Total Count: @Model.TotalCount</h3>
 
-        <form method="post" asp-page-handler="Delete">
+        <form method="post"
+              asp-page-handler="Delete"
+              id="deleteLinksForm">
+
             <table>
                 <tr>
                     <th></th>
@@ -220,9 +270,13 @@
                                        name="SelectedLinks"
                                        value="@(link.FIContractCode)|@(link.FISecondaryCode)" />
                             </td>
+
                             <td>
-                                <a href="/Contract/ContractLinks?EditContract=@Uri.EscapeDataString(link.FIContractCode)&EditSecondary=@Uri.EscapeDataString(link.FISecondaryCode ?? "")">Edit</a>
+                                <a href="/Contract/ContractLinks?EditContract=@Uri.EscapeDataString(link.FIContractCode)&EditSecondary=@Uri.EscapeDataString(link.FISecondaryCode ?? "")">
+                                    Edit
+                                </a>
                             </td>
+
                             <td>@link.BranchCode</td>
                             <td>@link.TypeOfLink</td>
                             <td>@link.FIPrimaryCode</td>
@@ -236,7 +290,9 @@
                 else
                 {
                     <tr>
-                        <td colspan="9" style="text-align:center;">No records found</td>
+                        <td colspan="9" style="text-align:center;">
+                            No records found
+                        </td>
                     </tr>
                 }
             </table>
@@ -266,7 +322,9 @@
                     }
                     else
                     {
-                        <a href="/Contract/ContractLinks?PageIndex=@i&SearchBranchCode=@Model.SearchBranchCode&SearchPrimaryCode=@Model.SearchPrimaryCode&SearchPrimaryName=@Model.SearchPrimaryName&SearchSecondaryCode=@Model.SearchSecondaryCode&SearchSecondaryName=@Model.SearchSecondaryName&SearchContractCode=@Model.SearchContractCode">@i</a>
+                        <a href="/Contract/ContractLinks?PageIndex=@i&SearchBranchCode=@Model.SearchBranchCode&SearchPrimaryCode=@Model.SearchPrimaryCode&SearchPrimaryName=@Model.SearchPrimaryName&SearchSecondaryCode=@Model.SearchSecondaryCode&SearchSecondaryName=@Model.SearchSecondaryName&SearchContractCode=@Model.SearchContractCode">
+                            @i
+                        </a>
                     }
 
                     lastDisplayedPage = i;
@@ -274,9 +332,131 @@
             </div>
 
             <br />
+
             <a href="/Contract/ContractLinks" class="btn-small">Add</a>
-            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
-            <button type="submit" class="btn-small" onclick="return confirm(' are you delete Selected record?');">Delete</button>
+
+            <button class="btn-small"
+                    onclick="location.reload();"
+                    type="button">
+                Refresh
+            </button>
+
+            <button type="submit"
+                    class="btn-small"
+                    onclick="return openDeleteConfirmation();">
+                Delete
+            </button>
         </form>
     </fieldset>
 </div>
+
+@if (showPopup)
+{
+    <div id="messageModal"
+         class="message-overlay"
+         style="display:flex;">
+
+        <div class="message-dialog">
+            <div class="message-header @popupType">
+                <h3>@popupTitle</h3>
+
+                <button type="button"
+                        class="message-close"
+                        aria-label="Close">
+                    &times;
+                </button>
+            </div>
+
+            <div class="message-body @popupType">
+                @Html.Raw(popupMessage)
+            </div>
+
+            <div class="message-footer">
+                <button type="button" class="message-ok">OK</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="deleteConfirmModal"
+     class="message-overlay"
+     style="display:none;">
+
+    <div class="message-dialog">
+        <div class="message-header warning">
+            <h3>Confirm Delete</h3>
+        </div>
+
+        <div class="message-body warning">
+            Are you sure you want to delete the selected record(s)?
+        </div>
+
+        <div class="message-footer">
+            <button type="button"
+                    class="message-button"
+                    onclick="confirmDeleteLinks()">
+                Yes, Delete
+            </button>
+
+            <button type="button"
+                    class="message-button"
+                    onclick="closeDeleteConfirmation()">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteConfirmation() {
+        var selected = document.querySelectorAll(
+            '#deleteLinksForm input[name="SelectedLinks"]:checked'
+        );
+
+        if (selected.length === 0) {
+            if (typeof window.showSharedMessage === 'function') {
+                window.showSharedMessage(
+                    'warning',
+                    'Please select at least one record to delete.',
+                    'Selection Required'
+                );
+            } else {
+                alert('Please select at least one record to delete.');
+            }
+
+            return false;
+        }
+
+        var modal = document.getElementById('deleteConfirmModal');
+
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+
+        return false;
+    }
+
+    function closeDeleteConfirmation() {
+        var modal = document.getElementById('deleteConfirmModal');
+
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    function confirmDeleteLinks() {
+        var form = document.getElementById('deleteLinksForm');
+
+        if (form) {
+            form.submit();
+        }
+    }
+
+    document.addEventListener('click', function (event) {
+        var modal = document.getElementById('deleteConfirmModal');
+
+        if (modal && event.target === modal) {
+            closeDeleteConfirmation();
+        }
+    });
+</script>

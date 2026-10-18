@@ -19,6 +19,7 @@
         border: 1px solid #b5b5a5;
         margin-top: 5px;
         background: #edf4ef;
+        padding: 10px;
     }
 
     legend {
@@ -34,7 +35,8 @@
         padding: 3px;
     }
 
-    input, select {
+    input,
+    select {
         width: 180px;
         height: 22px;
     }
@@ -45,11 +47,13 @@
         width: 48%;
         display: inline-block;
         vertical-align: top;
+        box-sizing: border-box;
     }
 
     .btn {
         margin-top: 10px;
         padding: 3px 10px;
+        cursor: pointer;
     }
 
     .auto-code {
@@ -61,38 +65,86 @@
         background: #eee;
         color: #666;
         border: 1px solid #999;
+        box-sizing: border-box;
     }
 
     .label-hint {
         color: #06c;
     }
+
+    /* Popup styling is centralized in wwwroot/css/site.css. */
+
+    @@media (max-width: 700px) {
+        .address-box {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        fieldset {
+            overflow-x: auto;
+        }
+
+        table {
+            min-width: 600px;
+        }
+    }
 </style>
 
 <div class="title">@(Model.IsEdit ? "Edit" : "Add") Institution</div>
 
-<form method="post">
-    @if (!string.IsNullOrEmpty(Model.ValidationMessage))
-    {
-        <div style="color:red; font-weight:bold;">
-            @Html.Raw(Model.ValidationMessage)
-        </div>
-    }
+@if (!string.IsNullOrWhiteSpace(Model.ValidationMessage))
+{
+    <div id="validationModal"
+         class="message-overlay"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="validationTitle">
 
+        <div class="message-dialog">
+            <div class="message-header warning">
+                <h3 id="validationTitle">Please Check</h3>
+
+                <button type="button"
+                        class="message-close"
+                        aria-label="Close message">
+                    &times;
+                </button>
+            </div>
+
+            <div class="message-body warning">@Model.ValidationMessage</div>
+
+            <div class="message-footer">
+                <button type="button"
+                        class="message-button warning">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<form method="post">
     <input asp-for="Subject.FISubjectCode" type="hidden" />
 
     <fieldset>
         <legend>General</legend>
+
         <table>
             <tr>
                 <td>Branch</td>
                 <td>
-                    <select asp-for="Subject.BranchCode" asp-items="Model.BranchCodeList">
+                    <select asp-for="Subject.BranchCode"
+                            asp-items="Model.BranchCodeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
+
                 <td>Cif No</td>
-                <td><input asp-for="Subject.CifNo" /></td>
+                <td>
+                    <input asp-for="Subject.CifNo" />
+                </td>
             </tr>
+
             <tr>
                 <td class="label-hint">F.I. Subject Code</td>
                 <td>
@@ -105,75 +157,112 @@
                         <span class="auto-code">[AUTO]</span>
                     }
                 </td>
+
                 <td class="label-hint">Trade Name</td>
-                <td><input asp-for="Subject.TradeName" /></td>
+                <td>
+                    <input asp-for="Subject.TradeName" />
+                </td>
             </tr>
+
             <tr>
                 <td>Title</td>
-                <td><input asp-for="Subject.Title" /></td>
+                <td>
+                    <input asp-for="Subject.Title" />
+                </td>
+
                 <td class="label-hint">Legal Form</td>
                 <td>
-                    <select asp-for="Subject.LegalForm" asp-items="Model.LegalFormList">
+                    <select asp-for="Subject.LegalForm"
+                            asp-items="Model.LegalFormList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
             </tr>
+
             <tr>
                 <td class="label-hint">Sector Type</td>
                 <td>
-                    <select asp-for="Subject.SectorType" asp-items="Model.SectorTypeList">
+                    <select asp-for="Subject.SectorType"
+                            asp-items="Model.SectorTypeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
+
                 <td>Sector Code</td>
                 <td>
-                    <select asp-for="Subject.SectorCode" asp-items="Model.SectorCodeList">
+                    <select asp-for="Subject.SectorCode"
+                            asp-items="Model.SectorCodeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
             </tr>
+
             <tr>
                 <td>TIN (eTIN)</td>
-                <td><input asp-for="Subject.TIN" /></td>
+                <td>
+                    <input asp-for="Subject.TIN" />
+                </td>
+
                 <td>Phone Nr.</td>
-                <td><input asp-for="Subject.PhoneNumber" /></td>
+                <td>
+                    <input asp-for="Subject.PhoneNumber" />
+                </td>
             </tr>
+
             <tr>
                 <td>Registration Number (RJSC)</td>
-                <td><input asp-for="Subject.RegistrationNumberRJSC" /></td>
+                <td>
+                    <input asp-for="Subject.RegistrationNumberRJSC" />
+                </td>
+
                 <td>Registration Date (RJSC)</td>
-                <td><input asp-for="Subject.RegistrationDateRJSC" type="date" /></td>
+                <td>
+                    <input asp-for="Subject.RegistrationDateRJSC"
+                           type="date" />
+                </td>
             </tr>
         </table>
 
         <div class="address-box">
             <h4>Business Address</h4>
+
             Street<br />
             <input asp-for="Subject.BusinessAddress.Street" /><br />
+
             Postal Code<br />
             <input asp-for="Subject.BusinessAddress.PostalCode" /><br />
+
             District<br />
-            <select asp-for="Subject.BusinessAddress.District" asp-items="Model.DistrictList">
+            <select asp-for="Subject.BusinessAddress.District"
+                    asp-items="Model.DistrictList">
                 <option value="">--Select--</option>
             </select><br />
+
             Country<br />
-            <select asp-for="Subject.BusinessAddress.CountryCode" asp-items="Model.CountryList">
+            <select asp-for="Subject.BusinessAddress.CountryCode"
+                    asp-items="Model.CountryList">
                 <option value="">--Select--</option>
             </select>
         </div>
 
         <div class="address-box">
             <h4>Factory Address</h4>
+
             Street<br />
             <input asp-for="Subject.FactoryAddress.Street" /><br />
+
             Postal Code<br />
             <input asp-for="Subject.FactoryAddress.PostalCode" /><br />
+
             District<br />
-            <select asp-for="Subject.FactoryAddress.District" asp-items="Model.DistrictList">
+            <select asp-for="Subject.FactoryAddress.District"
+                    asp-items="Model.DistrictList">
                 <option value="">--Select--</option>
             </select><br />
+
             Country<br />
-            <select asp-for="Subject.FactoryAddress.CountryCode" asp-items="Model.CountryList">
+            <select asp-for="Subject.FactoryAddress.CountryCode"
+                    asp-items="Model.CountryList">
                 <option value="">--Select--</option>
             </select>
         </div>
@@ -181,26 +270,48 @@
 
     <fieldset>
         <legend>Other</legend>
+
         <table>
             <tr>
                 <td>CRG Scoring</td>
-                <td><input asp-for="Subject.CRGScoring" /></td>
+                <td>
+                    <input asp-for="Subject.CRGScoring" />
+                </td>
+
                 <td>Credit Rating</td>
-                <td><input asp-for="Subject.CreditRating" /></td>
+                <td>
+                    <input asp-for="Subject.CreditRating" />
+                </td>
             </tr>
         </table>
     </fieldset>
 
     <fieldset>
         <legend>Record Info</legend>
+
         <table>
-            <tr><td>Maker</td><td>@Model.Subject.MakeBy</td></tr>
-            <tr><td>Last Update Date</td><td>@(Model.Subject.MakeDate == default(DateTime) ? "" : Model.Subject.MakeDate.ToString("dd-MMM-yyyy"))</td></tr>
-            <tr><td>Record Status</td><td>@Model.Subject.RecordStatus</td></tr>
+            <tr>
+                <td>Maker</td>
+                <td>@Model.Subject.MakeBy</td>
+            </tr>
+
+            <tr>
+                <td>Last Update Date</td>
+                <td>
+                    @(Model.Subject.MakeDate == default(DateTime)
+                        ? ""
+                        : Model.Subject.MakeDate.ToString("dd-MMM-yyyy"))
+                </td>
+            </tr>
+
+            <tr>
+                <td>Record Status</td>
+                <td>@Model.Subject.RecordStatus</td>
+            </tr>
         </table>
     </fieldset>
 
     <button type="submit" class="btn">Save</button>
-    <a href="/Subject/InstitutionInformation" class="btn">Exit</a>
 
+    <a href="/Subject/InstitutionInformation" class="btn">Exit</a>
 </form>

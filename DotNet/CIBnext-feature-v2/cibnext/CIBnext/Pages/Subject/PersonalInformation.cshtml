@@ -1,5 +1,26 @@
 ﻿@page
 @model CIBnext.Pages.Subject.PersonalInformationModel
+
+@{
+    var displayMessage = Model.PopupMessage;
+    var displayType = Model.PopupType;
+
+    if (string.IsNullOrWhiteSpace(displayMessage) &&
+        !string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        displayMessage = Model.SuccessMessage;
+        displayType = "success";
+    }
+
+    var popupTitle = displayType switch
+    {
+        "success" => "Success",
+        "warning" => "Please Check",
+        "info" => "Information",
+        _ => "Error"
+    };
+}
+
 <style>
     .page-title {
         font-weight: bold;
@@ -32,27 +53,29 @@
         font-size: 12px;
     }
 
-        table th {
-            background: #c9d5e8;
-            border: 1px solid #666;
-            padding: 3px;
-        }
+    table th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 3px;
+    }
 
-        table td {
-            border: 1px solid #666;
-            padding: 3px;
-        }
+    table td {
+        border: 1px solid #666;
+        padding: 3px;
+    }
 
     .btn-small {
         padding: 2px 8px;
         font-size: 12px;
+        cursor: pointer;
     }
 
     input, select {
         width: 120px;
     }
 
-    .pagination a, .pagination span {
+    .pagination a,
+    .pagination span {
         padding: 2px 8px;
         margin-right: 3px;
         text-decoration: none;
@@ -66,13 +89,205 @@
         font-weight: bold;
         color: #000;
     }
+
+    .message-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.55);
+        padding: 20px;
+    }
+
+    .message-overlay.hidden {
+        display: none;
+    }
+
+    .message-dialog {
+        width: 100%;
+        max-width: 500px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        font-family: Tahoma, sans-serif;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .message-header h3 {
+        margin: 0;
+        padding: 0;
+        font-size: 18px;
+    }
+
+    .message-header.error {
+        background: #f2dede;
+        color: #a94442;
+    }
+
+    .message-header.warning {
+        background: #fcf8e3;
+        color: #8a6d3b;
+    }
+
+    .message-header.success {
+        background: #dff0d8;
+        color: #3c763d;
+    }
+
+    .message-header.info {
+        background: #d9edf7;
+        color: #31708f;
+    }
+
+    .message-close {
+        border: none;
+        background: transparent;
+        color: #555;
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .message-body {
+        padding: 20px;
+        font-size: 14px;
+        line-height: 1.8;
+        background: #fff;
+        white-space: pre-line;
+    }
+
+    .message-body.error {
+        color: #c62828;
+    }
+
+    .message-body.warning {
+        color: #8a6d3b;
+    }
+
+    .message-body.success {
+        color: #2e7d32;
+    }
+
+    .message-body.info {
+        color: #1565c0;
+    }
+
+    .message-footer {
+        padding: 12px 20px;
+        text-align: right;
+        border-top: 1px solid #ddd;
+        background: #fafafa;
+    }
+
+    .message-button {
+        padding: 8px 22px;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .message-button.error {
+        background: #c62828;
+    }
+
+    .message-button.warning {
+        background: #b8860b;
+    }
+
+    .message-button.success {
+        background: #2e7d32;
+    }
+
+    .message-button.info {
+        background: #1565c0;
+    }
+
+    .confirm-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .confirm-delete {
+        padding: 8px 18px;
+        background: #c62828;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .confirm-cancel {
+        padding: 8px 18px;
+        background: #777;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    @@media (max-width: 800px) {
+        .section {
+            overflow-x: auto;
+        }
+
+        table {
+            min-width: 700px;
+        }
+    }
 </style>
 
 <div class="page-title">
     Personal Information List
 </div>
 
+@if (!string.IsNullOrWhiteSpace(displayMessage))
+{
+    <div id="messageModal" class="message-overlay"
+         role="dialog" aria-modal="true"
+         aria-labelledby="messageModalTitle">
+
+        <div class="message-dialog">
+            <div class="message-header @displayType">
+                <h3 id="messageModalTitle">@popupTitle</h3>
+
+                <button type="button" class="message-close"
+                        aria-label="Close"
+                        onclick="closeMessageModal()">
+                    &times;
+                </button>
+            </div>
+
+            <div class="message-body @displayType">
+                @displayMessage
+            </div>
+
+            <div class="message-footer">
+                <button type="button"
+                        class="message-button @displayType"
+                        onclick="closeMessageModal()">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
 <form method="get">
+    <input type="hidden" name="SearchSubmitted" value="true" />
+
     <div class="section">
         <fieldset>
             <legend>Search Option</legend>
@@ -117,7 +332,11 @@
             </table>
 
             <button type="submit" class="btn-small">Search</button>
-            <a href="/Subject/PersonalInformation" class="btn-small">Clear</a>
+
+            <a href="/Subject/PersonalInformation" class="btn-small">
+                Clear
+            </a>
+
             <a href="#">Goto Error List</a>
         </fieldset>
     </div>
@@ -127,14 +346,21 @@
     <fieldset>
         <legend>Personal Information</legend>
 
-        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
-        {
-            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
-        }
-
         <h3>Total Count: @Model.TotalCount</h3>
 
-        <form method="post" asp-page-handler="Delete">
+        <form method="post" asp-page-handler="Delete" id="deleteForm">
+            @Html.AntiForgeryToken()
+
+            @* Preserve search criteria when the delete form is submitted. *@
+            <input type="hidden" asp-for="Subject.BranchCode" />
+            <input type="hidden" asp-for="Subject.FISubjectCode" />
+            <input type="hidden" asp-for="Subject.Name" />
+            <input type="hidden" asp-for="Subject.FathersName" />
+            <input type="hidden" asp-for="Subject.DateOfBirth" />
+            <input type="hidden" asp-for="Subject.CifNo" />
+            <input type="hidden" asp-for="PageIndex" />
+            <input type="hidden" asp-for="SearchSubmitted" />
+
             <table>
                 <thead>
                     <tr>
@@ -159,8 +385,18 @@
                         @foreach (var person in Model.PersonList)
                         {
                             <tr>
-                                <td><input type="checkbox" name="SelectedCodes" value="@person.FISubjectCode" /></td>
-                                <td><a href="/Subject/AddPersonalInformation?fiSubjectCode=@person.FISubjectCode">Edit/View</a></td>
+                                <td>
+                                    <input type="checkbox"
+                                           name="SelectedCodes"
+                                           value="@person.FISubjectCode" />
+                                </td>
+
+                                <td>
+                                    <a href="/Subject/AddPersonalInformation?fiSubjectCode=@Uri.EscapeDataString(person.FISubjectCode ?? string.Empty)">
+                                        Edit/View
+                                    </a>
+                                </td>
+
                                 <td>@person.BranchCode</td>
                                 <td>@person.FISubjectCode</td>
                                 <td>@person.Title</td>
@@ -177,7 +413,9 @@
                     else
                     {
                         <tr>
-                            <td colspan="12" style="text-align:center;">No records found</td>
+                            <td colspan="12" style="text-align:center;">
+                                No records found
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -185,6 +423,7 @@
 
             <div class="pagination" style="margin-top:8px">
                 @{ var lastDisplayedPage = 0; }
+
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     var displayPage = i <= 3
@@ -207,7 +446,15 @@
                     }
                     else
                     {
-                        <a href="/Subject/PersonalInformation?PageIndex=@i&Subject.BranchCode=@Model.Subject.BranchCode&Subject.FISubjectCode=@Model.Subject.FISubjectCode&Subject.Name=@Model.Subject.Name&Subject.FathersName=@Model.Subject.FathersName&Subject.CifNo=@Model.Subject.CifNo">@i</a>
+                        <a asp-page="/Subject/PersonalInformation"
+                           asp-route-PageIndex="@i"
+                           asp-route-SearchSubmitted="true"
+                           asp-route-Subject.BranchCode="@Model.Subject.BranchCode"
+                           asp-route-Subject.FISubjectCode="@Model.Subject.FISubjectCode"
+                           asp-route-Subject.Name="@Model.Subject.Name"
+                           asp-route-Subject.FathersName="@Model.Subject.FathersName"
+                           asp-route-Subject.DateOfBirth="@Model.Subject.DateOfBirth"
+                           asp-route-Subject.CifNo="@Model.Subject.CifNo">@i</a>
                     }
 
                     lastDisplayedPage = i;
@@ -216,10 +463,212 @@
 
             <br />
 
-            <a href="/Subject/AddPersonalInformation" class="btn-small">Add</a>
-            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
-            <button type="submit" class="btn-small" onclick="return confirm('are you delete Selected?');">Delete</button>
-        </form>
+            <a href="/Subject/AddPersonalInformation" class="btn-small">
+                Add
+            </a>
 
+            <button class="btn-small"
+                    onclick="window.location.href='/Subject/PersonalInformation';"
+                    type="button">
+                Refresh
+            </button>
+
+            <button type="button" class="btn-small"
+                    onclick="openDeleteConfirm()">
+                Delete
+            </button>
+        </form>
     </fieldset>
 </div>
+
+@* Delete confirmation popup *@
+<div id="deleteConfirmModal" class="message-overlay hidden"
+     role="dialog" aria-modal="true"
+     aria-labelledby="deleteConfirmTitle">
+
+    <div class="message-dialog">
+        <div class="message-header warning">
+            <h3 id="deleteConfirmTitle">Confirm Deletion</h3>
+
+            <button type="button" class="message-close"
+                    aria-label="Close"
+                    onclick="closeDeleteConfirm()">
+                &times;
+            </button>
+        </div>
+
+        <div class="message-body warning">
+            Are you sure you want to delete the selected records?
+        </div>
+
+        <div class="message-footer">
+            <div class="confirm-buttons">
+                <button type="button" class="confirm-cancel"
+                        onclick="closeDeleteConfirm()">
+                    Cancel
+                </button>
+
+                <button type="button" class="confirm-delete"
+                        onclick="confirmDelete()">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Close the server-rendered message popup.
+    function closeMessageModal() {
+        const modal = document.getElementById("messageModal");
+
+        if (modal) {
+            modal.style.display = "none";
+            modal.setAttribute("aria-hidden", "true");
+        }
+    }
+
+    // Open delete confirmation only when records are selected.
+    function openDeleteConfirm() {
+        const checkboxes = document.querySelectorAll(
+            '#deleteForm input[name="SelectedCodes"]:checked'
+        );
+
+        if (checkboxes.length === 0) {
+            showClientMessage(
+                "warning",
+                "Please select at least one record to delete."
+            );
+            return;
+        }
+
+        const modal = document.getElementById("deleteConfirmModal");
+
+        if (modal) {
+            modal.classList.remove("hidden");
+            modal.style.display = "flex";
+            modal.setAttribute("aria-hidden", "false");
+        }
+    }
+
+    // Close delete confirmation without deleting anything.
+    function closeDeleteConfirm() {
+        const modal = document.getElementById("deleteConfirmModal");
+
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.style.display = "none";
+            modal.setAttribute("aria-hidden", "true");
+        }
+    }
+
+    // Submit the existing delete form only after explicit confirmation.
+    function confirmDelete() {
+        const form = document.getElementById("deleteForm");
+
+        if (form) {
+            closeDeleteConfirm();
+            form.requestSubmit();
+        }
+    }
+
+    // Delegate client-side messages to the shared popup system.
+    function showClientMessage(type, message) {
+        if (typeof window.showSharedMessage === "function") {
+            window.showSharedMessage(type, message);
+            return;
+        }
+
+        // Safe fallback if the shared popup script is not yet available.
+        const titles = {
+            error: "Error",
+            warning: "Please Check",
+            success: "Success",
+            info: "Information"
+        };
+
+        const colors = {
+            error: "#c62828",
+            warning: "#b8860b",
+            success: "#2e7d32",
+            info: "#1565c0"
+        };
+
+        const popupType = Object.prototype.hasOwnProperty.call(titles, type)
+            ? type
+            : "error";
+
+        const existing = document.getElementById("clientMessageModal");
+
+        if (existing) {
+            existing.remove();
+        }
+
+        const overlay = document.createElement("div");
+        overlay.id = "clientMessageModal";
+        overlay.className = "message-overlay";
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+
+        const dialog = document.createElement("div");
+        dialog.className = "message-dialog";
+
+        const header = document.createElement("div");
+        header.className = "message-header " + popupType;
+
+        const heading = document.createElement("h3");
+        heading.textContent = titles[popupType];
+
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.className = "message-close";
+        closeButton.setAttribute("aria-label", "Close message");
+        closeButton.textContent = "\u00D7";
+
+        const body = document.createElement("div");
+        body.className = "message-body " + popupType;
+        body.textContent = message;
+
+        const footer = document.createElement("div");
+        footer.className = "message-footer";
+
+        const okButton = document.createElement("button");
+        okButton.type = "button";
+        okButton.className = "message-button " + popupType;
+        okButton.textContent = "OK";
+
+        function closePopup() {
+            overlay.remove();
+        }
+
+        closeButton.addEventListener("click", closePopup);
+        okButton.addEventListener("click", closePopup);
+
+        overlay.addEventListener("click", function (event) {
+            if (event.target === overlay) {
+                closePopup();
+            }
+        });
+
+        header.appendChild(heading);
+        header.appendChild(closeButton);
+        footer.appendChild(okButton);
+
+        dialog.appendChild(header);
+        dialog.appendChild(body);
+        dialog.appendChild(footer);
+        overlay.appendChild(dialog);
+
+        document.body.appendChild(overlay);
+
+        if (popupType === "success") {
+            window.setTimeout(function () {
+                if (overlay.isConnected) {
+                    overlay.remove();
+                }
+            }, 3000);
+        }
+    }
+</script>
+

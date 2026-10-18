@@ -1,5 +1,12 @@
+
+/* =========================================================
+   CIBnext - Base Styles
+   ========================================================= */
+
 html {
     font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,38 +15,390 @@ html {
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 body {
     margin-bottom: 60px;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
 
-/* Validation message dialog */
+
+/* =========================================================
+   CIBnext - Shared Form Styles
+   Based on AddPersonalInformation.cshtml
+   ========================================================= */
+
+.title,
+.page-title {
+    font-family: Tahoma, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px;
+    border-bottom: 1px solid #999;
+    background: #f4f4ee;
+    margin-bottom: 10px;
+}
+
+fieldset,
+.section {
+    border: 1px solid #b5b5a5;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #edf4ef;
+}
+
+legend {
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+table {
+    width: 100%;
+}
+
+td {
+    padding: 3px;
+}
+
+.address-box {
+    display: inline-block;
+    vertical-align: top;
+    width: 32%;
+    padding: 5px;
+    border: 1px solid #b5b5a5;
+    box-sizing: border-box;
+}
+
+    .address-box h4 {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+.auto-code {
+    display: inline-block;
+    width: 180px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 3px;
+    background: #eee;
+    color: #666;
+    border: 1px solid #999;
+    box-sizing: border-box;
+}
+
+.label-hint {
+    color: #06c;
+}
+
+.search-btn {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CIBnext - Shared Form Buttons
+   ========================================================= */
+
+.btn-save,
+.btn-exit {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 7px 18px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-save {
+    background: #2e7d32;
+    color: #fff;
+}
+
+    .btn-save:hover {
+        background: #1b5e20;
+        color: #fff;
+    }
+
+.btn-exit {
+    background: #e5e7eb;
+    color: #333;
+    border-color: #bbb;
+}
+
+    .btn-exit:hover {
+        background: #d1d5db;
+        color: #333;
+    }
+
+.btn-small {
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CIBnext - Shared Message Popup
+   ========================================================= */
+
+.message-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.55);
+    box-sizing: border-box;
+}
+
+    .message-overlay.hidden {
+        display: none;
+    }
+
+.message-dialog {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: Tahoma, sans-serif;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: #fbe9e7;
+    border-bottom: 1px solid #efc7c3;
+    color: #b71c1c;
+}
+
+    .message-header h3 {
+        margin: 0;
+        padding: 0;
+        color: inherit;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+.message-close {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: #555;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+    .message-close:hover {
+        color: #111;
+    }
+
+.message-body {
+    padding: 20px;
+    background: #fff;
+    color: #c62828;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.message-footer {
+    padding: 12px 20px;
+    text-align: right;
+    border-top: 1px solid #ddd;
+    background: #fafafa;
+}
+
+.message-ok,
+.message-button {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 4px;
+    background: #b71c1c;
+    color: #fff;
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+    .message-ok:hover {
+        background: #8e0000;
+    }
+
+    .message-button:hover {
+        filter: brightness(0.9);
+    }
+
+
+/* =========================================================
+   Popup Variants
+   Default: Error / Validation
+   ========================================================= */
+
+
+/* UCB popup theme: red header and red action buttons */
+.message-overlay .message-dialog .message-header,
+.message-overlay .message-dialog .message-header.error,
+.message-overlay .message-dialog .message-header.warning,
+.message-overlay .message-dialog .message-header.success,
+.message-overlay .message-dialog .message-header.info {
+    background-color: #b71c1c !important;
+    border-bottom: 1px solid #8e0000;
+}
+
+.message-overlay .message-dialog .message-button,
+.message-overlay .message-dialog .message-button.error,
+.message-overlay .message-dialog .message-button.warning,
+.message-overlay .message-dialog .message-button.success,
+.message-overlay .message-dialog .message-button.info,
+.message-overlay .message-dialog .message-ok {
+    background-color: #b71c1c !important;
+    color: #fff !important;
+}
+
+/* Only the header title text changes by message type */
+.message-header.error h3 {
+    color: #ff8a80;
+}
+
+.message-header.warning h3 {
+    color: #ffd54f;
+}
+
+.message-header.success h3 {
+    color: #a5d6a7;
+}
+
+.message-header.info h3 {
+    color: #90caf9;
+}
+
+/* Content text colors */
+.message-body.error {
+    color: #c62828;
+}
+
+.message-body.warning {
+    color: #8a6d3b;
+}
+
+.message-body.success {
+    color: #2e7d32;
+}
+
+.message-body.info {
+    color: #1565c0;
+}
+
+
+
+/* =========================================================
+   CIBnext - Delete Confirmation Dialog
+   Separate from ordinary message popups
+   ========================================================= */
+
+.confirm-buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.confirm-delete,
+.confirm-cancel {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.confirm-delete {
+    background: #c62828;
+}
+
+    .confirm-delete:hover {
+        background: #a51f1f;
+    }
+
+.confirm-cancel {
+    background: #777;
+}
+
+    .confirm-cancel:hover {
+        background: #555;
+    }
+
+
+/* =========================================================
+   CIBnext - Pagination
+   ========================================================= */
+
+.pagination a,
+.pagination span {
+    padding: 2px 8px;
+    margin-right: 3px;
+    text-decoration: none;
+}
+
+.pagination a {
+    color: #06c;
+}
+
+.pagination span.current {
+    font-weight: bold;
+    color: #000;
+}
+
+
+/* =========================================================
+   Legacy Validation Popup Compatibility
+   Keep until all pages use message-* classes
+   ========================================================= */
+
 .validation-modal {
     display: none;
     position: fixed;
     z-index: 1055;
     inset: 0;
+    padding: 20px;
     background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
-    padding: 20px;
 }
 
     .validation-modal.show {
@@ -47,9 +406,9 @@ body {
     }
 
 .validation-modal-content {
-    background-color: #fff;
     width: 100%;
     max-width: 500px;
+    background-color: #fff;
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     overflow: hidden;
@@ -104,3 +463,37 @@ body {
         .validation-modal-footer button:hover {
             background-color: #286090;
         }
+
+
+/* =========================================================
+   Responsive Styles
+   ========================================================= */
+
+@media (max-width: 800px) {
+    .address-box {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .message-overlay {
+        padding: 12px;
+    }
+
+    .message-dialog {
+        max-width: 100%;
+    }
+
+    .message-header,
+    .message-body {
+        padding: 14px;
+    }
+
+    .message-footer {
+        padding: 10px 14px;
+    }
+}

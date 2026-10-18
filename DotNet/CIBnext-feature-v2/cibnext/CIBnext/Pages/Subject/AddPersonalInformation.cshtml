@@ -3,7 +3,7 @@
 
 <style>
     body {
-        font-family: Tahoma;
+        font-family: Tahoma, sans-serif;
         font-size: 13px;
     }
 
@@ -37,6 +37,7 @@
     input, select {
         width: 180px;
         height: 22px;
+        box-sizing: border-box;
     }
 
     .address-box {
@@ -45,12 +46,44 @@
         width: 32%;
         display: inline-block;
         vertical-align: top;
+        box-sizing: border-box;
     }
 
+        .address-box h4 {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
     .btn {
+        display: inline-block;
         margin-top: 10px;
-        padding: 3px 10px;
+        padding: 7px 18px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        font-family: Tahoma, sans-serif;
+        font-size: 13px;
+        text-decoration: none;
+        cursor: pointer;
     }
+
+    .btn-save {
+        background: #2e7d32;
+        color: white;
+    }
+
+        .btn-save:hover {
+            background: #1b5e20;
+        }
+
+    .btn-exit {
+        background: #e5e7eb;
+        color: #333;
+        border-color: #bbb;
+    }
+
+        .btn-exit:hover {
+            background: #d1d5db;
+        }
 
     .auto-code {
         display: inline-block;
@@ -61,6 +94,7 @@
         background: #eee;
         color: #666;
         border: 1px solid #999;
+        box-sizing: border-box;
     }
 
     .label-hint {
@@ -71,6 +105,95 @@
         width: 24px;
         height: 24px;
         vertical-align: middle;
+        cursor: pointer;
+    }
+
+    .message-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.55);
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .message-dialog {
+        background: #fff;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 8px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        font-family: Tahoma, sans-serif;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        background: #fbe9e7;
+        border-bottom: 1px solid #efc7c3;
+    }
+
+        .message-header h3 {
+            margin: 0;
+            color: #b71c1c;
+            font-size: 18px;
+        }
+
+    .message-close {
+        border: none;
+        background: transparent;
+        color: #555;
+        font-size: 26px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .message-body {
+        padding: 20px;
+        color: #c62828 !important;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .message-footer {
+        padding: 12px 20px;
+        text-align: right;
+        border-top: 1px solid #ddd;
+        background: #fafafa;
+    }
+
+    .message-ok {
+        padding: 8px 24px;
+        background: #b71c1c;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .message-ok:hover {
+            background: #8e0000;
+        }
+
+    @@media (max-width: 800px) {
+        .address-box {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        table {
+            display: block;
+            overflow-x: auto;
+        }
     }
 </style>
 
@@ -79,58 +202,42 @@
 </div>
 
 <form method="post">
+    @Html.AntiForgeryToken()
 
-    
-    @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+    @if (!string.IsNullOrWhiteSpace(Model.ValidationMessage))
     {
         <div id="validationModal"
-             style="position:fixed; inset:0; z-index:99999;
-            display:flex; align-items:center; justify-content:center;
-            background:rgba(0,0,0,0.55); padding:20px;">
+             class="message-overlay"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="validationModalTitle">
 
-            <div style="background:#fff; width:100%; max-width:500px;
-                border-radius:6px; box-shadow:0 8px 30px rgba(0,0,0,0.3);
-                overflow:hidden; font-family:Tahoma,sans-serif;">
-
-                <div style="display:flex; justify-content:space-between;
-                    align-items:center; padding:15px 20px;
-                    background:#f2dede; border-bottom:1px solid #e5c6c6;">
-
-                    <h3 style="margin:0; padding:0; color:#a94442;
-                        font-size:18px;">
-                        Validation Messages
-                    </h3>
+            <div class="message-dialog">
+                <div class="message-header">
+                    <h3 id="validationModalTitle">Please Check</h3>
 
                     <button type="button"
-                            onclick="document.getElementById('validationModal').style.display='none';"
-                            style="border:none; background:transparent;
-                        color:#555; font-size:28px; cursor:pointer;
-                        line-height:1;">
+                            class="message-close"
+                            aria-label="Close message"
+                            onclick="closeValidationModal()">
                         &times;
                     </button>
                 </div>
 
-                <div style="padding:20px; color:#c00; font-size:14px;
-                    line-height:1.8; background:#fff;">
-                    @Html.Raw(Model.ValidationMessage)
+                <div class="message-body">
+                    @Model.ValidationMessage
                 </div>
 
-                <div style="padding:12px 20px; text-align:right;
-                    border-top:1px solid #ddd; background:#fafafa;">
-
+                <div class="message-footer">
                     <button type="button"
-                            onclick="document.getElementById('validationModal').style.display='none';"
-                            style="padding:8px 22px; background:#c62828;
-                        color:#fff; border:none; border-radius:4px;
-                        cursor:pointer; font-size:14px;">
+                            class="message-ok"
+                            onclick="closeValidationModal()">
                         OK
                     </button>
                 </div>
-
             </div>
         </div>
     }
-
 
     <input asp-for="Subject.FISubjectCode" type="hidden" />
 
@@ -171,13 +278,15 @@
             <tr>
                 <td>Sector Type</td>
                 <td>
-                    <select asp-for="Subject.SectorType" asp-items="Model.SectorTypeList">
+                    <select asp-for="Subject.SectorType"
+                            asp-items="Model.SectorTypeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
                 <td>Sector Code</td>
                 <td>
-                    <select asp-for="Subject.SectorCode" asp-items="Model.SectorCodeList">
+                    <select asp-for="Subject.SectorCode"
+                            asp-items="Model.SectorCodeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
@@ -209,7 +318,8 @@
                 <td><input asp-for="Subject.MothersName" /></td>
                 <td class="label-hint">Country of Birth</td>
                 <td>
-                    <select asp-for="Subject.CountryOfBirth" asp-items="Model.CountryList">
+                    <select asp-for="Subject.CountryOfBirth"
+                            asp-items="Model.CountryList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
@@ -225,7 +335,8 @@
             <tr>
                 <td>Gender</td>
                 <td>
-                    <select asp-for="Subject.Gender" asp-items="Model.GenderList">
+                    <select asp-for="Subject.Gender"
+                            asp-items="Model.GenderList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
@@ -233,8 +344,14 @@
                 <td><input asp-for="Subject.NationalIDNumber" /></td>
                 <td>Smart ID</td>
                 <td>
-                    <input asp-for="Subject.SmartIDNumber" style="width:150px" />
-                    <button type="button" class="search-btn" title="Search by Smart ID">🔍</button>
+                    <input asp-for="Subject.SmartIDNumber"
+                           style="width:150px" />
+                    <button type="button"
+                            class="search-btn"
+                            title="Search by Smart ID"
+                            aria-label="Search by Smart ID">
+                        🔍
+                    </button>
                 </td>
             </tr>
         </table>
@@ -246,11 +363,13 @@
             Postal Code<br />
             <input asp-for="Subject.PermanentAddress.PostalCode" /><br />
             District<br />
-            <select asp-for="Subject.PermanentAddress.District" asp-items="Model.DistrictList">
+            <select asp-for="Subject.PermanentAddress.District"
+                    asp-items="Model.DistrictList">
                 <option value="">--Select--</option>
             </select><br />
             Country<br />
-            <select asp-for="Subject.PermanentAddress.CountryCode" asp-items="Model.CountryList">
+            <select asp-for="Subject.PermanentAddress.CountryCode"
+                    asp-items="Model.CountryList">
                 <option value="">--Select--</option>
             </select>
         </div>
@@ -262,11 +381,13 @@
             Postal Code<br />
             <input asp-for="Subject.PresentAddress.PostalCode" /><br />
             District<br />
-            <select asp-for="Subject.PresentAddress.District" asp-items="Model.DistrictList">
+            <select asp-for="Subject.PresentAddress.District"
+                    asp-items="Model.DistrictList">
                 <option value="">--Select--</option>
             </select><br />
             Country<br />
-            <select asp-for="Subject.PresentAddress.CountryCode" asp-items="Model.CountryList">
+            <select asp-for="Subject.PresentAddress.CountryCode"
+                    asp-items="Model.CountryList">
                 <option value="">--Select--</option>
             </select>
         </div>
@@ -278,11 +399,13 @@
             Postal Code<br />
             <input asp-for="Subject.BusinessAddress.PostalCode" /><br />
             District<br />
-            <select asp-for="Subject.BusinessAddress.District" asp-items="Model.DistrictList">
+            <select asp-for="Subject.BusinessAddress.District"
+                    asp-items="Model.DistrictList">
                 <option value="">--Select--</option>
             </select><br />
             Country<br />
-            <select asp-for="Subject.BusinessAddress.CountryCode" asp-items="Model.CountryList">
+            <select asp-for="Subject.BusinessAddress.CountryCode"
+                    asp-items="Model.CountryList">
                 <option value="">--Select--</option>
             </select>
         </div>
@@ -294,7 +417,8 @@
             <tr>
                 <td>ID Type</td>
                 <td>
-                    <select asp-for="Subject.IDType" asp-items="Model.IdTypeList">
+                    <select asp-for="Subject.IDType"
+                            asp-items="Model.IdTypeList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
@@ -304,7 +428,8 @@
             <tr>
                 <td>ID Issue Country</td>
                 <td>
-                    <select asp-for="Subject.IDIssueCountryCode" asp-items="Model.CountryList">
+                    <select asp-for="Subject.IDIssueCountryCode"
+                            asp-items="Model.CountryList">
                         <option value="">--Select--</option>
                     </select>
                 </td>
@@ -336,7 +461,28 @@
         </table>
     </fieldset>
 
-    <button type="submit" class="btn">Save</button>
-    <a href="/Subject/PersonalInformation" class="btn">Exit</a>
+    <button type="submit" class="btn btn-save">
+        Save
+    </button>
 
+    <a asp-page="/Subject/PersonalInformation"
+       class="btn btn-exit">
+        Exit
+    </a>
 </form>
+
+<script>
+    function closeValidationModal() {
+        const modal = document.getElementById("validationModal");
+
+        if (modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeValidationModal();
+        }
+    });
+</script>

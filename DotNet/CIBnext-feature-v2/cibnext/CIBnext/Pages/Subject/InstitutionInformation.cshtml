@@ -1,5 +1,26 @@
 ﻿@page
 @model CIBnext.Pages.Subject.InstitutionInformationModel
+
+@{
+    var displayMessage = Model.PopupMessage;
+    var displayType = Model.PopupType;
+
+    if (string.IsNullOrWhiteSpace(displayMessage) &&
+        !string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        displayMessage = Model.SuccessMessage;
+        displayType = "success";
+    }
+
+    var popupTitle = displayType switch
+    {
+        "success" => "Success",
+        "warning" => "Please Check",
+        "info" => "Information",
+        _ => "Error"
+    };
+}
+
 <style>
     .page-title {
         font-size: 30px;
@@ -45,9 +66,11 @@
     .btn-small {
         padding: 2px 8px;
         font-size: 12px;
+        cursor: pointer;
     }
 
-    .pagination a, .pagination span {
+    .pagination a,
+    .pagination span {
         padding: 2px 8px;
         margin-right: 3px;
         text-decoration: none;
@@ -61,45 +84,134 @@
         font-weight: bold;
         color: #000;
     }
+
+    /* Delete confirmation buttons only.
+       Shared message popup styles are in site.css. */
+    .confirm-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .confirm-delete {
+        padding: 8px 18px;
+        background: #b71c1c;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .confirm-delete:hover {
+        background: #8e0000;
+    }
+
+    .confirm-cancel {
+        padding: 8px 18px;
+        background: #777;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .confirm-cancel:hover {
+        background: #555;
+    }
+
+    @@media (max-width: 800px) {
+        .section {
+            overflow-x: auto;
+        }
+
+        table {
+            min-width: 750px;
+        }
+    }
 </style>
 
-<div class="page-title">
-    Institution Information
-</div>
+<div class="page-title">Institution Information</div>
+
+@if (!string.IsNullOrWhiteSpace(displayMessage))
+{
+    <div id="messageModal"
+         class="message-overlay"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="messageModalTitle">
+
+        <div class="message-dialog">
+            <div class="message-header @displayType">
+                <h3 id="messageModalTitle">@popupTitle</h3>
+
+                <button type="button"
+                        class="message-close"
+                        aria-label="Close message">
+                    &times;
+                </button>
+            </div>
+
+            <div class="message-body @displayType">@displayMessage</div>
+
+            <div class="message-footer">
+                <button type="button"
+                        class="message-button @displayType">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
 <form method="get">
+    <input type="hidden" name="SearchSubmitted" value="true" />
+
     <div class="section">
         <fieldset>
             <legend>Search Option</legend>
+
             <table style="border:none">
                 <tr>
                     <td style="border:none">Branch Code:</td>
                     <td style="border:none">
-                        <select asp-for="Subject.BranchCode" asp-items="Model.BranchCodeList">
+                        <select asp-for="Subject.BranchCode"
+                                asp-items="Model.BranchCodeList">
                             <option value="">All Branch</option>
                         </select>
                     </td>
+
                     <td style="border:none">F.I. Subject Code:</td>
                     <td style="border:none">
                         <input asp-for="Subject.FISubjectCode" />
                     </td>
+
                     <td style="border:none">Institution Name:</td>
                     <td style="border:none">
                         <input asp-for="Subject.TradeName" />
                     </td>
                 </tr>
+
                 <tr>
                     <td style="border:none">Business Address</td>
                     <td style="border:none">
-                        <input name="Subject.BusinessAddress.Street" value="@Model.Subject.BusinessAddress?.Street" />
+                        <input name="Subject.BusinessAddress.Street"
+                               value="@Model.Subject.BusinessAddress?.Street" />
                     </td>
+
                     <td style="border:none">CIF No</td>
                     <td style="border:none">
                         <input asp-for="Subject.CifNo" />
                     </td>
                 </tr>
             </table>
+
             <button type="submit" class="btn-small">Search</button>
-            <a href="/Subject/InstitutionInformation" class="btn-small">Clear</a>
+
+            <a href="/Subject/InstitutionInformation" class="btn-small">
+                Clear
+            </a>
+
             <a href="#">Go To Error List</a>
         </fieldset>
     </div>
@@ -109,54 +221,81 @@
     <fieldset>
         <legend>Institution Information</legend>
 
-        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
-        {
-            <div style="color:red; font-weight:bold;">@Model.DeleteMessage</div>
-        }
-
         <h3>Total Count: @Model.TotalCount</h3>
 
-        <form method="post" asp-page-handler="Delete">
-            <table>
-                <tr>
-                    <th></th>
-                    <th>Action</th>
-                    <th>Branch</th>
-                    <th>Subject Code</th>
-                    <th>Title</th>
-                    <th>Trade Name</th>
-                    <th>Legal Form</th>
-                    <th>CIF No</th>
-                    <th>Address</th>
-                </tr>
+        <form method="post" asp-page-handler="Delete" id="deleteForm">
+            @Html.AntiForgeryToken()
 
-                @if (Model.InstitutionList != null && Model.InstitutionList.Any())
-                {
-                    @foreach (var inst in Model.InstitutionList)
+            <input type="hidden" asp-for="Subject.BranchCode" />
+            <input type="hidden" asp-for="Subject.FISubjectCode" />
+            <input type="hidden" asp-for="Subject.TradeName" />
+            <input type="hidden" asp-for="Subject.CifNo" />
+
+            <input type="hidden"
+                   name="Subject.BusinessAddress.Street"
+                   value="@Model.Subject.BusinessAddress?.Street" />
+
+            <input type="hidden" asp-for="PageIndex" />
+            <input type="hidden" asp-for="SearchSubmitted" />
+
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Action</th>
+                        <th>Branch</th>
+                        <th>Subject Code</th>
+                        <th>Title</th>
+                        <th>Trade Name</th>
+                        <th>Legal Form</th>
+                        <th>CIF No</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.InstitutionList != null &&
+                         Model.InstitutionList.Any())
+                    {
+                        @foreach (var inst in Model.InstitutionList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox"
+                                           name="SelectedCodes"
+                                           value="@inst.FISubjectCode" />
+                                </td>
+
+                                <td>
+                                    <a href="/Subject/AddInstitutionInformation?fiSubjectCode=@Uri.EscapeDataString(inst.FISubjectCode ?? string.Empty)">
+                                        Edit/View
+                                    </a>
+                                </td>
+
+                                <td>@inst.BranchCode</td>
+                                <td>@inst.FISubjectCode</td>
+                                <td>@inst.Title</td>
+                                <td>@inst.TradeName</td>
+                                <td>@inst.LegalFormText</td>
+                                <td>@inst.CifNo</td>
+                                <td>@(inst.BusinessAddress?.Street ?? "")</td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td><input type="checkbox" name="SelectedCodes" value="@inst.FISubjectCode" /></td>
-                            <td><a href="/Subject/AddInstitutionInformation?fiSubjectCode=@inst.FISubjectCode">Edit/View</a></td>
-                            <td>@inst.BranchCode</td>
-                            <td>@inst.FISubjectCode</td>
-                            <td>@inst.Title</td>
-                            <td>@inst.TradeName</td>
-                            <td>@inst.LegalFormText</td>
-                            <td>@inst.CifNo</td>
-                            <td>@(inst.BusinessAddress != null ? inst.BusinessAddress.Street : "")</td>
+                            <td colspan="9" style="text-align:center;">
+                                No records found
+                            </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="9" style="text-align:center;">No records found</td>
-                    </tr>
-                }
+                </tbody>
             </table>
 
             <div class="pagination" style="margin-top:8px">
                 @{ var lastDisplayedPage = 0; }
+
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     var displayPage = i <= 3
@@ -179,7 +318,14 @@
                     }
                     else
                     {
-                        <a href="/Subject/InstitutionInformation?PageIndex=@i&Subject.BranchCode=@Model.Subject.BranchCode&Subject.FISubjectCode=@Model.Subject.FISubjectCode&Subject.TradeName=@Model.Subject.TradeName&Subject.CifNo=@Model.Subject.CifNo">@i</a>
+                        <a asp-page="/Subject/InstitutionInformation"
+                           asp-route-PageIndex="@i"
+                           asp-route-SearchSubmitted="@Model.SearchSubmitted"
+                           asp-route-Subject.BranchCode="@Model.Subject.BranchCode"
+                           asp-route-Subject.FISubjectCode="@Model.Subject.FISubjectCode"
+                           asp-route-Subject.TradeName="@Model.Subject.TradeName"
+                           asp-route-Subject.CifNo="@Model.Subject.CifNo"
+                           asp-route-Subject.BusinessAddress.Street="@Model.Subject.BusinessAddress?.Street">@i</a>
                     }
 
                     lastDisplayedPage = i;
@@ -188,10 +334,112 @@
 
             <br />
 
-            <a href="/Subject/AddInstitutionInformation" class="btn-small">Add</a>
-            <button class="btn-small" onclick="location.reload();" type="button">Refresh</button>
-            <button type="submit" class="btn-small" onclick="return confirm('are you delete Selected record ?');">Delete</button>
-        </form>
+            <a href="/Subject/AddInstitutionInformation" class="btn-small">
+                Add
+            </a>
 
+            <button class="btn-small"
+                    onclick="location.reload();"
+                    type="button">
+                Refresh
+            </button>
+
+            <button type="button"
+                    class="btn-small"
+                    onclick="openDeleteConfirm()">
+                Delete
+            </button>
+        </form>
     </fieldset>
 </div>
+
+<div id="deleteConfirmModal"
+     class="message-overlay hidden"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="deleteConfirmTitle">
+
+    <div class="message-dialog">
+        <div class="message-header warning">
+            <h3 id="deleteConfirmTitle">Confirm Deletion</h3>
+
+            <button type="button"
+                    class="message-close"
+                    aria-label="Close confirmation"
+                    onclick="closeDeleteConfirm()">
+                &times;
+            </button>
+        </div>
+
+        <div class="message-body warning">
+            Are you sure you want to delete the selected records?
+        </div>
+
+        <div class="message-footer">
+            <div class="confirm-buttons">
+                <button type="button"
+                        class="confirm-cancel"
+                        onclick="closeDeleteConfirm()">
+                    Cancel
+                </button>
+
+                <button type="button"
+                        class="confirm-delete"
+                        onclick="confirmDelete()">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteConfirm() {
+        const selected = document.querySelectorAll(
+            '#deleteForm input[name="SelectedCodes"]:checked'
+        );
+
+        if (selected.length === 0) {
+            showClientMessage(
+                'warning',
+                'Please select at least one record to delete.'
+            );
+            return;
+        }
+
+        const modal = document.getElementById('deleteConfirmModal');
+
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            modal.setAttribute('aria-hidden', 'false');
+        }
+    }
+
+    function closeDeleteConfirm() {
+        const modal = document.getElementById('deleteConfirmModal');
+
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+        }
+    }
+
+    function confirmDelete() {
+        const form = document.getElementById('deleteForm');
+
+        if (form) {
+            closeDeleteConfirm();
+            form.requestSubmit();
+        }
+    }
+
+    function showClientMessage(type, message) {
+        if (typeof window.showSharedMessage === 'function') {
+            window.showSharedMessage(type, message);
+        } else {
+            alert(message);
+        }
+    }
+</script>

@@ -69,9 +69,17 @@ namespace CIBnext.Pages.Contract
         [BindProperty]
         public List<string> SelectedLinks { get; set; } = new List<string>();
 
+        // Popup messages
         public string ValidationMessage { get; set; }
+        public string ValidationMessageType { get; set; }
+        public string ValidationMessageTitle { get; set; }
 
         public string DeleteMessage { get; set; }
+        public string DeleteMessageType { get; set; }
+        public string DeleteMessageTitle { get; set; }
+
+        [TempData]
+        public string SuccessMessage { get; set; }
 
         // Search dropdown: branch code
         public List<SelectListItem> BranchCodeList { get; set; }
@@ -95,8 +103,37 @@ namespace CIBnext.Pages.Contract
         public void OnGet()
         {
             LoadDropdowns();
+
+            // Detect whether the Search form was submitted.
+            // The Clear link does not include any search query keys.
+            bool searchSubmitted =
+                Request.Query.ContainsKey("SearchBranchCode") ||
+                Request.Query.ContainsKey("SearchPrimaryCode") ||
+                Request.Query.ContainsKey("SearchPrimaryName") ||
+                Request.Query.ContainsKey("SearchSecondaryCode") ||
+                Request.Query.ContainsKey("SearchSecondaryName") ||
+                Request.Query.ContainsKey("SearchContractCode");
+
+            bool hasSearchCriteria =
+                !string.IsNullOrWhiteSpace(SearchBranchCode) ||
+                !string.IsNullOrWhiteSpace(SearchPrimaryCode) ||
+                !string.IsNullOrWhiteSpace(SearchPrimaryName) ||
+                !string.IsNullOrWhiteSpace(SearchSecondaryCode) ||
+                !string.IsNullOrWhiteSpace(SearchSecondaryName) ||
+                !string.IsNullOrWhiteSpace(SearchContractCode);
+
+            if (searchSubmitted && !hasSearchCriteria)
+            {
+                ValidationMessage =
+                    "Please provide at least one search option.";
+
+                ValidationMessageType = "warning";
+                ValidationMessageTitle = "Search Required";
+            }
+
             LoadLinkList();
 
+            // Load the selected record for editing.
             if (!string.IsNullOrEmpty(EditContract))
             {
                 var contractBLL = new ContractBLL(_configuration);
@@ -118,6 +155,9 @@ namespace CIBnext.Pages.Contract
                 {
                     ValidationMessage =
                         "Selected record could not be found - it may have been deleted.";
+
+                    ValidationMessageType = "warning";
+                    ValidationMessageTitle = "Record Not Found";
                 }
             }
         }
@@ -143,6 +183,9 @@ namespace CIBnext.Pages.Contract
 
             if (!string.IsNullOrEmpty(ValidationMessage))
             {
+                ValidationMessageType = "warning";
+                ValidationMessageTitle = "Validation Required";
+
                 LoadLinkList();
                 return Page();
             }
@@ -162,9 +205,14 @@ namespace CIBnext.Pages.Contract
                 ValidationMessage =
                     "Save failed. Please check the values and try again.";
 
+                ValidationMessageType = "error";
+                ValidationMessageTitle = "Save Failed";
+
                 LoadLinkList();
                 return Page();
             }
+
+            SuccessMessage = "Contract link saved successfully.";
 
             return RedirectToPage("/Contract/ContractLinks");
         }
@@ -177,6 +225,9 @@ namespace CIBnext.Pages.Contract
             {
                 DeleteMessage =
                     "Please select at least one record to delete.";
+
+                DeleteMessageType = "warning";
+                DeleteMessageTitle = "Selection Required";
 
                 LoadLinkList();
                 return Page();
@@ -208,6 +259,17 @@ namespace CIBnext.Pages.Contract
             if (!success)
             {
                 DeleteMessage = "Delete failed. Please try again.";
+
+                DeleteMessageType = "error";
+                DeleteMessageTitle = "Delete Failed";
+            }
+            else
+            {
+                DeleteMessage =
+                    "Selected record(s) deleted successfully.";
+
+                DeleteMessageType = "success";
+                DeleteMessageTitle = "Success";
             }
 
             LoadLinkList();
@@ -233,10 +295,9 @@ namespace CIBnext.Pages.Contract
 
         private void LoadDropdowns()
         {
-            // Retrieve branch records from MiscBLL.
             var branches = _miscBLL.GetBranches().Result;
 
-            // Search Option: show branch codes.
+            // Search Option: display branch codes.
             BranchCodeList = branches
                 .Select(x => new SelectListItem
                 {
@@ -245,8 +306,8 @@ namespace CIBnext.Pages.Contract
                 })
                 .ToList();
 
-            // Add Contract Link: show branch names.
-            // The selected value remains the regular branch code.
+            // Add/Edit Contract Link: display branch names.
+            // Keep the selected value as the regular branch code.
             BranchNameList = branches
                 .Select(x => new SelectListItem
                 {
@@ -255,7 +316,6 @@ namespace CIBnext.Pages.Contract
                 })
                 .ToList();
 
-            // Keep the existing link type dropdown source.
             LinkTypeList = _lovBLL
                 .GetListOfValues(LovTypes.LINK_TYPES)
                 .Select(x => new SelectListItem

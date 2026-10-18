@@ -1,4 +1,3 @@
-
 using CIBnext.BLL;
 using CIBnext.DAL;
 using CIBnext.DAO;
@@ -34,15 +33,26 @@ namespace CIBnext.Pages.Subject
         [BindProperty]
         public Institution Subject { get; set; } = new Institution();
 
-        public string ValidationMessage { get; set; }
+        public string ValidationMessage { get; set; } = string.Empty;
         public bool IsEdit { get; set; }
 
         public List<SelectListItem> BranchCodeList { get; set; }
+            = new List<SelectListItem>();
+
         public List<SelectListItem> CountryList { get; set; }
+            = new List<SelectListItem>();
+
         public List<SelectListItem> SectorTypeList { get; set; }
+            = new List<SelectListItem>();
+
         public List<SelectListItem> SectorCodeList { get; set; }
+            = new List<SelectListItem>();
+
         public List<SelectListItem> LegalFormList { get; set; }
+            = new List<SelectListItem>();
+
         public List<SelectListItem> DistrictList { get; set; }
+            = new List<SelectListItem>();
 
         private void LoadDropdowns()
         {
@@ -51,49 +61,55 @@ namespace CIBnext.Pages.Subject
                 {
                     Value = x.CibBranchCode,
                     Text = x.BranchName
-                }).ToList();
+                })
+                .ToList();
 
             CountryList = _lovBLL.GetListOfValues(LovTypes.COUNTRIES)
                 .Select(x => new SelectListItem
                 {
                     Value = x.Key,
                     Text = x.Value
-                }).ToList();
+                })
+                .ToList();
 
             SectorTypeList = _lovBLL.GetListOfValues(LovTypes.SECTOR_TYPES)
                 .Select(x => new SelectListItem
                 {
                     Value = x.Key,
                     Text = x.Value
-                }).ToList();
+                })
+                .ToList();
 
             SectorCodeList = _lovBLL.GetListOfValues(LovTypes.SECTOR_CODES)
                 .Select(x => new SelectListItem
                 {
                     Value = x.Key,
                     Text = x.Value
-                }).ToList();
+                })
+                .ToList();
 
             LegalFormList = _lovBLL.GetListOfValues(LovTypes.INSTITUTION_LEGAL_FORMS)
                 .Select(x => new SelectListItem
                 {
                     Value = x.Key,
                     Text = x.Value
-                }).ToList();
+                })
+                .ToList();
 
             DistrictList = _lovBLL.GetDistrictsByCountryCode("BD")
                 .Select(x => new SelectListItem
                 {
                     Value = x,
                     Text = x
-                }).ToList();
+                })
+                .ToList();
         }
 
         public void OnGet(string fiSubjectCode)
         {
             LoadDropdowns();
 
-            if (!string.IsNullOrEmpty(fiSubjectCode))
+            if (!string.IsNullOrWhiteSpace(fiSubjectCode))
             {
                 var subjectBLL = new SubjectBLL(_configuration);
                 var existing = subjectBLL.GetInstitution(fiSubjectCode);
@@ -105,7 +121,8 @@ namespace CIBnext.Pages.Subject
                 }
                 else
                 {
-                    ValidationMessage = "Institution not found for subject code: " + fiSubjectCode;
+                    ValidationMessage =
+                        "No institution was found for the provided subject code.";
                 }
             }
 
@@ -123,50 +140,71 @@ namespace CIBnext.Pages.Subject
         {
             LoadDropdowns();
 
-            IsEdit = !string.IsNullOrEmpty(Subject.FISubjectCode);
+            IsEdit = !string.IsNullOrWhiteSpace(Subject.FISubjectCode);
+
+            if (Subject.BusinessAddress == null)
+                Subject.BusinessAddress = new Address();
+
+            if (Subject.FactoryAddress == null)
+                Subject.FactoryAddress = new Address();
 
             ModelState.Clear();
 
             ValidationMessage = ValidateInstitution(Subject);
 
-            if (!string.IsNullOrEmpty(ValidationMessage))
+            if (!string.IsNullOrWhiteSpace(ValidationMessage))
             {
                 return Page();
             }
 
-            Subject.RecordType = "I";
-            Subject.FICode = "046";
-            Subject.MakeBy = User.Identity.Name;
-            Subject.MakeDate = DateTime.Now;
-            Subject.RecordStatus = "C";
-
-            var subjectDAL = new SubjectDAL(_configuration);
-            string newSubjectCode = subjectDAL.InsertInstitution(Subject);
-
-            if (string.IsNullOrEmpty(newSubjectCode))
+            try
             {
-                ValidationMessage = "Save failed: " + subjectDAL.Message;
+                Subject.RecordType = "I";
+                Subject.FICode = "046";
+                Subject.MakeBy = User.Identity?.Name ?? "SYSTEM";
+                Subject.MakeDate = DateTime.Now;
+                Subject.RecordStatus = "C";
+
+                var subjectDAL = new SubjectDAL(_configuration);
+                string newSubjectCode = subjectDAL.InsertInstitution(Subject);
+
+                if (string.IsNullOrWhiteSpace(newSubjectCode))
+                {
+                    ValidationMessage =
+                        "The institution could not be saved. Please check the information and try again.";
+
+                    return Page();
+                }
+
+                TempData["SuccessMessage"] =
+                    $"Institution saved successfully. Subject code: {newSubjectCode}";
+
+                return RedirectToPage("/Subject/InstitutionInformation");
+            }
+            catch (Exception)
+            {
+                ValidationMessage =
+                    "An unexpected error occurred while saving the institution. Please try again.";
+
                 return Page();
             }
-
-            return RedirectToPage("/Subject/InstitutionInformation");
         }
 
         private string ValidateInstitution(Institution institution)
         {
-            var iv = new InstitutionValidator();
-            var res = iv.Validate(institution);
+            var validator = new InstitutionValidator();
+            var result = validator.Validate(institution);
 
-            if (!res.IsValid)
+            if (!result.IsValid)
             {
-                return "- " + string.Join(
-                    "<br/>- ",
-                    res.Errors.Select(e => e.ErrorMessage).Distinct());
+                return string.Join(
+                    Environment.NewLine,
+                    result.Errors
+                        .Select(error => "- " + error.ErrorMessage)
+                        .Distinct());
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return string.Empty;
         }
     }
 }

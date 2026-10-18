@@ -45,24 +45,52 @@ namespace CIBnext.Pages.Contract
         [BindProperty]
         public bool SmeFlag { get; set; }
 
-        public string ValidationMessage { get; set; }
-        public string BorrowerLookupMessage { get; set; }
+        // Validation and popup messages
+        public string ValidationMessage { get; set; } = string.Empty;
+
+        public string ValidationMessageType { get; set; } = "warning";
+
+        public string ValidationMessageTitle { get; set; } = "Validation Message";
+
+        public string BorrowerLookupMessage { get; set; } = string.Empty;
+
+        public string BorrowerLookupMessageType { get; set; } = "warning";
+
+        public string BorrowerLookupMessageTitle { get; set; } = "Borrower Lookup";
+
         public bool IsEdit { get; set; }
 
+        [TempData]
+        public string SuccessMessage { get; set; }
+
         public List<SelectListItem> BranchCodeList { get; set; }
+
         public List<SelectListItem> ContractTypeList { get; set; }
+
         public List<SelectListItem> ContractPhaseList { get; set; }
+
         public List<SelectListItem> ContractStatusList { get; set; }
+
         public List<SelectListItem> CurrencyList { get; set; }
+
         public List<SelectListItem> ReorganizedCreditList { get; set; }
+
         public List<SelectListItem> ThirdPartyGuaranteeTypeList { get; set; }
+
         public List<SelectListItem> SecurityTypeList { get; set; }
+
         public List<SelectListItem> DefaulterStatusList { get; set; }
+
         public List<SelectListItem> PeriodicityOfPaymentList { get; set; }
+
         public List<SelectListItem> MethodOfPaymentList { get; set; }
+
         public List<SelectListItem> NoOfDaysPaymentDelayList { get; set; }
+
         public List<SelectListItem> TypeOfLeasedGoodList { get; set; }
+
         public List<SelectListItem> EconomicPurposeCodeList { get; set; }
+
         public List<SelectListItem> EnterpriseTypeList { get; set; }
 
         private void LoadDropdowns()
@@ -72,48 +100,62 @@ namespace CIBnext.Pages.Contract
                 {
                     Value = x.CibBranchCode,
                     Text = x.BranchName
-                }).ToList();
+                })
+                .ToList();
 
             ContractTypeList = _lovBLL.GetListOfValues(LovTypes.CONTRACT_TYPES_INST)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             ContractPhaseList = _lovBLL.GetListOfValues(LovTypes.CONTRACT_PHASES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             ContractStatusList = _lovBLL.GetListOfValues(LovTypes.CONTRACT_STATUS)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             CurrencyList = _lovBLL.GetListOfValues(LovTypes.CURRENCIES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             ReorganizedCreditList = _lovBLL.GetListOfValues(LovTypes.REORGANIZED_CREDIT)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             ThirdPartyGuaranteeTypeList = _lovBLL.GetListOfValues(LovTypes.THIRD_PARTY_GUARANTEE_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             SecurityTypeList = _lovBLL.GetListOfValues(LovTypes.SECURITY_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             PeriodicityOfPaymentList = _lovBLL.GetListOfValues(LovTypes.PERIODICITY_OF_PAYMENT)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             MethodOfPaymentList = _lovBLL.GetListOfValues(LovTypes.PAYMENT_METHODS)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             NoOfDaysPaymentDelayList = _lovBLL.GetListOfValues(LovTypes.NO_OF_DAYS)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             TypeOfLeasedGoodList = _lovBLL.GetListOfValues(LovTypes.LEASED_GOOD_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             EconomicPurposeCodeList = _lovBLL.GetListOfValues(LovTypes.ECONOMIC_PURPOSE_CODES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
             EnterpriseTypeList = _lovBLL.GetListOfValues(LovTypes.ENTERPRISE_TYPES)
-                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value }).ToList();
+                .Select(x => new SelectListItem { Value = x.Key, Text = x.Value })
+                .ToList();
 
-            // Defaulter Status-LOV no exist
+            // Defaulter Status has no LOV entry.
             DefaulterStatusList = new List<SelectListItem>
             {
                 new SelectListItem { Value = "Y", Text = "Yes" },
@@ -143,36 +185,62 @@ namespace CIBnext.Pages.Contract
                 else
                 {
                     ValidationMessage = "Contract not found for code: " + contractCode;
+                    ValidationMessageType = "error";
+                    ValidationMessageTitle = "Contract Not Found";
                 }
             }
 
             if (!IsEdit)
+            {
                 Contract.MakeDate = DateTime.Now;
+            }
         }
 
         public IActionResult OnPostLookupBorrower()
         {
             LoadDropdowns();
 
-            if (string.IsNullOrEmpty(Contract.FISubjectCode))
+            IsEdit = !string.IsNullOrEmpty(Contract.FIContractCode);
+
+            if (string.IsNullOrWhiteSpace(Contract.FISubjectCode))
             {
-                BorrowerLookupMessage = "Please enter F.I. Subject Code first.";
+                BorrowerLookupMessage =
+                    "Please enter F.I. Subject Code first.";
+
+                BorrowerLookupMessageType = "warning";
+                BorrowerLookupMessageTitle = "Borrower Lookup";
+
                 return Page();
             }
 
-            var subjectBLL = new SubjectBLL(_configuration);
-            var person = subjectBLL.GetPerson(Contract.FISubjectCode);
-            var institution = subjectBLL.GetInstitution(Contract.FISubjectCode);
-
-            string name = person?.Name ?? institution?.TradeName;
-
-            if (string.IsNullOrEmpty(name))
+            try
             {
-                BorrowerLookupMessage = "No subject found for this F.I. Subject Code.";
+                var subjectBLL = new SubjectBLL(_configuration);
+                var person = subjectBLL.GetPerson(Contract.FISubjectCode);
+                var institution = subjectBLL.GetInstitution(Contract.FISubjectCode);
+
+                string name = person?.Name ?? institution?.TradeName;
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    BorrowerLookupMessage =
+                        "No subject found for this F.I. Subject Code.";
+
+                    BorrowerLookupMessageType = "warning";
+                    BorrowerLookupMessageTitle = "Borrower Not Found";
+                }
+                else
+                {
+                    Contract.BorrowerName = name;
+                }
             }
-            else
+            catch
             {
-                Contract.BorrowerName = name;
+                BorrowerLookupMessage =
+                    "Unable to look up the borrower. Please try again.";
+
+                BorrowerLookupMessageType = "error";
+                BorrowerLookupMessageTitle = "Lookup Failed";
             }
 
             return Page();
@@ -183,50 +251,65 @@ namespace CIBnext.Pages.Contract
             LoadDropdowns();
 
             IsEdit = !string.IsNullOrEmpty(Contract.FIContractCode);
+
             Contract.FlagSubsidizedCredit = SubsidizedCreditFlag ? "Y" : "N";
             Contract.FlagPreFinanceOfLoan = PreFinanceFlag ? "Y" : "N";
             Contract.QualitativeJudgement = QualitativeJudgementFlag ? "Y" : "N";
             Contract.SME = SmeFlag ? "Y" : "N";
             Contract.RecordType = "I";
             Contract.FICode = "046";
-            Contract.MakeBy = User.Identity.Name;
+            Contract.MakeBy = User.Identity?.Name;
             Contract.MakeDate = DateTime.Now;
             Contract.RecordStatus = "C";
 
-            ModelState.Clear();
+            // Run the existing contract validator.
+            var validationResult =
+                new InstalmentContractValidator().Validate(Contract);
 
-            ValidationMessage = ValidateContract(Contract);
-
-            if (!string.IsNullOrEmpty(ValidationMessage))
+            if (!validationResult.IsValid)
             {
+                ValidationMessage = "- " + string.Join("<br/>- ",
+                    validationResult.Errors
+                        .Select(e => e.ErrorMessage)
+                        .Distinct());
+
+                ValidationMessageType = "warning";
+                ValidationMessageTitle = "Validation Message";
+
                 return Page();
             }
 
-            var contractDAL = new ContractDAL(_configuration);
-            bool success = contractDAL.InsertContract(Contract);
-
-            if (!success)
+            try
             {
-                ValidationMessage = "Save failed. Please check the values and try again.";
+                var contractDAL = new ContractDAL(_configuration);
+                bool success = contractDAL.InsertContract(Contract);
+
+                if (!success)
+                {
+                    ValidationMessage =
+                        "Save failed. Please check the values and try again.";
+
+                    ValidationMessageType = "error";
+                    ValidationMessageTitle = "Save Failed";
+
+                    return Page();
+                }
+
+                SuccessMessage = IsEdit
+                    ? "Installment contract updated successfully."
+                    : "Installment contract saved successfully.";
+
+                return RedirectToPage("/Contract/InstallmentContract");
+            }
+            catch
+            {
+                ValidationMessage =
+                    "An error occurred while saving the contract. Please check the information and try again.";
+
+                ValidationMessageType = "error";
+                ValidationMessageTitle = "Save Failed";
+
                 return Page();
-            }
-
-            return RedirectToPage("/Contract/InstallmentContract");
-        }
-
-        private string ValidateContract(InstalmentContract contract)
-        {
-            var v = new InstalmentContractValidator();
-            var res = v.Validate(contract);
-
-            if (!res.IsValid)
-            {
-                return "- " + string.Join("<br/>- ",
-                    res.Errors.Select(e => e.ErrorMessage).Distinct());
-            }
-            else
-            {
-                return string.Empty;
             }
         }
     }

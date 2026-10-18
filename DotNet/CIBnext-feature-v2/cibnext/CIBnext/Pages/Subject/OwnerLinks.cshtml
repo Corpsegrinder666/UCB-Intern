@@ -1,6 +1,44 @@
 ﻿@page
 @model CIBnext.Pages.Subject.OwnerLinksModel
 
+@{
+    string popupMessage = string.Empty;
+    string popupType = "info";
+    string popupTitle = "Information";
+
+    if (!string.IsNullOrWhiteSpace(Model.ValidationMessage))
+    {
+        popupMessage = Model.ValidationMessage;
+        popupType = "warning";
+        popupTitle = "Please check your information";
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.DeleteMessage))
+    {
+        popupMessage = Model.DeleteMessage;
+        popupType = Model.DeleteMessageType;
+        popupTitle = Model.DeleteMessageTitle;
+    }
+    else if (TempData["SuccessMessage"] != null)
+    {
+        popupMessage = TempData["SuccessMessage"]?.ToString() ?? "";
+        popupType = "success";
+        popupTitle = "Success";
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        popupMessage = TempData["ErrorMessage"]?.ToString() ?? "";
+        popupType = "error";
+        popupTitle = "Operation failed";
+    }
+    else if (Model.SearchSubmitted &&
+             (Model.LinkList == null || !Model.LinkList.Any()))
+    {
+        popupMessage = "No records matched your search. Please check the search criteria and try again.";
+        popupType = "info";
+        popupTitle = "No records found";
+    }
+}
+
 <style>
     .page-title {
         font-size: 30px;
@@ -44,8 +82,9 @@
     }
 
     .btn-small {
-        padding: 2px 8px;
+        padding: 4px 10px;
         font-size: 12px;
+        cursor: pointer;
     }
 
     .label-hint {
@@ -56,16 +95,17 @@
         margin-bottom: 6px;
     }
 
-        .form-row label {
-            display: inline-block;
-            width: 220px;
-        }
+    .form-row label {
+        display: inline-block;
+        width: 220px;
+    }
 
     input, select {
         width: 180px;
     }
 
-    .pagination a, .pagination span {
+    .pagination a,
+    .pagination span {
         padding: 2px 8px;
         margin-right: 3px;
         text-decoration: none;
@@ -87,6 +127,8 @@
     <div class="section">
         <fieldset>
             <legend>Search Option</legend>
+
+            <input type="hidden" name="SearchSubmitted" value="true" />
 
             <table style="border:none">
                 <tr>
@@ -133,13 +175,6 @@
         <fieldset>
             <legend>Add Owner Link Information</legend>
 
-            @if (!string.IsNullOrEmpty(Model.ValidationMessage))
-            {
-                <div style="color:red; font-weight:bold;">
-                    @Html.Raw(Model.ValidationMessage)
-                </div>
-            }
-
             <div class="form-row">
                 <label>Branch Name</label>
                 <select asp-for="AddLink.CibBranchCode"
@@ -175,16 +210,23 @@
     <fieldset>
         <legend>Owner Information</legend>
 
-        @if (!string.IsNullOrEmpty(Model.DeleteMessage))
-        {
-            <div style="color:red; font-weight:bold;">
-                @Model.DeleteMessage
-            </div>
-        }
-
         <h3>Total Count: @Model.TotalCount</h3>
 
-        <form method="post" asp-page-handler="Delete">
+        <form method="post" asp-page-handler="Delete" id="deleteForm">
+            <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
+            <input type="hidden" name="SearchSubmitted"
+                   value="@Model.SearchSubmitted.ToString().ToLowerInvariant()" />
+            <input type="hidden" name="Subject.CibBranchCode"
+                   value="@Model.Subject.CibBranchCode" />
+            <input type="hidden" name="Subject.OwnerFiSubjectCode"
+                   value="@Model.Subject.OwnerFiSubjectCode" />
+            <input type="hidden" name="Subject.OwnerName"
+                   value="@Model.Subject.OwnerName" />
+            <input type="hidden" name="Subject.InstitutionFiSubjectCode"
+                   value="@Model.Subject.InstitutionFiSubjectCode" />
+            <input type="hidden" name="Subject.InstitutionName"
+                   value="@Model.Subject.InstitutionName" />
+
             <table>
                 <tr>
                     <th></th>
@@ -208,7 +250,7 @@
                             </td>
 
                             <td>
-                                <a href="/Subject/OwnerLinks?instSubjectCode=@link.InstitutionFiSubjectCode&ownerSubjectCode=@link.OwnerFiSubjectCode&branchCode=@link.CibBranchCode&role=@link.Role">
+                                <a href="/Subject/OwnerLinks?instSubjectCode=@Uri.EscapeDataString(link.InstitutionFiSubjectCode ?? "")&ownerSubjectCode=@Uri.EscapeDataString(link.OwnerFiSubjectCode ?? "")&branchCode=@Uri.EscapeDataString(link.CibBranchCode ?? "")&role=@Uri.EscapeDataString(link.Role ?? "")">
                                     Edit
                                 </a>
                             </td>
@@ -258,7 +300,7 @@
                     }
                     else
                     {
-                        <a href="/Subject/OwnerLinks?PageIndex=@i&Subject.CibBranchCode=@Model.Subject.CibBranchCode&Subject.OwnerFiSubjectCode=@Model.Subject.OwnerFiSubjectCode&Subject.OwnerName=@Model.Subject.OwnerName&Subject.InstitutionFiSubjectCode=@Model.Subject.InstitutionFiSubjectCode&Subject.InstitutionName=@Model.Subject.InstitutionName">@i</a>
+                        <a href="/Subject/OwnerLinks?PageIndex=@i&SearchSubmitted=@Model.SearchSubmitted.ToString().ToLowerInvariant()&Subject.CibBranchCode=@Uri.EscapeDataString(Model.Subject.CibBranchCode ?? "")&Subject.OwnerFiSubjectCode=@Uri.EscapeDataString(Model.Subject.OwnerFiSubjectCode ?? "")&Subject.OwnerName=@Uri.EscapeDataString(Model.Subject.OwnerName ?? "")&Subject.InstitutionFiSubjectCode=@Uri.EscapeDataString(Model.Subject.InstitutionFiSubjectCode ?? "")&Subject.InstitutionName=@Uri.EscapeDataString(Model.Subject.InstitutionName ?? "")">@i</a>
                     }
 
                     lastDisplayedPage = i;
@@ -273,11 +315,139 @@
                 Refresh
             </button>
 
-            <button type="submit"
+            <button type="button"
                     class="btn-small"
-                    onclick="return confirm('are you delete Selected record?');">
+                    onclick="openDeleteConfirmation()">
                 Delete
             </button>
         </form>
     </fieldset>
 </div>
+
+@if (!string.IsNullOrWhiteSpace(popupMessage))
+{
+    <div id="messageModal"
+         class="message-overlay"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="messageModalTitle">
+
+        <div class="message-dialog">
+            <div class="message-header @popupType">
+                <h3 id="messageModalTitle">@popupTitle</h3>
+                <button type="button"
+                        class="message-close"
+                        aria-label="Close message">
+                    &times;
+                </button>
+            </div>
+
+            <div class="message-body @popupType">@popupMessage</div>
+
+            <div class="message-footer">
+                <button type="button"
+                        class="message-button @popupType">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@* Separate delete confirmation dialog *@
+<div id="deleteConfirmModal"
+     class="message-overlay hidden"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="deleteConfirmTitle"
+     aria-hidden="true">
+
+    <div class="message-dialog">
+        <div class="message-header warning">
+            <h3 id="deleteConfirmTitle">Confirm deletion</h3>
+            <button type="button"
+                    class="message-close"
+                    aria-label="Close delete confirmation"
+                    onclick="closeDeleteConfirmation()">
+                &times;
+            </button>
+        </div>
+
+        <div class="message-body warning">
+            Are you sure you want to delete the selected owner link record(s)?
+            This action may not be reversible.
+        </div>
+
+        <div class="message-footer">
+            <button type="button"
+                    class="message-button"
+                    onclick="closeDeleteConfirmation()">
+                Cancel
+            </button>
+
+            <button type="button"
+                    class="message-button"
+                    onclick="confirmDelete()">
+                Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteConfirmation() {
+        const checkboxes = document.querySelectorAll(
+            '#deleteForm input[name="SelectedLinks"]:checked'
+        );
+
+        if (checkboxes.length === 0) {
+            if (typeof window.showSharedMessage === "function") {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one owner link record before deleting."
+                );
+            } else {
+                alert("Please select at least one owner link record before deleting.");
+            }
+
+            return;
+        }
+
+        const popup = document.getElementById("deleteConfirmModal");
+
+        if (popup) {
+            popup.classList.remove("hidden");
+            popup.style.display = "flex";
+            popup.setAttribute("aria-hidden", "false");
+        }
+    }
+
+    function closeDeleteConfirmation() {
+        const popup = document.getElementById("deleteConfirmModal");
+
+        if (popup) {
+            popup.classList.add("hidden");
+            popup.style.display = "none";
+            popup.setAttribute("aria-hidden", "true");
+        }
+    }
+
+    function confirmDelete() {
+        const form = document.getElementById("deleteForm");
+
+        if (!form) {
+            return;
+        }
+
+        closeDeleteConfirmation();
+
+        // Submit the existing Razor Pages Delete handler.
+        const submitButton = document.createElement("input");
+        submitButton.type = "hidden";
+        submitButton.name = "ConfirmDelete";
+        submitButton.value = "true";
+        form.appendChild(submitButton);
+
+        form.submit();
+    }
+</script>
