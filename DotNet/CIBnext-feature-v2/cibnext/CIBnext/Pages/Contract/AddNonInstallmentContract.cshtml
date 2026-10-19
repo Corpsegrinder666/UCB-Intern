@@ -7,6 +7,10 @@
         font-weight: bold;
         padding: 5px;
         border-bottom: 1px solid #999;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
     }
 
     .section {
@@ -14,12 +18,26 @@
         background: #edf4ef;
         padding: 10px;
         margin-top: 5px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
+
+        .section form {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
 
     fieldset {
         border: 1px solid #aaa;
         padding: 10px;
-        margin-bottom: 10px;
+        margin: 0 0 10px 0;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     legend {
@@ -27,24 +45,50 @@
         padding: 0 5px;
     }
 
-    table {
+    .section table {
         width: 100%;
+        max-width: 100%;
         border-collapse: collapse;
+        table-layout: fixed;
     }
 
-    td {
+    .section td {
         padding: 5px;
         vertical-align: middle;
+        box-sizing: border-box;
+        min-width: 0;
+        overflow-wrap: anywhere;
     }
+
+        /* Label and input columns */
+        .section td:nth-child(1),
+        .section td:nth-child(3) {
+            width: 22%;
+            white-space: normal;
+        }
+
+        .section td:nth-child(2),
+        .section td:nth-child(4) {
+            width: 28%;
+        }
 
     .label-hint {
         font-size: 12px;
         color: #666;
     }
 
-    input, select {
+    .section input:not([type="checkbox"]),
+    .section select {
         padding: 5px;
         box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .section input[type="checkbox"] {
+        width: auto;
+        max-width: 100%;
     }
 
     .readonly-box {
@@ -52,9 +96,117 @@
     }
 
     .btn {
+        display: inline-block;
         padding: 6px 14px;
         margin: 5px;
         cursor: pointer;
+        box-sizing: border-box;
+        max-width: 100%;
+        text-decoration: none;
+    }
+
+    /* Subject code and Find button */
+    .subject-code-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .section .subject-code-container input {
+        flex: 1 1 0;
+        width: 0;
+        min-width: 0;
+    }
+
+    .subject-code-container button {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    /* Popup markup uses the shared site.js behavior.
+           Shared site.css controls the standard UCB colors. */
+    #messageModal {
+        box-sizing: border-box;
+    }
+
+        #messageModal .message-dialog {
+            width: 400px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        #messageModal .message-body {
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+
+    /* Medium screens */
+    @@media (max-width: 900px) {
+        .section {
+            padding: 6px;
+        }
+
+        fieldset {
+            padding: 6px;
+        }
+
+        .section td {
+            padding: 4px;
+        }
+
+            .section td:nth-child(1),
+            .section td:nth-child(3) {
+                width: 24%;
+            }
+
+            .section td:nth-child(2),
+            .section td:nth-child(4) {
+                width: 26%;
+            }
+    }
+
+    /* Narrow screens: stack table cells */
+    @@media (max-width: 600px) {
+        .page-title {
+            font-size: 24px;
+        }
+
+        .section {
+            padding: 5px;
+        }
+
+        fieldset {
+            padding: 5px;
+        }
+
+        .section table,
+        .section tbody,
+        .section tr,
+        .section td {
+            display: block;
+            width: 100% !important;
+        }
+
+        .section td {
+            padding: 4px 0;
+        }
+
+            .section td:empty {
+                display: none;
+            }
+
+        .section input:not([type="checkbox"]),
+        .section select {
+            width: 100%;
+        }
+
+        .subject-code-container {
+            width: 100%;
+        }
     }
 </style>
 
@@ -66,42 +218,46 @@
             <legend>General</legend>
 
             <table>
-                <tr>
-                    <td>Branch</td>
-                    <td>
-                        <select asp-for="Contract.BranchCode"
-                                asp-items="Model.BranchCodeList">
-                            <option value="">-- Select Branch --</option>
-                        </select>
-                    </td>
+                <tbody>
+                    <tr>
+                        <td>Branch</td>
+                        <td>
+                            <select asp-for="Contract.BranchCode"
+                                    asp-items="Model.BranchCodeList">
+                                <option value="">-- Select Branch --</option>
+                            </select>
+                        </td>
 
-                    <td>F.I. Subject Code</td>
-                    <td>
-                        <input asp-for="Contract.FISubjectCode" />
+                        <td>F.I. Subject Code</td>
+                        <td>
+                            <div class="subject-code-container">
+                                <input asp-for="Contract.FISubjectCode" />
 
-                        <button type="submit"
-                                asp-page-handler="LookupBorrower"
-                                class="btn">
-                            Find
-                        </button>
-                    </td>
-                </tr>
+                                <button type="submit"
+                                        asp-page-handler="LookupBorrower"
+                                        class="btn">
+                                    Find
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>Borrower Name</td>
-                    <td>
-                        <input asp-for="Contract.BorrowerName"
-                               readonly
-                               class="readonly-box" />
-                    </td>
+                    <tr>
+                        <td>Borrower Name</td>
+                        <td>
+                            <input asp-for="Contract.BorrowerName"
+                                   readonly
+                                   class="readonly-box" />
+                        </td>
 
-                    <td>Contract Code</td>
-                    <td>
-                        <input asp-for="Contract.FIContractCode"
-                               readonly="@(Model.IsEdit ? "readonly" : null)"
-                               class="@(Model.IsEdit ? "readonly-box" : "")" />
-                    </td>
-                </tr>
+                        <td>Contract Code</td>
+                        <td>
+                            <input asp-for="Contract.FIContractCode"
+                                   readonly="@(Model.IsEdit ? "readonly" : null)"
+                                   class="@(Model.IsEdit ? "readonly-box" : "")" />
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </fieldset>
 
@@ -109,133 +265,138 @@
             <legend>Non Installment Contract</legend>
 
             <table>
-                <tr>
-                    <td>Contract Type</td>
-                    <td>
-                        <select asp-for="Contract.ContractType"
-                                asp-items="Model.ContractTypeList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
+                <tbody>
+                    <tr>
+                        <td>Contract Type</td>
+                        <td>
+                            <select asp-for="Contract.ContractType"
+                                    asp-items="Model.ContractTypeList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
 
-                    <td>Contract Phase</td>
-                    <td>
-                        <select asp-for="Contract.ContractPhase"
-                                asp-items="Model.ContractPhaseList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
-                </tr>
+                        <td>Contract Phase</td>
+                        <td>
+                            <select asp-for="Contract.ContractPhase"
+                                    asp-items="Model.ContractPhaseList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>Contract Status</td>
-                    <td>
-                        <select asp-for="Contract.ContractStatus"
-                                asp-items="Model.ContractStatusList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
+                    <tr>
+                        <td>Contract Status</td>
+                        <td>
+                            <select asp-for="Contract.ContractStatus"
+                                    asp-items="Model.ContractStatusList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
 
-                    <td>Currency Code</td>
-                    <td>
-                        <select asp-for="Contract.CurrencyCode"
-                                asp-items="Model.CurrencyList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
-                </tr>
+                        <td>Currency Code</td>
+                        <td>
+                            <select asp-for="Contract.CurrencyCode"
+                                    asp-items="Model.CurrencyList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>Reorganized Credit</td>
-                    <td>
-                        <select asp-for="Contract.CodeReorganizedCredit"
-                                asp-items="Model.ReorganizedCreditList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
+                    <tr>
+                        <td>Reorganized Credit</td>
+                        <td>
+                            <select asp-for="Contract.CodeReorganizedCredit"
+                                    asp-items="Model.ReorganizedCreditList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
 
-                    <td>Third Party Guarantee Type</td>
-                    <td>
-                        <select asp-for="Contract.ThirdPartyGuaranteeType"
-                                asp-items="Model.ThirdPartyGuaranteeTypeList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
-                </tr>
+                        <td>Third Party Guarantee Type</td>
+                        <td>
+                            <select asp-for="Contract.ThirdPartyGuaranteeType"
+                                    asp-items="Model.ThirdPartyGuaranteeTypeList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>Security Type</td>
-                    <td>
-                        <select asp-for="Contract.SecurityType"
-                                asp-items="Model.SecurityTypeList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
+                    <tr>
+                        <td>Security Type</td>
+                        <td>
+                            <select asp-for="Contract.SecurityType"
+                                    asp-items="Model.SecurityTypeList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
 
-                    <td>Defaulter Status</td>
-                    <td>
-                        <select asp-for="Contract.DefaulterStatus"
-                                asp-items="Model.DefaulterStatusList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
-                </tr>
+                        <td>Defaulter Status</td>
+                        <td>
+                            <select asp-for="Contract.DefaulterStatus"
+                                    asp-items="Model.DefaulterStatusList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>No. of Days Payment Delay</td>
-                    <td>
-                        <select asp-for="Contract.NumberOfDaysOfPaymentDelay"
-                                asp-items="Model.NoOfDaysPaymentDelayList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
+                    <tr>
+                        <td>No. of Days Payment Delay</td>
+                        <td>
+                            <select asp-for="Contract.NumberOfDaysOfPaymentDelay"
+                                    asp-items="Model.NoOfDaysPaymentDelayList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
 
-                    <td>Economic Purpose Code</td>
-                    <td>
-                        <select asp-for="Contract.EconomicPurposeCode"
-                                asp-items="Model.EconomicPurposeCodeList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
-                </tr>
+                        <td>Economic Purpose Code</td>
+                        <td>
+                            <select asp-for="Contract.EconomicPurposeCode"
+                                    asp-items="Model.EconomicPurposeCodeList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>Enterprise Type</td>
-                    <td>
-                        <select asp-for="Contract.EnterpriseType"
-                                asp-items="Model.EnterpriseTypeList">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>Enterprise Type</td>
+                        <td>
+                            <select asp-for="Contract.EnterpriseType"
+                                    asp-items="Model.EnterpriseTypeList">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </td>
 
-                <tr>
-                    <td>Subsidized Credit</td>
-                    <td>
-                        <input asp-for="SubsidizedCreditFlag"
-                               type="checkbox" />
-                    </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
 
-                    <td>Pre-Finance of Loan</td>
-                    <td>
-                        <input asp-for="PreFinanceFlag"
-                               type="checkbox" />
-                    </td>
-                </tr>
+                    <tr>
+                        <td>Subsidized Credit</td>
+                        <td>
+                            <input asp-for="SubsidizedCreditFlag"
+                                   type="checkbox" />
+                        </td>
 
-                <tr>
-                    <td>Qualitative Judgement</td>
-                    <td>
-                        <input asp-for="QualitativeJudgementFlag"
-                               type="checkbox" />
-                    </td>
+                        <td>Pre-Finance of Loan</td>
+                        <td>
+                            <input asp-for="PreFinanceFlag"
+                                   type="checkbox" />
+                        </td>
+                    </tr>
 
-                    <td>SME</td>
-                    <td>
-                        <input asp-for="SmeFlag"
-                               type="checkbox" />
-                    </td>
-                </tr>
+                    <tr>
+                        <td>Qualitative Judgement</td>
+                        <td>
+                            <input asp-for="QualitativeJudgementFlag"
+                                   type="checkbox" />
+                        </td>
+
+                        <td>SME</td>
+                        <td>
+                            <input asp-for="SmeFlag"
+                                   type="checkbox" />
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </fieldset>
 
