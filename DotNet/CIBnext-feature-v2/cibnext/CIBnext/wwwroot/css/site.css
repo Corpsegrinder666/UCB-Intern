@@ -1,8 +1,3 @@
-
-/* =========================================================
-   CIBnext - Base Styles
-   ========================================================= */
-
 html {
     font-size: 14px;
     position: relative;
@@ -113,6 +108,69 @@ td {
     height: 24px;
     vertical-align: middle;
     cursor: pointer;
+}
+
+
+/* =========================================================
+   CIBnext - Shared Input & Dropdown Text
+   ========================================================= */
+
+input,
+select,
+textarea {
+    color: #222 !important;
+    background-color: #fff;
+}
+
+/* Text typed inside input fields */
+input,
+textarea {
+    color: #222 !important;
+}
+
+    /* Placeholder text */
+    input::placeholder,
+    textarea::placeholder {
+        color: #555 !important;
+        opacity: 1;
+    }
+
+/* Dropdown selected text */
+select {
+    color: #222 !important;
+}
+
+    /* Dropdown options */
+    select option {
+        color: #222;
+        background-color: #fff;
+    }
+
+        /* Empty/default dropdown option */
+        select option[value=""] {
+            color: #555;
+        }
+
+/* Read-only fields */
+input[readonly],
+textarea[readonly] {
+    color: #222 !important;
+    background-color: #eee;
+}
+
+/* Disabled fields */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    color: #666 !important;
+    background-color: #eee;
+}
+
+/* Text when field is focused */
+input:focus,
+select:focus,
+textarea:focus {
+    color: #111 !important;
 }
 
 
@@ -267,7 +325,6 @@ td {
    Default: Error / Validation
    ========================================================= */
 
-
 /* UCB popup theme: red header and red action buttons */
 .message-overlay .message-dialog .message-header,
 .message-overlay .message-dialog .message-header.error,
@@ -321,7 +378,6 @@ td {
 .message-body.info {
     color: #1565c0;
 }
-
 
 
 /* =========================================================
@@ -466,7 +522,7 @@ td {
 
 
 /* =========================================================
-   Responsive Styles
+   CIBnext - Responsive Shared Styles
    ========================================================= */
 
 @media (max-width: 800px) {
@@ -496,4 +552,317 @@ td {
     .message-footer {
         padding: 10px 14px;
     }
+}
+
+
+/* =========================================================
+   CIBnext - Login Page
+   Scoped to .login-page to protect other pages
+   ========================================================= */
+
+.login-page,
+.login-page * {
+    box-sizing: border-box;
+}
+
+.login-page {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+    .login-page .top-header {
+        background: linear-gradient(90deg, #C40F1E 0%, #8f0b16 100%);
+        padding: 22px 40px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+        .login-page .top-header img {
+            width: 46px;
+            height: 46px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 4px;
+            object-fit: contain;
+        }
+
+        .login-page .top-header h1 {
+            color: #fff;
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: .5px;
+        }
+
+        .login-page .top-header p {
+            color: #ffe1e1;
+            margin: 0;
+            font-size: 13px;
+        }
+
+    .login-page .content {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 60px 20px;
+    }
+
+    .login-page .bg-sweep {
+        position: absolute;
+        left: -10%;
+        bottom: -18%;
+        width: 60%;
+        height: 55%;
+        background: linear-gradient(135deg, #E31B23, #8f0b16);
+        border-radius: 50%;
+        opacity: .95;
+        filter: blur(0);
+        clip-path: ellipse(60% 55% at 30% 70%);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .login-page .brand-panel {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        max-width: 420px;
+        padding: 0 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .login-page .brand-panel img {
+            width: 70px;
+            margin-bottom: 14px;
+        }
+
+        .login-page .brand-panel h2 {
+            font-size: 32px;
+            margin: 0;
+            color: #17202a;
+            line-height: 1.15;
+        }
+
+        .login-page .brand-panel .sub {
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #6b7280;
+            margin: 4px 0 18px;
+            text-transform: uppercase;
+        }
+
+        .login-page .brand-panel .tagline {
+            font-size: 15px;
+            color: #374151;
+            border-bottom: 3px solid #E31B23;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+    .login-page .login-box {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 430px;
+        background: #fff;
+        padding: 44px 46px;
+        border-radius: 14px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .login-page .logo-circle {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: #fdecec;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+    }
+
+        .login-page .logo-circle img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+    .login-page .login-box .welcome {
+        color: #E31B23;
+        font-weight: 600;
+        margin: 0 0 4px;
+    }
+
+    .login-page .login-box h3 {
+        margin: 0 0 6px;
+        font-size: 24px;
+        color: #17202a;
+    }
+
+    .login-page .login-box .hint {
+        color: #6b7280;
+        font-size: 13.5px;
+        margin: 0 0 18px;
+    }
+
+    .login-page .divider {
+        width: 60px;
+        height: 3px;
+        background: #E31B23;
+        margin: 0 auto 22px;
+        border-radius: 2px;
+    }
+
+    .login-page .field {
+        text-align: left;
+        margin-bottom: 16px;
+    }
+
+        .login-page .field label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+    .login-page .input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        border: 1px solid #e2e5ea;
+        border-radius: 8px;
+        background: #fafbfc;
+        padding: 0 12px;
+    }
+
+        .login-page .input-wrap:focus-within {
+            border-color: #E31B23;
+            box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.1);
+        }
+
+        .login-page .input-wrap svg {
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .login-page .input-wrap input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            min-width: 0;
+            padding: 12px 4px;
+            font-size: 14px;
+            color: #17202a;
+        }
+
+            .login-page .input-wrap input::placeholder {
+                color: #555;
+                opacity: 1;
+            }
+
+    .login-page .login-btn {
+        margin-top: 8px;
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(90deg, #E31B23, #b5141b);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 15.5px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: opacity .2s ease;
+    }
+
+        .login-page .login-btn:hover {
+            opacity: .92;
+        }
+
+        .login-page .login-btn:focus-visible {
+            outline: 3px solid rgba(227, 27, 35, 0.3);
+            outline-offset: 3px;
+        }
+
+    .login-page .foot-note {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid #eee;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+        .login-page .foot-note a {
+            color: #E31B23;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+            .login-page .foot-note a:hover {
+                text-decoration: underline;
+            }
+
+    .login-page .error {
+        color: #E31B23;
+        background: #fdecec;
+        border: 1px solid #f7c6c6;
+        padding: 10px 12px;
+        border-radius: 8px;
+        margin-top: 16px;
+        font-size: 13.5px;
+    }
+
+    .login-page .site-footer {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 12.5px;
+        padding: 16px;
+    }
+
+
+/* =========================================================
+   CIBnext - Login Page Responsive Styles
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .login-page .brand-panel {
+        display: none;
+    }
+
+    .login-page .login-box {
+        margin: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-page .top-header {
+        padding: 16px 20px;
+    }
+
+    .login-page .content {
+        padding: 30px 16px;
+    }
+
+    .login-page .login-box {
+        padding: 32px 24px;
+    }
+
+        .login-page .login-box h3 {
+            font-size: 22px;
+        }
 }
