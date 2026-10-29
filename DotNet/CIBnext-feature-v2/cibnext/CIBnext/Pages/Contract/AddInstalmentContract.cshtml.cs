@@ -232,6 +232,7 @@ namespace CIBnext.Pages.Contract
                 else
                 {
                     Contract.BorrowerName = name;
+                    ModelState.Remove("Contract.BorrowerName");
                 }
             }
             catch

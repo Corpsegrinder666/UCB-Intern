@@ -1,3 +1,3 @@
 Cif no. must be 9
-FI Subject and contrat code 16 digit
+FI Subject and contract code 16 digit
 ubs/cbs acc no. 16 digit
