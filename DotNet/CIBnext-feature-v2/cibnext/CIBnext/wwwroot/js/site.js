@@ -12,6 +12,49 @@
     };
 
     /*
+     * Sidebar and menu functionality
+     */
+
+    const sidebar = document.getElementById("sidebar");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+
+    if (sidebar) {
+        if (localStorage.getItem("cibSidebarCollapsed") === "true") {
+            sidebar.classList.add("collapsed");
+        }
+    }
+
+    if (sidebar && sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("collapsed");
+
+            localStorage.setItem(
+                "cibSidebarCollapsed",
+                sidebar.classList.contains("collapsed")
+            );
+        });
+    }
+
+    document.querySelectorAll("[data-menu-toggle]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const menuId = button.getAttribute("data-menu-toggle");
+            const menu = document.getElementById(menuId);
+
+            if (!menu) {
+                return;
+            }
+
+            if (menu.style.display === "none") {
+                menu.style.display = "block";
+                button.classList.add("open");
+            } else {
+                menu.style.display = "none";
+                button.classList.remove("open");
+            }
+        });
+    });
+
+    /*
      * Close an ordinary message popup.
      * The delete-confirmation dialog is deliberately excluded.
      */
