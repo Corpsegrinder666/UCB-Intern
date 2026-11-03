@@ -1,4 +1,3 @@
-
 html {
     font-size: 14px;
     position: relative;
@@ -11,8 +10,18 @@ html {
     }
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     margin-bottom: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    background: #f4f6f9;
+    color: #333;
 }
 
 .btn:focus,
@@ -34,10 +43,8 @@ body {
     text-align: start;
 }
 
-
 /* =========================================================
    CIBnext - Shared Form Styles
-   Based on AddPersonalInformation.cshtml
    ========================================================= */
 
 .title,
@@ -111,9 +118,8 @@ td {
     cursor: pointer;
 }
 
-
 /* =========================================================
-   CIBnext - Shared Input & Dropdown Text
+   CIBnext - Shared Input & Dropdown Styles
    ========================================================= */
 
 input,
@@ -123,43 +129,31 @@ textarea {
     background-color: #fff;
 }
 
-/* Text typed inside input fields */
-input,
-textarea {
-    color: #222 !important;
-}
-
-    /* Placeholder text */
     input::placeholder,
     textarea::placeholder {
         color: #555 !important;
         opacity: 1;
     }
 
-/* Dropdown selected text */
 select {
     color: #222 !important;
 }
 
-    /* Dropdown options */
     select option {
         color: #222;
         background-color: #fff;
     }
 
-        /* Empty/default dropdown option */
         select option[value=""] {
             color: #555;
         }
 
-/* Read-only fields */
 input[readonly],
 textarea[readonly] {
     color: #222 !important;
     background-color: #eee;
 }
 
-/* Disabled fields */
 input:disabled,
 select:disabled,
 textarea:disabled {
@@ -167,58 +161,181 @@ textarea:disabled {
     background-color: #eee;
 }
 
-/* Text when field is focused */
 input:focus,
 select:focus,
 textarea:focus {
     color: #111 !important;
 }
 
-
 /* =========================================================
-   CIBnext - Shared Form Buttons
+   CIBnext - Shared Professional Buttons
    ========================================================= */
 
+/* Common button appearance */
+
 .btn-save,
-.btn-exit {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 7px 18px;
+.btn-exit,
+.btn-small,
+.form-button,
+.add-institution-information-page .form-button,
+.add-installment-contract-page .btn,
+.add-non-installment-contract-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 30px;
+    padding: 6px 15px;
     border: 1px solid transparent;
     border-radius: 4px;
     font-family: Tahoma, sans-serif;
     font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
     text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
     cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
 
-.btn-save {
+/* Save / Add / Update */
+
+.btn-save,
+.add-personal-information-page .btn-save,
+.add-institution-information-page button[type="submit"].form-button,
+.add-installment-contract-page button[type="submit"].btn,
+.add-non-installment-contract-page button[type="submit"].btn {
     background: #2e7d32;
-    color: #fff;
+    border-color: #256629;
+    color: #fff !important;
 }
 
-    .btn-save:hover {
+    .btn-save:hover,
+    .add-personal-information-page .btn-save:hover,
+    .add-institution-information-page button[type="submit"].form-button:hover,
+    .add-installment-contract-page button[type="submit"].btn:hover,
+    .add-non-installment-contract-page button[type="submit"].btn:hover {
         background: #1b5e20;
-        color: #fff;
+        border-color: #174d1b;
+        color: #fff !important;
     }
 
-.btn-exit {
+/* Exit / Cancel */
+
+.btn-exit,
+.add-personal-information-page .btn-exit,
+.add-institution-information-page a.form-button,
+.add-installment-contract-page a.btn,
+.add-non-installment-contract-page a.btn {
     background: #e5e7eb;
-    color: #333;
-    border-color: #bbb;
+    border-color: #bfc4cc;
+    color: #333 !important;
 }
 
-    .btn-exit:hover {
+    .btn-exit:hover,
+    .add-personal-information-page .btn-exit:hover,
+    .add-institution-information-page a.form-button:hover,
+    .add-installment-contract-page a.btn:hover,
+    .add-non-installment-contract-page a.btn:hover {
         background: #d1d5db;
-        color: #333;
+        border-color: #aeb4bd;
+        color: #222 !important;
     }
 
-.btn-small {
-    padding: 2px 8px;
-    font-size: 12px;
-    cursor: pointer;
+/* General action buttons: Search, Refresh, Find, View */
+
+.btn-small,
+.form-button,
+.add-installment-contract-page .find-btn {
+    background: #e8eef7;
+    border-color: #b8c8dc;
+    color: #234a73 !important;
 }
 
+    .btn-small:hover,
+    .form-button:hover,
+    .add-installment-contract-page .find-btn:hover {
+        background: #d4e1f1;
+        border-color: #91abc9;
+        color: #173a60 !important;
+    }
+
+/* Add buttons */
+
+.owner-links-page a[href*="Add"],
+.installment-contract-page a[href*="Add"],
+.non-installment-contract-page a[href*="Add"],
+.contract-links-page a[href*="Add"] {
+    background: #2e7d32;
+    border-color: #256629;
+    color: #fff !important;
+}
+
+    .owner-links-page a[href*="Add"]:hover,
+    .installment-contract-page a[href*="Add"]:hover,
+    .non-installment-contract-page a[href*="Add"]:hover,
+    .contract-links-page a[href*="Add"]:hover {
+        background: #1b5e20;
+        border-color: #174d1b;
+        color: #fff !important;
+    }
+
+/* Delete buttons */
+
+button[data-owner-delete-open],
+button[data-installment-delete-open],
+button[data-contract-links-delete-open],
+button[data-personal-delete-open],
+button[data-institution-delete-open],
+button[data-noninstallment-delete-open],
+#deleteContractsButton,
+button[id*="deleteButton"],
+button[id*="DeleteButton"] {
+    background: #c62828;
+    border-color: #a51f1f;
+    color: #fff !important;
+}
+
+    button[data-owner-delete-open]:hover,
+    button[data-installment-delete-open]:hover,
+    button[data-contract-links-delete-open]:hover,
+    button[data-personal-delete-open]:hover,
+    button[data-institution-delete-open]:hover,
+    button[data-noninstallment-delete-open]:hover,
+    #deleteContractsButton:hover,
+    button[id*="deleteButton"]:hover,
+    button[id*="DeleteButton"]:hover {
+        background: #a51f1f;
+        border-color: #851818;
+        color: #fff !important;
+    }
+
+/* Button focus and active states */
+
+.btn-save:focus-visible,
+.btn-exit:focus-visible,
+.btn-small:focus-visible,
+.form-button:focus-visible,
+.add-installment-contract-page .btn:focus-visible,
+.add-non-installment-contract-page .btn:focus-visible {
+    outline: 3px solid rgba(37, 140, 251, 0.25);
+    outline-offset: 2px;
+}
+
+.btn-save:active,
+.btn-exit:active,
+.btn-small:active,
+.form-button:active {
+    transform: translateY(1px);
+}
+
+button:disabled,
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
 
 /* =========================================================
    CIBnext - Shared Message Popup
@@ -309,24 +426,17 @@ textarea:focus {
     color: #fff;
     font-family: Tahoma, sans-serif;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
 }
 
-    .message-ok:hover {
+    .message-ok:hover,
+    .message-button:hover {
         background: #8e0000;
     }
 
-    .message-button:hover {
-        filter: brightness(0.9);
-    }
+/* Popup variants */
 
-
-/* =========================================================
-   Popup Variants
-   Default: Error / Validation
-   ========================================================= */
-
-/* UCB popup theme: red header and red action buttons */
 .message-overlay .message-dialog .message-header,
 .message-overlay .message-dialog .message-header.error,
 .message-overlay .message-dialog .message-header.warning,
@@ -346,7 +456,6 @@ textarea:focus {
     color: #fff !important;
 }
 
-/* Only the header title text changes by message type */
 .message-header.error h3 {
     color: #ff8a80;
 }
@@ -363,7 +472,6 @@ textarea:focus {
     color: #90caf9;
 }
 
-/* Content text colors */
 .message-body.error {
     color: #c62828;
 }
@@ -380,10 +488,8 @@ textarea:focus {
     color: #1565c0;
 }
 
-
 /* =========================================================
    CIBnext - Delete Confirmation Dialog
-   Separate from ordinary message popups
    ========================================================= */
 
 .confirm-buttons {
@@ -401,6 +507,7 @@ textarea:focus {
     color: #fff;
     font-family: Tahoma, sans-serif;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -420,31 +527,45 @@ textarea:focus {
         background: #555;
     }
 
-
 /* =========================================================
    CIBnext - Pagination
    ========================================================= */
 
-.pagination a,
-.pagination span {
-    padding: 2px 8px;
-    margin-right: 3px;
-    text-decoration: none;
+.pagination {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
-.pagination a {
-    color: #06c;
-}
+    .pagination a,
+    .pagination span {
+        display: inline-block;
+        padding: 4px 9px;
+        margin-right: 2px;
+        border-radius: 3px;
+        text-decoration: none;
+    }
 
-.pagination span.current {
-    font-weight: bold;
-    color: #000;
-}
+    .pagination a {
+        color: #234a73;
+        background: #e8eef7;
+        border: 1px solid #c5d2e2;
+    }
 
+        .pagination a:hover {
+            background: #d4e1f1;
+        }
+
+    .pagination span.current {
+        font-weight: bold;
+        color: #fff;
+        background: #234a73;
+        border: 1px solid #234a73;
+    }
 
 /* =========================================================
    Legacy Validation Popup Compatibility
-   Keep until all pages use message-* classes
    ========================================================= */
 
 .validation-modal {
@@ -521,44 +642,8 @@ textarea:focus {
             background-color: #286090;
         }
 
-
-/* =========================================================
-   CIBnext - Responsive Shared Styles
-   ========================================================= */
-
-@media (max-width: 800px) {
-    .address-box {
-        width: 100%;
-        margin-bottom: 8px;
-    }
-
-    table {
-        display: block;
-        overflow-x: auto;
-    }
-
-    .message-overlay {
-        padding: 12px;
-    }
-
-    .message-dialog {
-        max-width: 100%;
-    }
-
-    .message-header,
-    .message-body {
-        padding: 14px;
-    }
-
-    .message-footer {
-        padding: 10px 14px;
-    }
-}
-
-
 /* =========================================================
    CIBnext - Login Page
-   Scoped to .login-page to protect other pages
    ========================================================= */
 
 .login-page,
@@ -835,57 +920,9 @@ textarea:focus {
         padding: 16px;
     }
 
-
 /* =========================================================
-   CIBnext - Login Page Responsive Styles
+   CIBnext - Main Layout
    ========================================================= */
-
-@media (max-width: 900px) {
-    .login-page .brand-panel {
-        display: none;
-    }
-
-    .login-page .login-box {
-        margin: auto;
-    }
-}
-
-@media (max-width: 480px) {
-    .login-page .top-header {
-        padding: 16px 20px;
-    }
-
-    .login-page .content {
-        padding: 30px 16px;
-    }
-
-    .login-page .login-box {
-        padding: 32px 24px;
-    }
-
-        .login-page .login-box h3 {
-            font-size: 22px;
-        }
-}
-
-
-/* =========================================================
-   CIBnext - Layout Styles
-   Migrated from _Layout.cshtml
-   ========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 14px;
-    background: #f4f6f9;
-    color: #333;
-}
 
 .header {
     height: 72px;
@@ -1136,10 +1173,7 @@ body {
     min-width: 0;
 }
 
-/* =========================================================
-   CIBnext - Layout Footer Styles
-   Migrated from _Layout.cshtml.css and _Layout.cshtml
-   ========================================================= */
+/* Footer */
 
 .footer {
     position: absolute;
@@ -1154,4 +1188,975 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* =========================================================
+   Index Page
+   ========================================================= */
+
+.index-logo-container {
+    height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.index-logo {
+    max-width: 250px;
+}
+
+/* =========================================================
+   Home Page
+   ========================================================= */
+
+.welcome-banner {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 40px 36px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    text-align: center;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-card-header {
+    text-align: left;
+}
+
+.dashboard-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #17202a;
+    margin-bottom: 12px;
+}
+
+.title-underline {
+    width: 70px;
+    height: 4px;
+    background: #E31B23;
+    border-radius: 3px;
+    margin-bottom: 34px;
+}
+
+.illustration-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+}
+
+.illustration-circle {
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fdecec 0%, #fbe0e0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.helper-text {
+    color: #4b5563;
+    font-size: 15px;
+}
+
+/* =========================================================
+   Access Denied Page
+   ========================================================= */
+
+.access-denied-container {
+    text-align: center;
+    margin-top: 120px;
+}
+
+.access-denied-title {
+    color: red;
+}
+
+.access-denied-link {
+    padding: 10px 20px;
+    background: #E31B23;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+/* =========================================================
+   Personal Information Page
+   ========================================================= */
+
+.personal-information-page .page-title {
+    font-weight: bold;
+    font-size: 28px;
+    padding: 5px;
+    border-bottom: 1px solid #999;
+    margin-bottom: 10px;
+}
+
+.personal-information-page .section {
+    border: 1px solid #b5b5a5;
+    background: #edf4ef;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.personal-information-page fieldset {
+    border: 1px solid #b5b5a5;
+    padding: 10px;
+}
+
+.personal-information-page legend {
+    padding: 0 5px;
+    font-size: 14px;
+}
+
+.personal-information-page table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    .personal-information-page table th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+    .personal-information-page table td {
+        border: 1px solid #666;
+        padding: 3px;
+    }
+
+.personal-information-page input,
+.personal-information-page select {
+    width: 120px;
+}
+
+.personal-information-page .personal-information-empty {
+    text-align: center;
+}
+
+.personal-information-page .personal-information-pagination {
+    margin-top: 8px;
+}
+
+.personal-information-page .message-dialog {
+    border-radius: 6px;
+}
+
+.personal-information-page .message-header {
+    padding: 15px 20px;
+}
+
+    .personal-information-page .message-header h3 {
+        font-size: 18px;
+    }
+
+.personal-information-page .message-close {
+    font-size: 28px;
+}
+
+.personal-information-page .message-body {
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.personal-information-page .message-footer {
+    padding: 12px 20px;
+}
+
+/* =========================================================
+   Add Personal Information Page
+   ========================================================= */
+
+.add-personal-information-page {
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+    .add-personal-information-page .title {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px;
+        border-bottom: 1px solid #999;
+        background: #f4f4ee;
+    }
+
+    .add-personal-information-page fieldset {
+        border: 1px solid #b5b5a5;
+        margin-top: 5px;
+        background: #edf4ef;
+    }
+
+    .add-personal-information-page legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    .add-personal-information-page table {
+        width: 100%;
+    }
+
+    .add-personal-information-page td {
+        padding: 3px;
+    }
+
+    .add-personal-information-page input,
+    .add-personal-information-page select {
+        width: 180px;
+        height: 22px;
+        box-sizing: border-box;
+    }
+
+    .add-personal-information-page .branch-select {
+        width: 450px;
+    }
+
+    .add-personal-information-page .smart-id-input {
+        width: 150px;
+    }
+
+    .add-personal-information-page .address-box {
+        border: 1px solid #b5b5a5;
+        padding: 5px;
+        width: 32%;
+        display: inline-block;
+        vertical-align: top;
+        box-sizing: border-box;
+    }
+
+        .add-personal-information-page .address-box h4 {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+    .add-personal-information-page .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        padding: 7px 18px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        font-family: Tahoma, sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .add-personal-information-page .btn-save {
+        background: #2e7d32;
+        border-color: #256629;
+        color: white !important;
+    }
+
+        .add-personal-information-page .btn-save:hover {
+            background: #1b5e20;
+            color: white !important;
+        }
+
+    .add-personal-information-page .btn-exit {
+        background: #e5e7eb;
+        color: #333 !important;
+        border-color: #bbb;
+    }
+
+        .add-personal-information-page .btn-exit:hover {
+            background: #d1d5db;
+        }
+
+    .add-personal-information-page .auto-code {
+        display: inline-block;
+        width: 180px;
+        height: 22px;
+        line-height: 22px;
+        padding: 0 3px;
+        background: #eee;
+        color: #666;
+        border: 1px solid #999;
+        box-sizing: border-box;
+    }
+
+    .add-personal-information-page .label-hint {
+        color: #06c;
+    }
+
+    .add-personal-information-page .search-btn {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+    .add-personal-information-page .message-ok {
+        padding: 8px 24px;
+        background: #b71c1c;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .add-personal-information-page .message-ok:hover {
+            background: #8e0000;
+        }
+
+/* =========================================================
+   Institution Information Page
+   ========================================================= */
+
+.institution-information-page .page-title {
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px;
+    border-bottom: 1px solid #999;
+}
+
+.institution-information-page .section {
+    border: 1px solid #b8b8a8;
+    background: #edf4ef;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+.institution-information-page fieldset {
+    border: 1px solid #b8b8a8;
+    padding: 10px;
+}
+
+.institution-information-page legend {
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+.institution-information-page table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.institution-information-page th {
+    background: #cdd8ea;
+    border: 1px solid #666;
+    padding: 3px;
+}
+
+.institution-information-page td {
+    border: 1px solid #666;
+    padding: 3px;
+}
+
+.institution-information-page .institution-search-table,
+.institution-information-page .institution-search-table td {
+    border: none;
+}
+
+.institution-information-page .institution-information-empty {
+    text-align: center;
+}
+
+.institution-information-page .institution-information-pagination {
+    margin-top: 8px;
+}
+
+/* =========================================================
+   Add Institution Information Page
+   ========================================================= */
+
+.add-institution-information-page input,
+.add-institution-information-page select {
+    width: 180px;
+    height: 22px;
+}
+
+.add-institution-information-page .address-box {
+    border: 1px solid #b5b5a5;
+    padding: 5px;
+    width: 48%;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+    .add-institution-information-page .address-box h4 {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+.add-institution-information-page .auto-code {
+    display: inline-block;
+    width: 180px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 3px;
+    background: #eee;
+    color: #666;
+    border: 1px solid #999;
+    box-sizing: border-box;
+}
+
+.add-institution-information-page .label-hint {
+    color: #06c;
+}
+
+.add-institution-information-page .form-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    margin-top: 10px;
+    padding: 6px 15px;
+    border: 1px solid #b8c8dc;
+    border-radius: 4px;
+    background: #e8eef7;
+    color: #234a73 !important;
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* =========================================================
+   Owner Links Page
+   ========================================================= */
+
+.owner-links-page .form-row {
+    margin-bottom: 6px;
+}
+
+    .owner-links-page .form-row label {
+        display: inline-block;
+        width: 220px;
+    }
+
+.owner-links-page .label-hint {
+    color: #06c;
+}
+
+.owner-links-page .owner-search-table,
+.owner-links-page .owner-search-table td {
+    border: none;
+}
+
+.owner-links-page .owner-empty-row {
+    text-align: center;
+}
+
+.owner-links-page .owner-pagination {
+    margin-top: 8px;
+}
+
+/* Record table styling */
+
+.owner-links-page table:not(.owner-search-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    .owner-links-page table:not(.owner-search-table) th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .owner-links-page table:not(.owner-search-table) td {
+        border: 1px solid #666;
+        padding: 5px;
+        vertical-align: middle;
+    }
+
+/* =========================================================
+   Installment Contract Page
+   ========================================================= */
+
+.installment-contract-page .installment-search-table,
+.installment-contract-page .installment-search-table td {
+    border: none;
+}
+
+.installment-contract-page .installment-empty-row {
+    text-align: center;
+}
+
+.installment-contract-page .installment-pagination {
+    margin-top: 8px;
+}
+
+.installment-contract-page table:not(.installment-search-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    .installment-contract-page table:not(.installment-search-table) th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .installment-contract-page table:not(.installment-search-table) td {
+        border: 1px solid #666;
+        padding: 5px;
+        vertical-align: middle;
+    }
+
+/* =========================================================
+   Add Non-Installment Contract Page
+   ========================================================= */
+
+.add-non-installment-contract-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+    .add-non-installment-contract-page form {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .add-non-installment-contract-page fieldset {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .add-non-installment-contract-page .non-installment-contract-table {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+        .add-non-installment-contract-page .non-installment-contract-table td {
+            padding: 5px;
+            vertical-align: middle;
+            box-sizing: border-box;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(1),
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(3) {
+                width: 22%;
+                white-space: normal;
+            }
+
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(2),
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(4) {
+                width: 28%;
+            }
+
+        .add-non-installment-contract-page .non-installment-contract-table input:not([type="checkbox"]),
+        .add-non-installment-contract-page .non-installment-contract-table select {
+            padding: 5px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .add-non-installment-contract-page .non-installment-contract-table input[type="checkbox"] {
+            width: auto;
+            max-width: 100%;
+        }
+
+    .add-non-installment-contract-page .readonly-box {
+        background-color: #eee;
+    }
+
+    .add-non-installment-contract-page .subject-code-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+        .add-non-installment-contract-page .subject-code-container input {
+            flex: 1 1 0;
+            width: 0;
+            min-width: 0;
+        }
+
+        .add-non-installment-contract-page .subject-code-container button {
+            flex: 0 0 auto;
+            margin: 0;
+        }
+
+#messageModal .message-dialog {
+    width: 400px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#messageModal .message-body {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+/* =========================================================
+   Non-Installment Contract Page
+   ========================================================= */
+
+.non-installment-contract-page .non-installment-search-table,
+.non-installment-contract-page .non-installment-search-table td {
+    border: none;
+}
+
+.non-installment-contract-page .non-installment-empty-row {
+    text-align: center;
+}
+
+.non-installment-contract-page .non-installment-pagination {
+    margin-top: 8px;
+}
+
+.non-installment-contract-page table:not(.non-installment-search-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    .non-installment-contract-page table:not(.non-installment-search-table) th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .non-installment-contract-page table:not(.non-installment-search-table) td {
+        border: 1px solid #666;
+        padding: 5px;
+        vertical-align: middle;
+    }
+
+/* =========================================================
+   Add Installment Contract Page
+   ========================================================= */
+
+.add-installment-contract-page {
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+    .add-installment-contract-page .add-installment-contract-title {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px;
+        border-bottom: 1px solid #999;
+        background: #f4f4ee;
+    }
+
+    .add-installment-contract-page fieldset {
+        border: 1px solid #b5b5a5;
+        margin-top: 5px;
+        background: #edf4ef;
+    }
+
+    .add-installment-contract-page legend {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    .add-installment-contract-page table {
+        width: 100%;
+    }
+
+    .add-installment-contract-page td {
+        padding: 3px;
+        vertical-align: middle;
+    }
+
+    .add-installment-contract-page input,
+    .add-installment-contract-page select {
+        width: 180px;
+        height: 22px;
+    }
+
+    .add-installment-contract-page .subject-code-input {
+        width: 130px;
+    }
+
+    .add-installment-contract-page .label-hint {
+        color: #06c;
+    }
+
+    .add-installment-contract-page .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        padding: 6px 15px;
+        min-height: 30px;
+    }
+
+    .add-installment-contract-page .readonly-box {
+        background: #eee;
+        color: #666;
+        width: 180px;
+    }
+
+    .add-installment-contract-page .find-btn {
+        padding: 4px 10px;
+        font-size: 12px;
+        margin-left: 4px;
+    }
+
+/* =========================================================
+   Contract Links Page
+   ========================================================= */
+
+.contract-links-page .form-row {
+    margin-bottom: 6px;
+}
+
+    .contract-links-page .form-row label {
+        display: inline-block;
+        width: 150px;
+    }
+
+.contract-links-page input,
+.contract-links-page select {
+    width: 180px;
+}
+
+.contract-links-page .label-hint {
+    color: #06c;
+}
+
+.contract-links-page .contract-links-search-table,
+.contract-links-page .contract-links-search-table td {
+    border: none;
+}
+
+.contract-links-page .contract-links-search-table {
+    font-size: 12px;
+}
+
+    .contract-links-page .contract-links-search-table td {
+        padding: 3px;
+    }
+
+.contract-links-page .contract-links-empty-row {
+    text-align: center;
+}
+
+.contract-links-page .contract-links-pagination {
+    margin-top: 8px;
+}
+
+.contract-links-page .contract-links-popup {
+    display: flex;
+}
+
+.contract-links-page .contract-links-delete-modal {
+    display: none;
+}
+
+.contract-links-page table:not(.contract-links-search-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    .contract-links-page table:not(.contract-links-search-table) th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .contract-links-page table:not(.contract-links-search-table) td {
+        border: 1px solid #666;
+        padding: 5px;
+        vertical-align: middle;
+    }
+
+/* =========================================================
+   CIBnext - Responsive Styles
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .login-page .brand-panel {
+        display: none;
+    }
+
+    .login-page .login-box {
+        margin: auto;
+    }
+
+    .add-non-installment-contract-page {
+        padding: 6px;
+    }
+
+        .add-non-installment-contract-page fieldset {
+            padding: 6px;
+        }
+
+        .add-non-installment-contract-page .non-installment-contract-table td {
+            padding: 4px;
+        }
+
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(1),
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(3) {
+                width: 24%;
+            }
+
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(2),
+            .add-non-installment-contract-page .non-installment-contract-table td:nth-child(4) {
+                width: 26%;
+            }
+}
+
+@media (max-width: 800px) {
+    .address-box {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .message-overlay {
+        padding: 12px;
+    }
+
+    .message-dialog {
+        max-width: 100%;
+    }
+
+    .message-header,
+    .message-body {
+        padding: 14px;
+    }
+
+    .message-footer {
+        padding: 10px 14px;
+    }
+
+    .personal-information-page .section,
+    .institution-information-page .section {
+        overflow-x: auto;
+    }
+
+    .personal-information-page table {
+        min-width: 700px;
+    }
+
+    .institution-information-page table {
+        min-width: 750px;
+    }
+
+    .add-personal-information-page .address-box {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .add-personal-information-page table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 700px) {
+    .add-institution-information-page .address-box {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .add-institution-information-page fieldset {
+        overflow-x: auto;
+    }
+
+    .add-institution-information-page table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 600px) {
+    .add-non-installment-contract-page fieldset {
+        padding: 5px;
+    }
+
+    .add-non-installment-contract-page .non-installment-contract-table,
+    .add-non-installment-contract-page .non-installment-contract-table tbody,
+    .add-non-installment-contract-page .non-installment-contract-table tr,
+    .add-non-installment-contract-page .non-installment-contract-table td {
+        display: block;
+        width: 100% !important;
+    }
+
+        .add-non-installment-contract-page .non-installment-contract-table td {
+            padding: 4px 0;
+        }
+
+            .add-non-installment-contract-page .non-installment-contract-table td:empty {
+                display: none;
+            }
+
+        .add-non-installment-contract-page .non-installment-contract-table input:not([type="checkbox"]),
+        .add-non-installment-contract-page .non-installment-contract-table select {
+            width: 100%;
+        }
+
+    .add-non-installment-contract-page .subject-code-container {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-page .top-header {
+        padding: 16px 20px;
+    }
+
+    .login-page .content {
+        padding: 30px 16px;
+    }
+
+    .login-page .login-box {
+        padding: 32px 24px;
+    }
+
+        .login-page .login-box h3 {
+            font-size: 22px;
+        }
+
+    .content {
+        padding: 14px;
+    }
+
+    .header {
+        padding: 0 14px;
+    }
+
+    .info-bar {
+        gap: 12px;
+        padding: 10px 14px;
+    }
+
+    .btn-small,
+    .btn-save,
+    .btn-exit,
+    .form-button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
 }

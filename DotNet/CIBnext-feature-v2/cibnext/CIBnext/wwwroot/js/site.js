@@ -58,6 +58,7 @@
      * Close an ordinary message popup.
      * The delete-confirmation dialog is deliberately excluded.
      */
+
     function closeMessage(modal) {
         if (!modal || modal.id === "deleteConfirmModal") {
             return;
@@ -85,6 +86,7 @@
      * Initialize server-rendered message popups.
      * Do not initialize delete-confirmation dialogs here.
      */
+
     function initializeMessage(modal) {
         if (
             !modal ||
@@ -144,6 +146,7 @@
      * Shared popup API.
      * Pages can call window.showSharedMessage(type, message).
      */
+
     window.showSharedMessage = function (type, message) {
         const popupType = Object.prototype.hasOwnProperty.call(titles, type)
             ? type
@@ -226,9 +229,447 @@
     };
 
     /*
+     * Personal Information page functionality
+     */
+
+    const personalDeleteOpen = document.querySelector(
+        "[data-personal-delete-open]"
+    );
+
+    if (personalDeleteOpen) {
+        personalDeleteOpen.addEventListener("click", function () {
+            const checkboxes = document.querySelectorAll(
+                '#deleteForm input[name="SelectedCodes"]:checked'
+            );
+
+            if (checkboxes.length === 0) {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one record to delete."
+                );
+                return;
+            }
+
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (modal) {
+                modal.classList.remove("hidden");
+                modal.style.display = "flex";
+                modal.setAttribute("aria-hidden", "false");
+            }
+        });
+    }
+
+    const personalDeleteConfirm = document.querySelector(
+        "[data-personal-delete-confirm]"
+    );
+
+    if (personalDeleteConfirm) {
+        personalDeleteConfirm.addEventListener("click", function () {
+            const form = document.getElementById("deleteForm");
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (form) {
+                if (modal) {
+                    modal.classList.add("hidden");
+                    modal.style.display = "none";
+                    modal.setAttribute("aria-hidden", "true");
+                }
+
+                form.requestSubmit();
+            }
+        });
+    }
+
+    const personalRefresh = document.querySelector(
+        "[data-personal-refresh]"
+    );
+
+    if (personalRefresh) {
+        personalRefresh.addEventListener("click", function () {
+            window.location.href = "/Subject/PersonalInformation";
+        });
+    }
+
+    /*
+     * Institution Information page functionality
+     */
+
+    const institutionDeleteOpen = document.querySelector(
+        "[data-institution-delete-open]"
+    );
+
+    if (institutionDeleteOpen) {
+        institutionDeleteOpen.addEventListener("click", function () {
+            const selected = document.querySelectorAll(
+                '#deleteForm input[name="SelectedCodes"]:checked'
+            );
+
+            if (selected.length === 0) {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one record to delete."
+                );
+                return;
+            }
+
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (modal) {
+                modal.classList.remove("hidden");
+                modal.style.display = "flex";
+                modal.setAttribute("aria-hidden", "false");
+            }
+        });
+    }
+
+    const institutionDeleteConfirm = document.querySelector(
+        "[data-institution-delete-confirm]"
+    );
+
+    if (institutionDeleteConfirm) {
+        institutionDeleteConfirm.addEventListener("click", function () {
+            const form = document.getElementById("deleteForm");
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (form) {
+                if (modal) {
+                    modal.classList.add("hidden");
+                    modal.style.display = "none";
+                    modal.setAttribute("aria-hidden", "true");
+                }
+
+                form.requestSubmit();
+            }
+        });
+    }
+
+    const institutionRefresh = document.querySelector(
+        "[data-institution-refresh]"
+    );
+
+    if (institutionRefresh) {
+        institutionRefresh.addEventListener("click", function () {
+            window.location.reload();
+        });
+    }
+
+    /*
+     * Owner Links page functionality
+     */
+
+    const ownerDeleteOpen = document.querySelector(
+        "[data-owner-delete-open]"
+    );
+
+    if (ownerDeleteOpen) {
+        ownerDeleteOpen.addEventListener("click", function () {
+            const checkboxes = document.querySelectorAll(
+                '#deleteForm input[name="SelectedLinks"]:checked'
+            );
+
+            if (checkboxes.length === 0) {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one owner link record before deleting."
+                );
+                return;
+            }
+
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (modal) {
+                modal.classList.remove("hidden");
+                modal.style.display = "flex";
+                modal.setAttribute("aria-hidden", "false");
+            }
+        });
+    }
+
+    const ownerDeleteConfirm = document.querySelector(
+        "[data-owner-delete-confirm]"
+    );
+
+    if (ownerDeleteConfirm) {
+        ownerDeleteConfirm.addEventListener("click", function () {
+            const form = document.getElementById("deleteForm");
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (form) {
+                if (modal) {
+                    modal.classList.add("hidden");
+                    modal.style.display = "none";
+                    modal.setAttribute("aria-hidden", "true");
+                }
+
+                form.requestSubmit();
+            }
+        });
+    }
+
+    const ownerRefresh = document.querySelector(
+        "[data-owner-refresh]"
+    );
+
+    if (ownerRefresh) {
+        ownerRefresh.addEventListener("click", function () {
+            window.location.reload();
+        });
+    }
+
+    /*
+     * Installment Contract page functionality
+     */
+
+    const installmentSearchForm = document.getElementById("searchForm");
+
+    if (installmentSearchForm) {
+        installmentSearchForm.addEventListener("submit", function (event) {
+            const fields = [
+                "BranchCode",
+                "ContractCode",
+                "FISubjectCode",
+                "ContractPhase",
+                "UbsAcNo"
+            ];
+
+            const hasSearchValue = fields.some(function (name) {
+                const field = installmentSearchForm.querySelector(
+                    '[name="' + name + '"]'
+                );
+
+                return field && field.value.trim() !== "";
+            });
+
+            if (!hasSearchValue) {
+                event.preventDefault();
+
+                window.showSharedMessage(
+                    "warning",
+                    "Please enter or select at least one search option."
+                );
+            }
+        });
+    }
+
+    const installmentDeleteOpen = document.querySelector(
+        "[data-installment-delete-open]"
+    );
+
+    if (installmentDeleteOpen) {
+        installmentDeleteOpen.addEventListener("click", function () {
+            const form = document.getElementById("deleteContractsForm");
+
+            if (!form) {
+                return;
+            }
+
+            const selected = form.querySelectorAll(
+                'input[name="SelectedCodes"]:checked'
+            );
+
+            if (selected.length === 0) {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one record to delete."
+                );
+                return;
+            }
+
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (modal) {
+                modal.classList.remove("hidden");
+                modal.style.display = "flex";
+                modal.setAttribute("aria-hidden", "false");
+            }
+        });
+    }
+
+    const installmentDeleteConfirm = document.querySelector(
+        "[data-installment-delete-confirm]"
+    );
+
+    if (installmentDeleteConfirm) {
+        installmentDeleteConfirm.addEventListener("click", function () {
+            const form = document.getElementById("deleteContractsForm");
+            const modal = document.getElementById("deleteConfirmModal");
+
+            if (form) {
+                if (modal) {
+                    modal.classList.add("hidden");
+                    modal.style.display = "none";
+                    modal.setAttribute("aria-hidden", "true");
+                }
+
+                form.requestSubmit();
+            }
+        });
+    }
+
+    const installmentRefresh = document.querySelector(
+        "[data-installment-refresh]"
+    );
+
+    if (installmentRefresh) {
+        installmentRefresh.addEventListener("click", function () {
+            window.location.reload();
+        });
+    }
+
+    /*
+     * Non-Installment Contract page functionality
+     */
+
+    const nonInstallmentDeleteForm = document.getElementById("deleteContractsForm");
+    const nonInstallmentDeleteModal = document.getElementById("deleteConfirmModal");
+    const nonInstallmentConfirmButton = document.getElementById("confirmDeleteButton");
+    const nonInstallmentCancelButton = document.getElementById("cancelDeleteButton");
+
+    if (
+        nonInstallmentDeleteForm &&
+        nonInstallmentDeleteModal &&
+        nonInstallmentConfirmButton &&
+        nonInstallmentCancelButton
+    ) {
+        let deleteConfirmed = false;
+
+        function openNonInstallmentDeleteConfirmation() {
+            nonInstallmentDeleteModal.style.display = "flex";
+            nonInstallmentDeleteModal.style.removeProperty("display");
+            nonInstallmentDeleteModal.classList.add("show");
+            nonInstallmentConfirmButton.focus();
+        }
+
+        function closeNonInstallmentDeleteConfirmation() {
+            nonInstallmentDeleteModal.classList.remove("show");
+            nonInstallmentDeleteModal.style.display = "none";
+        }
+
+        nonInstallmentDeleteForm.addEventListener("submit", function (event) {
+            if (deleteConfirmed) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const selected = nonInstallmentDeleteForm.querySelectorAll(
+                'input[name="SelectedCodes"]:checked'
+            );
+
+            if (selected.length === 0) {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one record to delete."
+                );
+
+                return;
+            }
+
+            openNonInstallmentDeleteConfirmation();
+        });
+
+        nonInstallmentConfirmButton.addEventListener("click", function () {
+            deleteConfirmed = true;
+            closeNonInstallmentDeleteConfirmation();
+            nonInstallmentDeleteForm.submit();
+        });
+
+        nonInstallmentCancelButton.addEventListener("click", function () {
+            closeNonInstallmentDeleteConfirmation();
+        });
+
+        nonInstallmentDeleteModal.addEventListener("click", function (event) {
+            if (event.target === nonInstallmentDeleteModal) {
+                closeNonInstallmentDeleteConfirmation();
+            }
+        });
+    }
+
+    document.querySelectorAll("[data-noninstallment-refresh]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            location.reload();
+        });
+    });
+
+    /*
+     * Contract Links page functionality
+     */
+
+    const contractLinksDeleteForm = document.getElementById("deleteLinksForm");
+    const contractLinksDeleteModal = document.getElementById("deleteConfirmModal");
+
+    const contractLinksDeleteOpenButton = document.querySelector(
+        "[data-contract-links-delete-open]"
+    );
+
+    const contractLinksDeleteConfirmButton = document.querySelector(
+        "[data-contract-links-delete-confirm]"
+    );
+
+    if (
+        contractLinksDeleteForm &&
+        contractLinksDeleteModal &&
+        contractLinksDeleteOpenButton &&
+        contractLinksDeleteConfirmButton
+    ) {
+        function openContractLinksDeleteConfirmation() {
+            const selected = contractLinksDeleteForm.querySelectorAll(
+                'input[name="SelectedLinks"]:checked'
+            );
+
+            if (selected.length === 0) {
+                window.showSharedMessage(
+                    "warning",
+                    "Please select at least one record to delete."
+                );
+                return;
+            }
+
+            contractLinksDeleteModal.classList.remove("hidden");
+            contractLinksDeleteModal.style.display = "flex";
+            contractLinksDeleteModal.setAttribute("aria-hidden", "false");
+
+            contractLinksDeleteConfirmButton.focus();
+        }
+
+        function closeContractLinksDeleteConfirmation() {
+            contractLinksDeleteModal.classList.add("hidden");
+            contractLinksDeleteModal.style.display = "none";
+            contractLinksDeleteModal.setAttribute("aria-hidden", "true");
+        }
+
+        contractLinksDeleteOpenButton.addEventListener("click", function () {
+            openContractLinksDeleteConfirmation();
+        });
+
+        contractLinksDeleteConfirmButton.addEventListener("click", function () {
+            closeContractLinksDeleteConfirmation();
+            contractLinksDeleteForm.requestSubmit();
+        });
+
+        contractLinksDeleteModal.addEventListener("click", function (event) {
+            if (event.target === contractLinksDeleteModal) {
+                closeContractLinksDeleteConfirmation();
+            }
+        });
+    }
+
+    const contractLinksRefresh = document.querySelector(
+        "[data-contract-links-refresh]"
+    );
+
+    if (contractLinksRefresh) {
+        contractLinksRefresh.addEventListener("click", function () {
+            window.location.reload();
+        });
+    }
+
+    /*
      * Escape closes ordinary messages only.
      * Delete confirmation stays separate and requires its own controls.
      */
+
     document.addEventListener("keydown", function (event) {
         if (event.key !== "Escape") {
             return;
@@ -249,8 +690,9 @@
 
     /*
      * Delete confirmation: backdrop and Cancel close it.
-     * Yes, Delete is still handled by the page's confirmDelete() function.
+     * Yes, Delete is handled by the page-specific confirmation handler.
      */
+
     const deleteModal = document.getElementById("deleteConfirmModal");
 
     if (deleteModal) {
@@ -273,4 +715,5 @@
             }
         });
     }
+
 });

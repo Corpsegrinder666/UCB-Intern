@@ -1,449 +1,323 @@
 ﻿@page
 @model CIBnext.Pages.Contract.InstalmentContractModel
 
-<style>
-    .page-title {
-        font-size: 30px;
-        font-weight: bold;
-        padding: 5px;
-        border-bottom: 1px solid #999;
-    }
+<div class="installment-contract-page">
 
-    .section {
-        border: 1px solid #b8b8a8;
-        background: #edf4ef;
-        padding: 10px;
-        margin-top: 5px;
-    }
+    <div class="page-title">Installment Contract List</div>
 
-    fieldset {
-        border: 1px solid #b8b8a8;
-        padding: 10px;
-    }
+    <form method="get" id="searchForm">
+        <div class="section">
+            <fieldset>
+                <legend>Search Option</legend>
 
-    legend {
-        font-size: 14px;
-        padding: 0 5px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-    }
-
-    th {
-        background: #cdd8ea;
-        border: 1px solid #666;
-        padding: 3px;
-    }
-
-    td {
-        border: 1px solid #666;
-        padding: 3px;
-    }
-
-    .btn-small {
-        padding: 2px 8px;
-        font-size: 12px;
-        cursor: pointer;
-    }
-
-    .pagination a,
-    .pagination span {
-        padding: 2px 8px;
-        margin-right: 3px;
-        text-decoration: none;
-    }
-
-    .pagination a {
-        color: #06c;
-    }
-
-    .pagination span.current {
-        font-weight: bold;
-        color: #000;
-    }
-</style>
-
-<div class="page-title">Installment Contract List</div>
-
-<form method="get" id="searchForm">
-    <div class="section">
-        <fieldset>
-            <legend>Search Option</legend>
-
-            <table style="border:none">
-                <tr>
-                    <td style="border:none">Branch Code:</td>
-                    <td style="border:none">
-                        <select asp-for="BranchCode"
-                                asp-items="Model.BranchCodeList">
-                            <option value="">All Branch</option>
-                        </select>
-                    </td>
-
-                    <td style="border:none">Contract Code:</td>
-                    <td style="border:none">
-                        <input asp-for="ContractCode" />
-                    </td>
-
-                    <td style="border:none">F.I. Subject Code:</td>
-                    <td style="border:none">
-                        <input asp-for="FISubjectCode" />
-                    </td>
-
-                    <td style="border:none">Contract Phase</td>
-                    <td style="border:none">
-                        <select asp-for="ContractPhase"
-                                asp-items="Model.ContractPhaseList">
-                            <option value="">--Select--</option>
-                        </select>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td style="border:none">UBS A/C No:</td>
-                    <td style="border:none">
-                        <input asp-for="UbsAcNo" />
-                    </td>
-                </tr>
-            </table>
-
-            <button type="submit"
-                    class="btn-small"
-                    name="SearchSubmitted"
-                    value="true">
-                Search
-            </button>
-
-            <a href="/Contract/InstallmentContract"
-               class="btn-small">
-                Clear
-            </a>
-
-            <a href="#">Go to Error List</a>
-        </fieldset>
-    </div>
-</form>
-
-<div class="section">
-    <fieldset>
-        <legend>Installment Contract Information</legend>
-
-        <h3>Total Count: @Model.TotalCount</h3>
-
-        <form method="post"
-              asp-page-handler="Delete"
-              id="deleteContractsForm">
-
-            <table>
-                <tr>
-                    <th></th>
-                    <th>Action</th>
-                    <th>Branch Code</th>
-                    <th>Subject Code</th>
-                    <th>Borrower Name</th>
-                    <th>Contract Code</th>
-                    <th>Contract Type</th>
-                    <th>Contract Phase</th>
-                    <th>Contract Status</th>
-                    <th>Currency Code</th>
-                    <th>Sanction Limit</th>
-                </tr>
-
-                @if (Model.ContractList != null &&
-                     Model.ContractList.Any())
-                {
-                    @foreach (var c in Model.ContractList)
-                    {
-                        <tr>
-                            <td>
-                                <input type="checkbox"
-                                       name="SelectedCodes"
-                                       value="@c.FIContractCode" />
-                            </td>
-
-                            <td>
-                                <a href="/Contract/AddInstalmentContract?contractCode=@Uri.EscapeDataString(c.FIContractCode ?? "")">
-                                    View/Edit
-                                </a>
-                            </td>
-
-                            <td>@c.BranchCode</td>
-                            <td>@c.FISubjectCode</td>
-                            <td>@c.BorrowerName</td>
-                            <td>@c.FIContractCode</td>
-                            <td>@c.ContractType</td>
-                            <td>@c.ContractPhase</td>
-                            <td>@c.ContractStatus</td>
-                            <td>@c.CurrencyCode</td>
-                            <td>@c.SanctionLimit</td>
-                        </tr>
-                    }
-                }
-                else
-                {
+                <table class="installment-search-table">
                     <tr>
-                        <td colspan="11" style="text-align:center;">
-                            No records found
+                        <td>Branch Code:</td>
+                        <td>
+                            <select asp-for="BranchCode"
+                                    asp-items="Model.BranchCodeList">
+                                <option value="">All Branch</option>
+                            </select>
+                        </td>
+
+                        <td>Contract Code:</td>
+                        <td>
+                            <input asp-for="ContractCode" />
+                        </td>
+
+                        <td>F.I. Subject Code:</td>
+                        <td>
+                            <input asp-for="FISubjectCode" />
+                        </td>
+
+                        <td>Contract Phase</td>
+                        <td>
+                            <select asp-for="ContractPhase"
+                                    asp-items="Model.ContractPhaseList">
+                                <option value="">--Select--</option>
+                            </select>
                         </td>
                     </tr>
-                }
-            </table>
 
-            <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
+                    <tr>
+                        <td>UBS A/C No:</td>
+                        <td>
+                            <input asp-for="UbsAcNo" />
+                        </td>
+                    </tr>
+                </table>
 
-            <div class="pagination" style="margin-top:8px">
-                @{ var lastDisplayedPage = 0; }
+                <button type="submit"
+                        class="btn-small"
+                        name="SearchSubmitted"
+                        value="true">
+                    Search
+                </button>
 
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    var displayPage = i <= 3
-                        || i > Model.TotalPages - 3
-                        || Math.Abs(i - Model.PageIndex) <= 2;
+                <a href="/Contract/InstallmentContract"
+                   class="btn-small">
+                    Clear
+                </a>
 
-                    if (!displayPage)
+                <a href="#">Go to Error List</a>
+            </fieldset>
+        </div>
+    </form>
+
+    <div class="section">
+        <fieldset>
+            <legend>Installment Contract Information</legend>
+
+            <h3>Total Count: @Model.TotalCount</h3>
+
+            <form method="post"
+                  asp-page-handler="Delete"
+                  id="deleteContractsForm">
+
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Action</th>
+                        <th>Branch Code</th>
+                        <th>Subject Code</th>
+                        <th>Borrower Name</th>
+                        <th>Contract Code</th>
+                        <th>Contract Type</th>
+                        <th>Contract Phase</th>
+                        <th>Contract Status</th>
+                        <th>Currency Code</th>
+                        <th>Sanction Limit</th>
+                    </tr>
+
+                    @if (Model.ContractList != null &&
+                         Model.ContractList.Any())
                     {
-                        continue;
-                    }
+                        @foreach (var c in Model.ContractList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox"
+                                           name="SelectedCodes"
+                                           value="@c.FIContractCode" />
+                                </td>
 
-                    if (lastDisplayedPage > 0 &&
-                        i > lastDisplayedPage + 1)
-                    {
-                        <span class="ellipsis">...</span>
-                    }
+                                <td>
+                                    <a href="/Contract/AddInstalmentContract?contractCode=@Uri.EscapeDataString(c.FIContractCode ?? "")">
+                                        View/Edit
+                                    </a>
+                                </td>
 
-                    if (i == Model.PageIndex)
-                    {
-                        <span class="current">@i</span>
+                                <td>@c.BranchCode</td>
+                                <td>@c.FISubjectCode</td>
+                                <td>@c.BorrowerName</td>
+                                <td>@c.FIContractCode</td>
+                                <td>@c.ContractType</td>
+                                <td>@c.ContractPhase</td>
+                                <td>@c.ContractStatus</td>
+                                <td>@c.CurrencyCode</td>
+                                <td>@c.SanctionLimit</td>
+                            </tr>
+                        }
                     }
                     else
                     {
-                        <a href="/Contract/InstallmentContract?PageIndex=@i&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">@i</a>
+                        <tr>
+                            <td colspan="11" class="installment-empty-row">
+                                No records found
+                            </td>
+                        </tr>
+                    }
+                </table>
+
+                <input type="hidden"
+                       name="PageIndex"
+                       value="@Model.PageIndex" />
+
+                <div class="pagination installment-pagination">
+                    @{
+                        var lastDisplayedPage = 0;
                     }
 
-                    lastDisplayedPage = i;
-                }
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        var displayPage = i <= 3
+                            || i > Model.TotalPages - 3
+                            || Math.Abs(i - Model.PageIndex) <= 2;
+
+                        if (!displayPage)
+                        {
+                            continue;
+                        }
+
+                        if (lastDisplayedPage > 0 &&
+                            i > lastDisplayedPage + 1)
+                        {
+                            <span class="ellipsis">...</span>
+                        }
+
+                        if (i == Model.PageIndex)
+                        {
+                            <span class="current">@i</span>
+                        }
+                        else
+                        {
+                            <a href="/Contract/InstallmentContract?PageIndex=@i&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">@i</a>
+                        }
+
+                        lastDisplayedPage = i;
+                    }
+                </div>
+
+                <br />
+
+                <a href="/Contract/AddInstalmentContract"
+                   class="btn-small">
+                    Add
+                </a>
+
+                <button class="btn-small"
+                        type="button"
+                        data-installment-refresh>
+                    Refresh
+                </button>
+
+                <button type="button"
+                        class="btn-small"
+                        data-installment-delete-open>
+                    Delete
+                </button>
+            </form>
+        </fieldset>
+    </div>
+
+    @* Ordinary server message popup *@
+    @if (!string.IsNullOrWhiteSpace(Model.SearchMessage))
+    {
+        <div id="messageModal"
+             class="message-overlay"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="messageModalTitle">
+
+            <div class="message-dialog">
+                <div class="message-header warning">
+                    <h3 id="messageModalTitle">Search Option</h3>
+                    <button type="button"
+                            class="message-close"
+                            aria-label="Close message">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="message-body warning">@Model.SearchMessage</div>
+
+                <div class="message-footer">
+                    <button type="button" class="message-button warning">
+                        OK
+                    </button>
+                </div>
             </div>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.DeleteMessage))
+    {
+        <div id="messageModal"
+             class="message-overlay"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="messageModalTitle">
 
-            <br />
+            <div class="message-dialog">
+                <div class="message-header @Model.DeleteMessageType">
+                    <h3 id="messageModalTitle">@Model.DeleteMessageTitle</h3>
+                    <button type="button"
+                            class="message-close"
+                            aria-label="Close message">
+                        &times;
+                    </button>
+                </div>
 
-            <a href="/Contract/AddInstalmentContract"
-               class="btn-small">
-                Add
-            </a>
+                <div class="message-body @Model.DeleteMessageType">
+                    @Model.DeleteMessage
+                </div>
 
-            <button class="btn-small"
-                    onclick="location.reload();"
-                    type="button">
-                Refresh
-            </button>
+                <div class="message-footer">
+                    <button type="button"
+                            class="message-button @Model.DeleteMessageType">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        <div id="messageModal"
+             class="message-overlay"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="messageModalTitle">
 
-            <button type="button"
-                    class="btn-small"
-                    onclick="openDeleteConfirmation()">
-                Delete
-            </button>
-        </form>
-    </fieldset>
-</div>
+            <div class="message-dialog">
+                <div class="message-header success">
+                    <h3 id="messageModalTitle">Success</h3>
+                    <button type="button"
+                            class="message-close"
+                            aria-label="Close message">
+                        &times;
+                    </button>
+                </div>
 
-@* Ordinary server message popup *@
-@if (!string.IsNullOrWhiteSpace(Model.SearchMessage))
-{
-    <div id="messageModal"
-         class="message-overlay"
+                <div class="message-body success">
+                    @Model.SuccessMessage
+                </div>
+
+                <div class="message-footer">
+                    <button type="button" class="message-button success">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* Separate delete confirmation; it does not auto-dismiss. *@
+    <div id="deleteConfirmModal"
+         class="message-overlay hidden"
          role="dialog"
          aria-modal="true"
-         aria-labelledby="messageModalTitle">
+         aria-labelledby="deleteConfirmTitle"
+         aria-hidden="true">
 
         <div class="message-dialog">
             <div class="message-header warning">
-                <h3 id="messageModalTitle">Search Option</h3>
+                <h3 id="deleteConfirmTitle">Confirm deletion</h3>
                 <button type="button"
                         class="message-close"
-                        aria-label="Close message">
+                        aria-label="Close delete confirmation"
+                        data-delete-cancel>
                     &times;
                 </button>
             </div>
 
-            <div class="message-body warning">@Model.SearchMessage</div>
+            <div class="message-body warning">
+                Are you sure you want to delete the selected contract record(s)?
+                This action may not be reversible.
+            </div>
 
             <div class="message-footer">
-                <button type="button" class="message-button warning">OK</button>
-            </div>
-        </div>
-    </div>
-}
-else if (!string.IsNullOrWhiteSpace(Model.DeleteMessage))
-{
-    <div id="messageModal"
-         class="message-overlay"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="messageModalTitle">
-
-        <div class="message-dialog">
-            <div class="message-header @Model.DeleteMessageType">
-                <h3 id="messageModalTitle">@Model.DeleteMessageTitle</h3>
                 <button type="button"
-                        class="message-close"
-                        aria-label="Close message">
-                    &times;
+                        class="message-button confirm-cancel">
+                    Cancel
                 </button>
-            </div>
 
-            <div class="message-body @Model.DeleteMessageType">@Model.DeleteMessage</div>
-
-            <div class="message-footer">
                 <button type="button"
-                        class="message-button @Model.DeleteMessageType">
-                    OK
+                        class="message-button"
+                        data-installment-delete-confirm>
+                    Yes, Delete
                 </button>
             </div>
         </div>
     </div>
-}
-else if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
-{
-    <div id="messageModal"
-         class="message-overlay"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="messageModalTitle">
 
-        <div class="message-dialog">
-            <div class="message-header success">
-                <h3 id="messageModalTitle">Success</h3>
-                <button type="button"
-                        class="message-close"
-                        aria-label="Close message">
-                    &times;
-                </button>
-            </div>
-
-            <div class="message-body success">@Model.SuccessMessage</div>
-
-            <div class="message-footer">
-                <button type="button" class="message-button success">OK</button>
-            </div>
-        </div>
-    </div>
-}
-
-@* Separate delete confirmation; it does not auto-dismiss. *@
-<div id="deleteConfirmModal"
-     class="message-overlay hidden"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="deleteConfirmTitle"
-     aria-hidden="true">
-
-    <div class="message-dialog">
-        <div class="message-header warning">
-            <h3 id="deleteConfirmTitle">Confirm deletion</h3>
-            <button type="button"
-                    class="message-close"
-                    aria-label="Close delete confirmation"
-                    onclick="closeDeleteConfirmation()">
-                &times;
-            </button>
-        </div>
-
-        <div class="message-body warning">
-            Are you sure you want to delete the selected contract record(s)?
-            This action may not be reversible.
-        </div>
-
-        <div class="message-footer">
-            <button type="button"
-                    class="message-button"
-                    onclick="closeDeleteConfirmation()">
-                Cancel
-            </button>
-
-            <button type="button"
-                    class="message-button"
-                    onclick="confirmDelete()">
-                Yes, Delete
-            </button>
-        </div>
-    </div>
 </div>
-
-<script>
-    function openDeleteConfirmation() {
-        const form = document.getElementById("deleteContractsForm");
-        const selected = form.querySelectorAll(
-            'input[name="SelectedCodes"]:checked'
-        );
-
-        if (selected.length === 0) {
-            if (typeof window.showSharedMessage === "function") {
-                window.showSharedMessage(
-                    "warning",
-                    "Please select at least one record to delete."
-                );
-            } else {
-                alert("Please select at least one record to delete.");
-            }
-
-            return;
-        }
-
-        const popup = document.getElementById("deleteConfirmModal");
-
-        popup.classList.remove("hidden");
-        popup.style.display = "flex";
-        popup.setAttribute("aria-hidden", "false");
-    }
-
-    function closeDeleteConfirmation() {
-        const popup = document.getElementById("deleteConfirmModal");
-
-        popup.classList.add("hidden");
-        popup.style.display = "none";
-        popup.setAttribute("aria-hidden", "true");
-    }
-
-    function confirmDelete() {
-        const form = document.getElementById("deleteContractsForm");
-
-        if (!form) {
-            return;
-        }
-
-        closeDeleteConfirmation();
-        form.submit();
-    }
-
-    // Preserve the client-side empty-search validation.
-    document.getElementById("searchForm").addEventListener("submit", function (event) {
-        const fields = [
-            "BranchCode",
-            "ContractCode",
-            "FISubjectCode",
-            "ContractPhase",
-            "UbsAcNo"
-        ];
-
-        const hasSearchValue = fields.some(function (name) {
-            const field = this.querySelector('[name="' + name + '"]');
-            return field && field.value.trim() !== "";
-        }, this);
-
-        if (!hasSearchValue) {
-            event.preventDefault();
-
-            if (typeof window.showSharedMessage === "function") {
-                window.showSharedMessage(
-                    "warning",
-                    "Please enter or select at least one search option."
-                );
-            } else {
-                alert("Please enter or select at least one search option.");
-            }
-        }
-    });
-</script>
