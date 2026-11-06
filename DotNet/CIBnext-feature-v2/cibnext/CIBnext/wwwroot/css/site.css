@@ -1766,6 +1766,16 @@ button:disabled,
                 width: 28%;
             }
 
+        .add-non-installment-contract-page .non-installment-contract-table col:nth-child(1),
+        .add-non-installment-contract-page .non-installment-contract-table col:nth-child(3) {
+            width: 22%;
+        }
+
+        .add-non-installment-contract-page .non-installment-contract-table col:nth-child(2),
+        .add-non-installment-contract-page .non-installment-contract-table col:nth-child(4) {
+            width: 28%;
+        }
+
         .add-non-installment-contract-page .non-installment-contract-table input:not([type="checkbox"]),
         .add-non-installment-contract-page .non-installment-contract-table select {
             padding: 5px;

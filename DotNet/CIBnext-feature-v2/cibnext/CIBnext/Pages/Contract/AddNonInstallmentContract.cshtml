@@ -9,21 +9,40 @@
             <legend>General</legend>
 
             <table class="non-installment-contract-table">
+                <colgroup>
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                </colgroup>
                 <tbody>
                     <tr>
                         <td>Branch</td>
-                        <td>
+                        <td colspan="3">
                             <select asp-for="Contract.BranchCode"
                                     asp-items="Model.BranchCodeList">
                                 <option value="">-- Select Branch --</option>
                             </select>
                         </td>
+                    </tr>
 
-                        <td>F.I. Subject Code</td>
+                    <tr>
+                        <td>F.I. Code</td>
+                        <td>
+                            <input asp-for="Contract.FICode"
+                                   value="046"
+                                   readonly
+                                   class="readonly-box" />
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-hint">F.I. Subject Code</td>
                         <td>
                             <div class="subject-code-container">
                                 <input asp-for="Contract.FISubjectCode" />
-
                                 <button type="submit"
                                         asp-page-handler="LookupBorrower"
                                         class="btn">
@@ -31,34 +50,45 @@
                                 </button>
                             </div>
                         </td>
-                    </tr>
 
-                    <tr>
                         <td>Borrower Name</td>
                         <td>
                             <input asp-for="Contract.BorrowerName"
                                    readonly
                                    class="readonly-box" />
                         </td>
+                    </tr>
 
-                        <td>Contract Code</td>
+                    <tr>
+                        <td class="label-hint">CBS A/C No.</td>
+                        <td>
+                            <input asp-for="Contract.UbsAccountNo" />
+                        </td>
+
+                        <td>Starting Date of Contract</td>
+                        <td>
+                            <input asp-for="Contract.StartingDate"
+                                   type="date" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-hint">F.I. Contract Code</td>
                         <td>
                             <input asp-for="Contract.FIContractCode"
                                    readonly="@(Model.IsEdit ? "readonly" : null)"
                                    class="@(Model.IsEdit ? "readonly-box" : "")" />
                         </td>
+
+                        <td>Request Date of Contract</td>
+                        <td>
+                            <input asp-for="Contract.RequestDate"
+                                   type="date" />
+                        </td>
                     </tr>
-                </tbody>
-            </table>
-        </fieldset>
 
-        <fieldset>
-            <legend>Non Installment Contract</legend>
-
-            <table class="non-installment-contract-table">
-                <tbody>
                     <tr>
-                        <td>Contract Type</td>
+                        <td class="label-hint">Contract Type</td>
                         <td>
                             <select asp-for="Contract.ContractType"
                                     asp-items="Model.ContractTypeList">
@@ -66,17 +96,31 @@
                             </select>
                         </td>
 
-                        <td>Contract Phase</td>
+                        <td>Planned End Date of Contract</td>
+                        <td>
+                            <input asp-for="Contract.PlannedEndDate"
+                                   type="date" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-hint">Contract Phase</td>
                         <td>
                             <select asp-for="Contract.ContractPhase"
                                     asp-items="Model.ContractPhaseList">
                                 <option value="">-- Select --</option>
                             </select>
                         </td>
+
+                        <td>Actual End Date of Contract</td>
+                        <td>
+                            <input asp-for="Contract.ActualEndDate"
+                                   type="date" />
+                        </td>
                     </tr>
 
                     <tr>
-                        <td>Contract Status</td>
+                        <td class="label-hint">Contract Status</td>
                         <td>
                             <select asp-for="Contract.ContractStatus"
                                     asp-items="Model.ContractStatusList">
@@ -84,17 +128,31 @@
                             </select>
                         </td>
 
-                        <td>Currency Code</td>
+                        <td>Date of Last Payment</td>
+                        <td>
+                            <input asp-for="Contract.DateOfLastPayment"
+                                   type="date" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-hint">Currency Code</td>
                         <td>
                             <select asp-for="Contract.CurrencyCode"
                                     asp-items="Model.CurrencyList">
                                 <option value="">-- Select --</option>
                             </select>
                         </td>
+
+                        <td>Subsidized Credit</td>
+                        <td>
+                            <input asp-for="SubsidizedCreditFlag"
+                                   type="checkbox" />
+                        </td>
                     </tr>
 
                     <tr>
-                        <td>Reorganized Credit</td>
+                        <td>Code Reorganized Credit</td>
                         <td>
                             <select asp-for="Contract.CodeReorganizedCredit"
                                     asp-items="Model.ReorganizedCreditList">
@@ -102,12 +160,26 @@
                             </select>
                         </td>
 
+                        <td>Pre-Finance of Loan</td>
+                        <td>
+                            <input asp-for="PreFinanceFlag"
+                                   type="checkbox" />
+                        </td>
+                    </tr>
+
+                    <tr>
                         <td>Third Party Guarantee Type</td>
                         <td>
                             <select asp-for="Contract.ThirdPartyGuaranteeType"
                                     asp-items="Model.ThirdPartyGuaranteeTypeList">
                                 <option value="">-- Select --</option>
                             </select>
+                        </td>
+
+                        <td>Amount Guaranteed by Third Party Guarantor</td>
+                        <td>
+                            <input asp-for="Contract.AmountGuaranteedByThirdParty"
+                                   type="number" />
                         </td>
                     </tr>
 
@@ -120,30 +192,124 @@
                             </select>
                         </td>
 
-                        <td>Defaulter Status</td>
+                        <td>Amount Guaranteed by Security</td>
+                        <td>
+                            <input asp-for="Contract.AmountGuaranteedBySecurityType"
+                                   type="number" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-hint">Defaulter Status</td>
                         <td>
                             <select asp-for="Contract.DefaulterStatus"
                                     asp-items="Model.DefaulterStatusList">
                                 <option value="">-- Select --</option>
                             </select>
                         </td>
-                    </tr>
 
+                        <td>Qualitative Judgement</td>
+                        <td>
+                            <input asp-for="QualitativeJudgementFlag"
+                                   type="checkbox" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <fieldset>
+            <legend>Non Installment Contract</legend>
+
+            <table class="non-installment-contract-table">
+                <colgroup>
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                </colgroup>
+                <tbody>
                     <tr>
-                        <td>No. of Days Payment Delay</td>
+                        <td class="label-hint">Sanction Limit</td>
+                        <td>
+                            <input asp-for="Contract.SanctionLimit"
+                                   type="number" />
+                        </td>
+
+                        <td>No. of Days of Payment Delay</td>
                         <td>
                             <select asp-for="Contract.NumberOfDaysOfPaymentDelay"
                                     asp-items="Model.NoOfDaysPaymentDelayList">
                                 <option value="">-- Select --</option>
                             </select>
                         </td>
+                    </tr>
 
+                    <tr>
+                        <td class="label-hint">Total Outstanding Amount</td>
+                        <td>
+                            <input asp-for="Contract.TotalOutstandingAmount"
+                                   type="number" />
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>No. of Times Rescheduling</td>
+                        <td>
+                            <input asp-for="Contract.NumberOfTimesRescheduling"
+                                   type="text" />
+                        </td>
+
+                        <td>Date of Last Rescheduling</td>
+                        <td>
+                            <input asp-for="Contract.DateOfLastRescheduling"
+                                   type="date" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Recovery During Reporting Period</td>
+                        <td>
+                            <input asp-for="Contract.RecoveryDuringTheReportingPeriod"
+                                   type="number" />
+                        </td>
+
+                        <td>Cumulative Recovery</td>
+                        <td>
+                            <input asp-for="Contract.CumulativeRecovery"
+                                   type="number" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Due for recovery</td>
+                        <td>
+                            <input asp-for="Contract.DueForRecovery"
+                                   type="number" />
+                        </td>
+
+                        <td>Date of Law Suit</td>
+                        <td>
+                            <input asp-for="Contract.DateOfLawSuit"
+                                   type="date" />
+                        </td>
+                    </tr>
+
+                    <tr>
                         <td>Economic Purpose Code</td>
                         <td>
                             <select asp-for="Contract.EconomicPurposeCode"
                                     asp-items="Model.EconomicPurposeCodeList">
                                 <option value="">-- Select --</option>
                             </select>
+                        </td>
+
+                        <td>Date of Classification</td>
+                        <td>
+                            <input asp-for="Contract.DateOfClassification"
+                                   type="date" />
                         </td>
                     </tr>
 
@@ -154,31 +320,6 @@
                                     asp-items="Model.EnterpriseTypeList">
                                 <option value="">-- Select --</option>
                             </select>
-                        </td>
-
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td>Subsidized Credit</td>
-                        <td>
-                            <input asp-for="SubsidizedCreditFlag"
-                                   type="checkbox" />
-                        </td>
-
-                        <td>Pre-Finance of Loan</td>
-                        <td>
-                            <input asp-for="PreFinanceFlag"
-                                   type="checkbox" />
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Qualitative Judgement</td>
-                        <td>
-                            <input asp-for="QualitativeJudgementFlag"
-                                   type="checkbox" />
                         </td>
 
                         <td>SME</td>
