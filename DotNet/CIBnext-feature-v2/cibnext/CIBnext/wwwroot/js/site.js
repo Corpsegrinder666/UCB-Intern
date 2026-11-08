@@ -1,4 +1,5 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+﻿
+document.addEventListener("DOMContentLoaded", function () {
 
     const messageSelector =
         "#validationModal, #messageModal, #clientMessageModal, " +
@@ -595,6 +596,129 @@
     /*
      * Contract Links page functionality
      */
+
+    const contractCodeInput = document.getElementById("fiContractCode");
+    const primaryCodeInput = document.getElementById("fiPrimaryCode");
+
+    if (contractCodeInput && primaryCodeInput) {
+        let lastLookupCode = "";
+        let lookupRequest = 0;
+        let lookupTimer = null;
+
+        async function lookupPrimaryCode() {
+            const contractCode = contractCodeInput.value.trim();
+
+            if (!contractCode) {
+                lookupRequest++;
+                lastLookupCode = "";
+                primaryCodeInput.value = "";
+                primaryCodeInput.setCustomValidity("");
+                return;
+            }
+
+            if (
+                contractCode === lastLookupCode &&
+                primaryCodeInput.value.trim() !== ""
+            ) {
+                return;
+            }
+
+            lastLookupCode = contractCode;
+
+            const currentRequest = ++lookupRequest;
+
+            primaryCodeInput.value = "";
+            primaryCodeInput.setCustomValidity("");
+
+            try {
+                const lookupUrl = new URL(
+                    contractCodeInput.dataset.primaryCodeLookupUrl,
+                    window.location.origin
+                );
+
+                lookupUrl.searchParams.set("contractCode", contractCode);
+
+                const response = await fetch(lookupUrl);
+
+                if (!response.ok) {
+                    throw new Error("The contract lookup request failed.");
+                }
+
+                const result = await response.json();
+
+                // Ignore an outdated response if the user has typed a new code.
+                if (currentRequest !== lookupRequest) {
+                    return;
+                }
+
+                if (result.success) {
+                    primaryCodeInput.value = result.primaryCode;
+                    primaryCodeInput.setCustomValidity("");
+                } else {
+                    lastLookupCode = "";
+
+                    primaryCodeInput.value = "";
+                    primaryCodeInput.setCustomValidity(
+                        result.message || "No matching contract was found."
+                    );
+
+                    primaryCodeInput.reportValidity();
+                }
+            } catch (error) {
+                if (currentRequest !== lookupRequest) {
+                    return;
+                }
+
+                lastLookupCode = "";
+
+                primaryCodeInput.value = "";
+                primaryCodeInput.setCustomValidity(
+                    "Unable to retrieve the primary code. Please try again."
+                );
+
+                primaryCodeInput.reportValidity();
+
+                console.error("Primary code lookup error:", error);
+            }
+        }
+
+        /*
+         * Automatically look up the primary code while typing.
+         * The short delay prevents unnecessary requests for every keystroke.
+         */
+
+        contractCodeInput.addEventListener("input", function () {
+            clearTimeout(lookupTimer);
+
+            const contractCode = contractCodeInput.value.trim();
+
+            // Invalidate any previous lookup response.
+            lookupRequest++;
+            lastLookupCode = "";
+
+            // Clear the previous primary code immediately.
+            primaryCodeInput.value = "";
+            primaryCodeInput.setCustomValidity("");
+
+            if (!contractCode) {
+                return;
+            }
+
+            lookupTimer = setTimeout(function () {
+                lookupPrimaryCode();
+            }, 300);
+        });
+
+        /*
+         * If the user leaves the field before the delay finishes,
+         * perform the lookup immediately.
+         */
+
+        contractCodeInput.addEventListener("blur", function () {
+            clearTimeout(lookupTimer);
+            lookupPrimaryCode();
+        });
+    }
 
     const contractLinksDeleteForm = document.getElementById("deleteLinksForm");
     const contractLinksDeleteModal = document.getElementById("deleteConfirmModal");

@@ -122,13 +122,17 @@
                     }
                     else
                     {
-                        <input asp-for="AddLink.FIContractCode" />
+                        <input asp-for="AddLink.FIContractCode"
+                               id="fiContractCode"
+                               data-primary-code-lookup-url="@Url.Page("/Contract/ContractLinks", "LookupPrimaryCode")" />
                     }
                 </div>
 
                 <div class="form-row">
                     <label class="label-hint">F.I. Primary Code</label>
-                    <input asp-for="AddLink.FIPrimaryCode" />
+                    <input asp-for="AddLink.FIPrimaryCode"
+                           id="fiPrimaryCode"
+                           readonly />
                 </div>
 
                 <div class="form-row">

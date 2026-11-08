@@ -1,3 +1,4 @@
+
 using CIBnext.BLL;
 using CIBnext.DAO;
 using CIBnext.Validators;
@@ -104,8 +105,6 @@ namespace CIBnext.Pages.Contract
         {
             LoadDropdowns();
 
-            // Detect whether the Search form was submitted.
-            // The Clear link does not include any search query keys.
             bool searchSubmitted =
                 Request.Query.ContainsKey("SearchBranchCode") ||
                 Request.Query.ContainsKey("SearchPrimaryCode") ||
@@ -162,9 +161,84 @@ namespace CIBnext.Pages.Contract
             }
         }
 
+        // AJAX lookup for F.I. Primary Code.
+        public IActionResult OnGetLookupPrimaryCode(string contractCode)
+        {
+            if (string.IsNullOrWhiteSpace(contractCode))
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "Please enter an F.I. Contract Code."
+                });
+            }
+
+            string primaryCode = GetPrimarySubjectCode(contractCode.Trim());
+
+            if (string.IsNullOrWhiteSpace(primaryCode))
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "No matching Installment or Non-Installment Contract was found for this F.I. Contract Code."
+                });
+            }
+
+            return new JsonResult(new
+            {
+                success = true,
+                primaryCode = primaryCode
+            });
+        }
+
+        // Retrieve the primary subject code from either contract type.
+        private string GetPrimarySubjectCode(string contractCode)
+        {
+            var contractBLL = new ContractBLL(_configuration);
+
+            // First, check Installment Contract.
+            var installmentContract =
+                contractBLL.GetInstalmentContract(contractCode);
+
+            if (!string.IsNullOrWhiteSpace(
+                installmentContract?.FISubjectCode))
+            {
+                return installmentContract.FISubjectCode;
+            }
+
+            // If not found, check Non-Installment Contract.
+            var nonInstallmentContract =
+                contractBLL.GetNonInstalmentContract(contractCode);
+
+            if (!string.IsNullOrWhiteSpace(
+                nonInstallmentContract?.FISubjectCode))
+            {
+                return nonInstallmentContract.FISubjectCode;
+            }
+
+            return null;
+        }
+
         public IActionResult OnPostSave()
         {
             LoadDropdowns();
+
+            // Always retrieve the primary code from the actual contract.
+            // Do not rely on a value submitted by the browser.
+            AddLink.FIPrimaryCode =
+                GetPrimarySubjectCode(AddLink.FIContractCode?.Trim());
+
+            if (string.IsNullOrWhiteSpace(AddLink.FIPrimaryCode))
+            {
+                ValidationMessage =
+                    "The F.I. Contract Code was not found in either Installment or Non-Installment Contracts. Please check the code.";
+
+                ValidationMessageType = "warning";
+                ValidationMessageTitle = "Contract Not Found";
+
+                LoadLinkList();
+                return Page();
+            }
 
             var subjectBLL = new SubjectBLL(_configuration);
 
@@ -307,7 +381,6 @@ namespace CIBnext.Pages.Contract
                 .ToList();
 
             // Add/Edit Contract Link: display branch names.
-            // Keep the selected value as the regular branch code.
             BranchNameList = branches
                 .Select(x => new SelectListItem
                 {
