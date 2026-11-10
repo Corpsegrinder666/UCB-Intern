@@ -1290,90 +1290,81 @@ button:disabled,
     border-radius: 5px;
 }
 
+
 /* =========================================================
    Personal Information Page
    ========================================================= */
 
-.personal-information-page .page-title {
-    font-weight: bold;
-    font-size: 28px;
-    padding: 5px;
-    border-bottom: 1px solid #999;
-    margin-bottom: 10px;
+.personal-information-page {
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
 }
 
-.personal-information-page .section {
-    border: 1px solid #b5b5a5;
-    background: #edf4ef;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.personal-information-page fieldset {
-    border: 1px solid #b5b5a5;
-    padding: 10px;
-}
-
-.personal-information-page legend {
-    padding: 0 5px;
-    font-size: 14px;
-}
-
-.personal-information-page table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-}
-
-    .personal-information-page table th {
-        background: #c9d5e8;
-        border: 1px solid #666;
-        padding: 3px;
+    /* Page Title */
+    .personal-information-page .page-title,
+    .personal-information-page .title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
     }
 
-    .personal-information-page table td {
-        border: 1px solid #666;
-        padding: 3px;
+    /* Sections */
+    .personal-information-page .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
     }
 
-.personal-information-page input,
-.personal-information-page select {
-    width: 120px;
-}
+    /* Fieldsets */
+    .personal-information-page fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
 
-.personal-information-page .personal-information-empty {
-    text-align: center;
-}
-
-.personal-information-page .personal-information-pagination {
-    margin-top: 8px;
-}
-
-.personal-information-page .message-dialog {
-    border-radius: 6px;
-}
-
-.personal-information-page .message-header {
-    padding: 15px 20px;
-}
-
-    .personal-information-page .message-header h3 {
+    /* Legends */
+    .personal-information-page legend {
         font-size: 18px;
+        padding: 0 5px;
     }
 
-.personal-information-page .message-close {
-    font-size: 28px;
-}
+    /* Tables */
+    .personal-information-page table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
 
-.personal-information-page .message-body {
-    padding: 20px;
-    font-size: 14px;
-    line-height: 1.8;
-}
+    /* Table Headers */
+    .personal-information-page th {
+        background: #cdd8ea;
+        border: 1px solid #666;
+        padding: 3px;
+    }
 
-.personal-information-page .message-footer {
-    padding: 12px 20px;
-}
+    /* Table Cells */
+    .personal-information-page td {
+        border: 1px solid #666;
+        padding: 6px;
+    }
+
+    /* Search Criteria Table */
+    .personal-information-page form[method="get"] table,
+    .personal-information-page form[method="get"] td {
+        border: none;
+    }
+
+    /* Empty Result Row */
+    .personal-information-page .personal-information-empty {
+        text-align: center;
+    }
+
+    /* Pagination */
+    .personal-information-page .personal-information-pagination {
+        margin-top: 8px;
+    }
+
 
 /* =========================================================
    Add Personal Information Page

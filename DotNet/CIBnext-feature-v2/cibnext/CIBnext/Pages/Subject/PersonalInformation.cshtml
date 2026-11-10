@@ -24,7 +24,7 @@
 <div class="personal-information-page">
 
     <div class="page-title">
-        Personal Information List
+        Personal Information
     </div>
 
     @if (!string.IsNullOrWhiteSpace(displayMessage))
@@ -86,17 +86,17 @@
                     </tr>
 
                     <tr>
-                        <td>Fathers Name</td>
+                        <td>Fathers Name:</td>
                         <td>
                             <input asp-for="Subject.FathersName" />
                         </td>
 
-                        <td>Date Of Birth</td>
+                        <td>Date Of Birth:</td>
                         <td>
                             <input asp-for="Subject.DateOfBirth" type="date" />
                         </td>
 
-                        <td>Cif No</td>
+                        <td>Cif No:</td>
                         <td>
                             <input asp-for="Subject.CifNo" />
                         </td>
