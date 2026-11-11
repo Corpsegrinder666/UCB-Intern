@@ -1291,6 +1291,7 @@ button:disabled,
 }
 
 
+
 /* =========================================================
    Personal Information Page
    ========================================================= */
@@ -1300,7 +1301,6 @@ button:disabled,
     font-size: 13px;
 }
 
-    /* Page Title */
     .personal-information-page .page-title,
     .personal-information-page .title {
         font-size: 30px;
@@ -1309,7 +1309,6 @@ button:disabled,
         border-bottom: 1px solid #999;
     }
 
-    /* Sections */
     .personal-information-page .section {
         border: 1px solid #b8b8a8;
         background: #edf4ef;
@@ -1317,50 +1316,42 @@ button:disabled,
         margin-top: 5px;
     }
 
-    /* Fieldsets */
     .personal-information-page fieldset {
         border: 1px solid #b8b8a8;
         padding: 10px;
     }
 
-    /* Legends */
     .personal-information-page legend {
         font-size: 18px;
         padding: 0 5px;
     }
 
-    /* Tables */
     .personal-information-page table {
         width: 100%;
         border-collapse: collapse;
         font-size: 13px;
     }
 
-    /* Table Headers */
     .personal-information-page th {
         background: #cdd8ea;
         border: 1px solid #666;
         padding: 3px;
     }
 
-    /* Table Cells */
     .personal-information-page td {
         border: 1px solid #666;
         padding: 6px;
     }
 
-    /* Search Criteria Table */
     .personal-information-page form[method="get"] table,
     .personal-information-page form[method="get"] td {
         border: none;
     }
 
-    /* Empty Result Row */
     .personal-information-page .personal-information-empty {
         text-align: center;
     }
 
-    /* Pagination */
     .personal-information-page .personal-information-pagination {
         margin-top: 8px;
     }
@@ -1504,63 +1495,71 @@ button:disabled,
             background: #8e0000;
         }
 
+
 /* =========================================================
    Institution Information Page
    ========================================================= */
 
-.institution-information-page .page-title {
-    font-size: 30px;
-    font-weight: bold;
-    padding: 5px;
-    border-bottom: 1px solid #999;
+.institution-information-page {
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
 }
 
-.institution-information-page .section {
-    border: 1px solid #b8b8a8;
-    background: #edf4ef;
-    padding: 10px;
-    margin-top: 5px;
-}
+    .institution-information-page .page-title,
+    .institution-information-page .title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
+    }
 
-.institution-information-page fieldset {
-    border: 1px solid #b8b8a8;
-    padding: 10px;
-}
+    .institution-information-page .section {
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
+    }
 
-.institution-information-page legend {
-    font-size: 14px;
-    padding: 0 5px;
-}
+    .institution-information-page fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
 
-.institution-information-page table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-}
+    .institution-information-page legend {
+        font-size: 18px;
+        padding: 0 5px;
+    }
 
-.institution-information-page th {
-    background: #cdd8ea;
-    border: 1px solid #666;
-    padding: 3px;
-}
+    .institution-information-page table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
 
-.institution-information-page td {
-    border: 1px solid #666;
-    padding: 3px;
-}
+    .institution-information-page th {
+        background: #cdd8ea;
+        border: 1px solid #666;
+        padding: 3px;
+    }
 
-.institution-information-page .institution-search-table,
-.institution-information-page .institution-search-table td {
-    border: none;
-}
+    .institution-information-page td {
+        border: 1px solid #666;
+        padding: 6px;
+    }
 
-.institution-information-page .institution-information-empty {
-    text-align: center;
-}
+    .institution-information-page .institution-search-table,
+    .institution-information-page .institution-search-table td {
+        border: none;
+    }
 
-.institution-information-page .institution-information-pagination {
-    margin-top: 8px;
-}
+    .institution-information-page .institution-information-empty {
+        text-align: center;
+    }
+
+    .institution-information-page .institution-information-pagination {
+        margin-top: 8px;
+    }
+
 
 /* =========================================================
    Add Institution Information Page
@@ -1620,56 +1619,180 @@ button:disabled,
     cursor: pointer;
 }
 
+
+
+
 /* =========================================================
    Owner Links Page
    ========================================================= */
 
-.owner-links-page .form-row {
-    margin-bottom: 6px;
+.owner-links-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+    box-sizing: border-box;
 }
 
-    .owner-links-page .form-row label {
-        display: inline-block;
-        width: 220px;
+    .owner-links-page .page-title,
+    .owner-links-page .title {
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #999;
     }
 
-.owner-links-page .label-hint {
-    color: #06c;
-}
+    /* General section styling */
 
-.owner-links-page .owner-search-table,
-.owner-links-page .owner-search-table td {
-    border: none;
-}
+    .owner-links-page .section {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        border: 1px solid #b8b8a8;
+        background: #edf4ef;
+        padding: 10px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
 
-.owner-links-page .owner-empty-row {
-    text-align: center;
-}
+    .owner-links-page fieldset {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+        box-sizing: border-box;
+    }
 
-.owner-links-page .owner-pagination {
-    margin-top: 8px;
-}
+    .owner-links-page legend {
+        font-size: 18px;
+        padding: 0 5px;
+    }
 
-/* Record table styling */
+    /* Search Option and Add Owner Link Information
+   Horizontal scrolling without changing the original layout */
 
-.owner-links-page table:not(.owner-search-table) {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-}
+    .owner-links-page > form > .section {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
 
-    .owner-links-page table:not(.owner-search-table) th {
-        background: #c9d5e8;
-        border: 1px solid #666;
-        padding: 5px;
+        .owner-links-page > form > .section > fieldset {
+            width: max-content;
+            min-width: 100%;
+            max-width: none;
+        }
+
+    /* Search Option */
+
+    .owner-links-page .owner-search-table {
+        width: 1000px;
+        min-width: 1000px;
+        max-width: none;
+        border-collapse: collapse;
+        table-layout: auto;
+    }
+
+        .owner-links-page .owner-search-table td {
+            border: none;
+            padding: 5px 3px;
+            white-space: nowrap;
+        }
+
+        .owner-links-page .owner-search-table input,
+        .owner-links-page .owner-search-table select {
+            min-width: 150px;
+            box-sizing: border-box;
+        }
+
+        .owner-links-page .owner-search-table tr + tr {
+            margin-top: 5px;
+        }
+
+    /* Add Owner Link Information */
+
+    .owner-links-page .form-row {
+        display: block;
+        width: 650px;
+        min-width: 650px;
+        max-width: none;
+        margin-bottom: 8px;
+        white-space: nowrap;
+    }
+
+        .owner-links-page .form-row label {
+            display: inline-block;
+            width: 220px;
+            min-width: 220px;
+        }
+
+        .owner-links-page .form-row input,
+        .owner-links-page .form-row select {
+            width: 350px;
+            min-width: 350px;
+            box-sizing: border-box;
+        }
+
+    .owner-links-page .label-hint {
+        color: #06c;
+    }
+
+    /* Owner Information table */
+
+    .owner-links-page .owner-record-table-wrapper {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+    }
+
+    .owner-links-page .owner-record-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+        font-size: 12px;
+        table-layout: auto;
+    }
+
+        .owner-links-page .owner-record-table th {
+            background: #c9d5e8;
+            border: 1px solid #666;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .owner-links-page .owner-record-table td {
+            border: 1px solid #666;
+            padding: 5px;
+            vertical-align: middle;
+            overflow-wrap: anywhere;
+        }
+
+    .owner-links-page .owner-empty-row {
         text-align: center;
     }
 
-    .owner-links-page table:not(.owner-search-table) td {
-        border: 1px solid #666;
-        padding: 5px;
-        vertical-align: middle;
+    .owner-links-page .owner-pagination {
+        margin-top: 8px;
     }
+
+/* Owner Links Responsive Styles */
+
+@media (max-width: 700px) {
+    .owner-links-page .page-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .owner-links-page .page-title {
+        font-size: 21px;
+    }
+}
+
+
+
 
 /* =========================================================
    Installment Contract Page
@@ -2161,3 +2284,4 @@ button:disabled,
         font-size: 12px;
     }
 }
+

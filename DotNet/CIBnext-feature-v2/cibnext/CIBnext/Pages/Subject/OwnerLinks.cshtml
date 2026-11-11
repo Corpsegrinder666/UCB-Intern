@@ -43,6 +43,7 @@
 
     <div class="page-title">Owner Link Information</div>
 
+    <!-- Search Option -->
     <form method="get">
         <div class="section">
             <fieldset>
@@ -90,6 +91,7 @@
         </div>
     </form>
 
+    <!-- Add Owner Link Information -->
     <form method="post" asp-page-handler="Save">
         <div class="section">
             <fieldset>
@@ -126,6 +128,7 @@
         </div>
     </form>
 
+    <!-- Owner Information -->
     <div class="section">
         <fieldset>
             <legend>Owner Information</legend>
@@ -133,66 +136,77 @@
             <h3>Total Count: @Model.TotalCount</h3>
 
             <form method="post" asp-page-handler="Delete" id="deleteForm">
+
                 <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
+
                 <input type="hidden" name="SearchSubmitted"
                        value="@Model.SearchSubmitted.ToString().ToLowerInvariant()" />
+
                 <input type="hidden" name="Subject.CibBranchCode"
                        value="@Model.Subject.CibBranchCode" />
+
                 <input type="hidden" name="Subject.OwnerFiSubjectCode"
                        value="@Model.Subject.OwnerFiSubjectCode" />
+
                 <input type="hidden" name="Subject.OwnerName"
                        value="@Model.Subject.OwnerName" />
+
                 <input type="hidden" name="Subject.InstitutionFiSubjectCode"
                        value="@Model.Subject.InstitutionFiSubjectCode" />
+
                 <input type="hidden" name="Subject.InstitutionName"
                        value="@Model.Subject.InstitutionName" />
 
-                <table>
-                    <tr>
-                        <th></th>
-                        <th>Actions</th>
-                        <th>Branch Code</th>
-                        <th>Inst. Subject Code</th>
-                        <th>Inst. Name</th>
-                        <th>Owner Subject Code</th>
-                        <th>Owner Name</th>
-                    </tr>
+                <!-- Responsive table wrapper -->
+                <div class="owner-record-table-wrapper">
+                    <table class="owner-record-table">
+                        <tr>
+                            <th></th>
+                            <th>Actions</th>
+                            <th>Branch Code</th>
+                            <th>Inst. Subject Code</th>
+                            <th>Inst. Name</th>
+                            <th>Owner Subject Code</th>
+                            <th>Owner Name</th>
+                        </tr>
 
-                    @if (Model.LinkList != null && Model.LinkList.Any())
-                    {
-                        @foreach (var link in Model.LinkList)
+                        @if (Model.LinkList != null && Model.LinkList.Any())
+                        {
+                            @foreach (var link in Model.LinkList)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               name="SelectedLinks"
+                                               value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" />
+                                    </td>
+
+                                    <td>
+                                        <a href="/Subject/OwnerLinks?instSubjectCode=@Uri.EscapeDataString(link.InstitutionFiSubjectCode ?? "")&ownerSubjectCode=@Uri.EscapeDataString(link.OwnerFiSubjectCode ?? "")&branchCode=@Uri.EscapeDataString(link.CibBranchCode ?? "")&role=@Uri.EscapeDataString(link.Role ?? "")">
+                                            Edit
+                                        </a>
+                                    </td>
+
+                                    <td>@link.CibBranchCode</td>
+                                    <td>@link.InstitutionFiSubjectCode</td>
+                                    <td>@link.InstitutionName</td>
+                                    <td>@link.OwnerFiSubjectCode</td>
+                                    <td>@link.OwnerName</td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>
-                                    <input type="checkbox"
-                                           name="SelectedLinks"
-                                           value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" />
+                                <td colspan="7" class="owner-empty-row">
+                                    No records found
                                 </td>
-
-                                <td>
-                                    <a href="/Subject/OwnerLinks?instSubjectCode=@Uri.EscapeDataString(link.InstitutionFiSubjectCode ?? "")&ownerSubjectCode=@Uri.EscapeDataString(link.OwnerFiSubjectCode ?? "")&branchCode=@Uri.EscapeDataString(link.CibBranchCode ?? "")&role=@Uri.EscapeDataString(link.Role ?? "")">
-                                        Edit
-                                    </a>
-                                </td>
-
-                                <td>@link.CibBranchCode</td>
-                                <td>@link.InstitutionFiSubjectCode</td>
-                                <td>@link.InstitutionName</td>
-                                <td>@link.OwnerFiSubjectCode</td>
-                                <td>@link.OwnerName</td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="owner-empty-row">
-                                No records found
-                            </td>
-                        </tr>
-                    }
-                </table>
+                    </table>
+                </div>
 
+                <!-- Pagination -->
                 <div class="pagination owner-pagination">
                     @{
                         var lastDisplayedPage = 0;
@@ -240,12 +254,14 @@
                         data-owner-delete-open>
                     Delete
                 </button>
+
             </form>
         </fieldset>
     </div>
 
 </div>
 
+<!-- Information Modal -->
 @if (!string.IsNullOrWhiteSpace(popupMessage))
 {
     <div id="messageModal"
@@ -257,6 +273,7 @@
         <div class="message-dialog">
             <div class="message-header @popupType">
                 <h3 id="messageModalTitle">@popupTitle</h3>
+
                 <button type="button"
                         class="message-close"
                         aria-label="Close message">
@@ -264,7 +281,9 @@
                 </button>
             </div>
 
-            <div class="message-body @popupType">@popupMessage</div>
+            <div class="message-body @popupType">
+                @popupMessage
+            </div>
 
             <div class="message-footer">
                 <button type="button"
@@ -276,6 +295,7 @@
     </div>
 }
 
+<!-- Delete Confirmation Modal -->
 <div id="deleteConfirmModal"
      class="message-overlay hidden"
      role="dialog"
@@ -286,6 +306,7 @@
     <div class="message-dialog">
         <div class="message-header warning">
             <h3 id="deleteConfirmTitle">Confirm deletion</h3>
+
             <button type="button"
                     class="message-close"
                     aria-label="Close delete confirmation"
