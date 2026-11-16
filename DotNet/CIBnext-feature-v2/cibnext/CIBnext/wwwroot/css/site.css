@@ -265,8 +265,7 @@ textarea:focus {
 
 .owner-links-page a[href*="Add"],
 .installment-contract-page a[href*="Add"],
-.non-installment-contract-page a[href*="Add"],
-.contract-links-page a[href*="Add"] {
+.non-installment-contract-page a[href*="Add"], {
     background: #2e7d32;
     border-color: #256629;
     color: #fff !important;
@@ -2284,3 +2283,39 @@ button:disabled,
         font-size: 12px;
     }
 }
+
+
+/* Installment Contract Error List */
+
+.installment-contract-error-list-page .error-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.installment-contract-error-list-page .error-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 12px;
+}
+
+    .installment-contract-error-list-page .error-table th {
+        background: #c9d5e8;
+        border: 1px solid #666;
+        padding: 6px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .installment-contract-error-list-page .error-table td {
+        border: 1px solid #666;
+        padding: 6px;
+        vertical-align: middle;
+    }
+
+.installment-contract-error-list-page .error-back-link {
+    display: inline-block;
+    margin-top: 12px;
+}
+

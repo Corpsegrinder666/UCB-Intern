@@ -1,0 +1,115 @@
+﻿@page
+@model CIBnext.Pages.Contract.InstallmentContractErrorListModel
+
+@{
+    ViewData["Title"] = "Installment Contract Error List";
+}
+
+<div class="installment-contract-error-list-page">
+
+    <div class="page-title">
+        Installment Contract Error List
+    </div>
+
+    <form method="get">
+        <fieldset class="section">
+            <legend>Search Information</legend>
+
+            <table class="error-search-table">
+                <tr>
+                    <td>
+                        <label asp-for="BranchCode">Branch Code:</label>
+                    </td>
+                    <td>
+                        <input asp-for="BranchCode" />
+                    </td>
+
+                    <td>
+                        <label asp-for="FISubjectCode">F.I. Subject Code:</label>
+                    </td>
+                    <td>
+                        <input asp-for="FISubjectCode" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label asp-for="ContractCode">Contract Code:</label>
+                    </td>
+                    <td>
+                        <input asp-for="ContractCode" />
+                    </td>
+                </tr>
+            </table>
+
+            <button type="submit" class="btn-save">
+                Search
+            </button>
+        </fieldset>
+    </form>
+
+    <div class="error-table-container">
+        <table class="error-table">
+            <thead>
+                <tr>
+                    <th>Version No</th>
+                    <th>Reporting Period</th>
+                    <th>Contract Code</th>
+                    <th>Primary Code</th>
+                    <th>Primary Name</th>
+                    <th>Error Code</th>
+                    <th>Error Description</th>
+                    <th>Make By</th>
+                    <th>Make Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Errors != null && Model.Errors.Any())
+                {
+                    foreach (var error in Model.Errors)
+                    {
+                        <tr>
+                            <td>@error.VersionNo</td>
+                            <td>
+                                @(error.ReportingPeriod == default(DateTime)
+                                    ? "-"
+                                    : error.ReportingPeriod.ToString("dd-MMM-yyyy"))
+                            </td>
+                            <td>@error.FiContractCode</td>
+                            <td>@error.FiPrimaryCode</td>
+                            <td>@error.FiPrimaryName</td>
+                            <td>@error.ErrorCode</td>
+                            <td>@error.ErrorDescription</td>
+                            <td>@error.MakeBy</td>
+                            <td>
+                                @(error.MakeDate == default(DateTime)
+                                    ? "-"
+                                    : error.MakeDate.ToString("dd-MMM-yyyy"))
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            No errors found for this contract.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <a asp-page="/Contract/InstallmentContract"
+       asp-route-BranchCode="@Model.BranchCode"
+       asp-route-ContractCode="@Model.ContractCode"
+       asp-route-FISubjectCode="@Model.FISubjectCode"
+       asp-route-ContractPhase="@Model.ContractPhase"
+       asp-route-UbsAcNo="@Model.UbsAcNo"
+       class="error-back-link">
+        Back to Installment Contract List
+    </a>
+
+</div>

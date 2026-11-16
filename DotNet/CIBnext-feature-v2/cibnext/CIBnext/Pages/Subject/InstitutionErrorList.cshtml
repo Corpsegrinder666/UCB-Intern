@@ -1,0 +1,114 @@
+﻿@page
+@model CIBnext.Pages.Subject.InstitutionErrorListModel
+
+<div class="institution-information-page">
+
+    <div class="page-title">
+        Institution Information Error List
+    </div>
+
+    <div class="section">
+
+        <form method="get">
+
+            <input type="hidden" asp-for="SearchSubmitted" value="true" />
+
+            <table class="institution-search-table">
+                <tr>
+                    <td>
+                        <label asp-for="BranchCode">Branch Code</label>
+                    </td>
+                    <td>
+                        <select asp-for="BranchCode"
+                                asp-items="Model.BranchCodeList">
+                            <option value="">-- Select Branch --</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <label asp-for="SubjectCode">F.I. Subject Code</label>
+                    </td>
+                    <td>
+                        <input asp-for="SubjectCode" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label asp-for="SubjectName">Institution Name</label>
+                    </td>
+                    <td>
+                        <input asp-for="SubjectName" />
+                    </td>
+                </tr>
+            </table>
+
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+
+                <a asp-page="/Subject/InstitutionErrorList"
+                   class="btn btn-secondary">
+                    Clear
+                </a>
+
+                <a asp-page="/Subject/InstitutionInformation"
+                   class="btn btn-secondary">
+                    Back
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="section">
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Version No</th>
+                    <th>Reporting Period</th>
+                    <th>Subject Code</th>
+                    <th>Institution Name</th>
+                    <th>Error Code</th>
+                    <th>Error Description</th>
+                    <th>Made By</th>
+                    <th>Make Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.ErrorList.Any())
+                {
+                    foreach (var item in Model.ErrorList)
+                    {
+                        <tr>
+                            <td>@item.VersionNo</td>
+                            <td>@item.ReportingPeriod.ToString("dd-MMM-yyyy")</td>
+                            <td>@item.FiSubjectCode</td>
+                            <td>@item.FiSubjectName</td>
+                            <td>@item.ErrorCode</td>
+                            <td>@item.ErrorDescription</td>
+                            <td>@item.MakeBy</td>
+                            <td>@item.MakeDate.ToString("dd-MMM-yyyy")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            @(Model.SearchSubmitted
+                                ? "No errors found."
+                                : "Search to view institution errors.")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

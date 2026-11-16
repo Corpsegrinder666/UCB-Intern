@@ -106,7 +106,13 @@
                     Clear
                 </a>
 
-                <a href="#">Go To Error List</a>
+                <a asp-page="/Subject/InstitutionErrorList"
+                   asp-route-SearchSubmitted="true"
+                   asp-route-BranchCode="@Model.Subject.BranchCode"
+                   asp-route-SubjectCode="@Model.Subject.FISubjectCode"
+                   asp-route-SubjectName="@Model.Subject.TradeName">
+                    Go To Error List
+                </a>
             </fieldset>
         </div>
     </form>

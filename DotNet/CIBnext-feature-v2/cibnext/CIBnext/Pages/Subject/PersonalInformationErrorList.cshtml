@@ -1,0 +1,105 @@
+﻿@page
+@model CIBnext.Pages.Subject.PersonalInformationErrorListModel
+
+<div class="personal-information-page">
+
+    <div class="page-title">
+        Personal Information Error List
+    </div>
+
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+
+            <form method="get">
+                <input type="hidden" name="SearchSubmitted" value="true" />
+
+                <table>
+                    <tr>
+                        <td>Branch Code:</td>
+                        <td>
+                            <select asp-for="BranchCode"
+                                    asp-items="Model.BranchCodeList">
+                                <option value="">All Branch</option>
+                            </select>
+                        </td>
+
+                        <td>F.I. Subject Code:</td>
+                        <td>
+                            <input asp-for="SubjectCode" />
+                        </td>
+
+                        <td>F.I. Subject Name:</td>
+                        <td>
+                            <input asp-for="SubjectName" />
+                        </td>
+                    </tr>
+                </table>
+
+                <button type="submit" class="btn-small">
+                    Search
+                </button>
+
+                <a asp-page="/Subject/PersonalInformationErrorList"
+                   class="btn-small">
+                    Clear
+                </a>
+
+                <a asp-page="/Subject/PersonalInformation">
+                    Back
+                </a>
+            </form>
+        </fieldset>
+    </div>
+
+    <div class="section">
+        <fieldset>
+            <legend>Personal Information Errors</legend>
+
+            <h3>Total Count: @Model.ErrorList.Count</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Version No</th>
+                        <th>Reporting Period</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Error Code</th>
+                        <th>Error Description</th>
+                        <th>Made By</th>
+                        <th>Make Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.ErrorList.Any())
+                    {
+                        @foreach (var error in Model.ErrorList)
+                        {
+                            <tr>
+                                <td>@error.VersionNo</td>
+                                <td>@error.ReportingPeriod.ToString("dd/MM/yyyy")</td>
+                                <td>@error.FiSubjectCode</td>
+                                <td>@error.FiSubjectName</td>
+                                <td>@error.ErrorCode</td>
+                                <td>@error.ErrorDescription</td>
+                                <td>@error.MakeBy</td>
+                                <td>@error.MakeDate.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="personal-information-empty">
+                                No error records found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+
+</div>
