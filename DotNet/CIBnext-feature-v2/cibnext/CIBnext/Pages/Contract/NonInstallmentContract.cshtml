@@ -59,7 +59,14 @@
                     Clear
                 </a>
 
-                <a href="#">Go to Error List</a>
+                <a asp-page="/Contract/NonInstallmentContractErrorList"
+                   asp-route-BranchCode="@Model.BranchCode"
+                   asp-route-ContractCode="@Model.ContractCode"
+                   asp-route-FISubjectCode="@Model.FISubjectCode"
+                   asp-route-ContractPhase="@Model.ContractPhase"
+                   asp-route-UbsAcNo="@Model.UbsAcNo">
+                    Go to Error List
+                </a>
             </fieldset>
         </div>
     </form>

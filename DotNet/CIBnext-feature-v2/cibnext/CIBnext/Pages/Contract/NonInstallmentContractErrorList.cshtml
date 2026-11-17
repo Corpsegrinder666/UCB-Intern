@@ -1,0 +1,118 @@
+﻿@page
+@model CIBnext.Pages.Contract.NonInstallmentContractErrorListModel
+
+@{
+    ViewData["Title"] = "Non-Installment Contract Error List";
+}
+
+<div class="personal-information-page">
+
+    <div class="page-title">
+        Non-Installment Contract Error List
+    </div>
+
+    <div class="section">
+        <fieldset>
+            <legend>Search Option</legend>
+
+            <form method="get">
+                <input type="hidden" name="SearchSubmitted" value="true" />
+
+                <table>
+                    <tr>
+                        <td>Branch Code:</td>
+                        <td>
+                            <select asp-for="BranchCode"
+                                    asp-items="Model.BranchCodeList">
+                                <option value="">All Branch</option>
+                            </select>
+                        </td>
+
+                        <td>F.I. Subject Code:</td>
+                        <td>
+                            <input asp-for="FISubjectCode" />
+                        </td>
+
+                        <td>Contract Code:</td>
+                        <td>
+                            <input asp-for="ContractCode" />
+                        </td>
+                    </tr>
+                </table>
+
+                <button type="submit" class="btn-small">
+                    Search
+                </button>
+
+                <a asp-page="/Contract/NonInstallmentContractErrorList"
+                   class="btn-small">
+                    Clear
+                </a>
+
+                <a asp-page="/Contract/NonInstallmentContract"
+                   asp-route-BranchCode="@Model.BranchCode"
+                   asp-route-ContractCode="@Model.ContractCode"
+                   asp-route-FISubjectCode="@Model.FISubjectCode"
+                   asp-route-ContractPhase="@Model.ContractPhase"
+                   asp-route-UbsAcNo="@Model.UbsAcNo">
+                    Back
+                </a>
+            </form>
+        </fieldset>
+    </div>
+
+    <div class="section">
+        <fieldset>
+            <legend>Non-Installment Contract Errors</legend>
+
+            <h3>Total Count: @Model.ErrorList.Count</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Version No</th>
+                        <th>Reporting Period</th>
+                        <th>FI Contract Code</th>
+                        <th>FI Primary Code</th>
+                        <th>FI Primary Name</th>
+                        <th>Error Code</th>
+                        <th>Error Description</th>
+                        <th>Make By</th>
+                        <th>Make Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.ErrorList.Any())
+                    {
+                        @foreach (var item in Model.ErrorList)
+                        {
+                            <tr>
+                                <td>@item.VersionNo</td>
+                                <td>@item.ReportingPeriod.ToString("dd/MM/yyyy")</td>
+                                <td>@item.FiContractCode</td>
+                                <td>@item.FiPrimaryCode</td>
+                                <td>@item.FiPrimaryName</td>
+                                <td>@item.ErrorCode</td>
+                                <td>@item.ErrorDescription</td>
+                                <td>@item.MakeBy</td>
+                                <td>@item.MakeDate.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="personal-information-empty">
+                                @(Model.SearchSubmitted
+                                    ? "No error records found"
+                                    : "Search to view non-installment contract errors")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+
+</div>
