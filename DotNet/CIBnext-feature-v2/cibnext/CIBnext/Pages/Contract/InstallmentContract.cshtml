@@ -6,6 +6,9 @@
     <div class="page-title">Installment Contract List</div>
 
     <form method="get" id="searchForm">
+        <input type="hidden" name="SearchSubmitted" value="true" />
+        <input type="hidden" name="PageIndex" value="1" />
+
         <div class="section">
             <fieldset>
                 <legend>Search Option</legend>
@@ -47,10 +50,7 @@
                     </tr>
                 </table>
 
-                <button type="submit"
-                        class="btn-small"
-                        name="SearchSubmitted"
-                        value="true">
+                <button type="submit" class="btn-small">
                     Search
                 </button>
 
@@ -59,143 +59,146 @@
                     Clear
                 </a>
 
-                <a asp-page="/Contract/InstallmentContractErrorList"
-                   asp-route-BranchCode="@Model.BranchCode"
-                   asp-route-ContractCode="@Model.ContractCode"
-                   asp-route-FISubjectCode="@Model.FISubjectCode"
-                   asp-route-ContractPhase="@Model.ContractPhase"
-                   asp-route-UbsAcNo="@Model.UbsAcNo">
+                <a asp-page="/Contract/InstallmentContractErrorList">
                     Go to Error List
                 </a>
             </fieldset>
         </div>
     </form>
 
-    <div class="section">
-        <fieldset>
-            <legend>Installment Contract Information</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Installment Contract Information</legend>
 
-            <h3>Total Count: @Model.TotalCount</h3>
+                <h3>Total Count: @Model.TotalCount</h3>
 
-            <form method="post"
-                  asp-page-handler="Delete"
-                  id="deleteContractsForm">
+                <form method="post"
+                      asp-page-handler="Delete"
+                      id="deleteContractsForm">
 
-                <table>
-                    <tr>
-                        <th></th>
-                        <th>Action</th>
-                        <th>Branch Code</th>
-                        <th>Subject Code</th>
-                        <th>Borrower Name</th>
-                        <th>Contract Code</th>
-                        <th>Contract Type</th>
-                        <th>Contract Phase</th>
-                        <th>Contract Status</th>
-                        <th>Currency Code</th>
-                        <th>Sanction Limit</th>
-                    </tr>
+                    <input type="hidden" asp-for="BranchCode" />
+                    <input type="hidden" asp-for="ContractCode" />
+                    <input type="hidden" asp-for="FISubjectCode" />
+                    <input type="hidden" asp-for="ContractPhase" />
+                    <input type="hidden" asp-for="UbsAcNo" />
 
-                    @if (Model.ContractList != null &&
-                         Model.ContractList.Any())
-                    {
-                        @foreach (var c in Model.ContractList)
-                        {
-                            <tr>
-                                <td>
-                                    <input type="checkbox"
-                                           name="SelectedCodes"
-                                           value="@c.FIContractCode" />
-                                </td>
+                    <input type="hidden" asp-for="PageIndex" />
+                    <input type="hidden" asp-for="SearchSubmitted" />
 
-                                <td>
-                                    <a href="/Contract/AddInstalmentContract?contractCode=@Uri.EscapeDataString(c.FIContractCode ?? "")">
-                                        View/Edit
-                                    </a>
-                                </td>
-
-                                <td>@c.BranchCode</td>
-                                <td>@c.FISubjectCode</td>
-                                <td>@c.BorrowerName</td>
-                                <td>@c.FIContractCode</td>
-                                <td>@c.ContractType</td>
-                                <td>@c.ContractPhase</td>
-                                <td>@c.ContractStatus</td>
-                                <td>@c.CurrencyCode</td>
-                                <td>@c.SanctionLimit</td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
+                    <table>
                         <tr>
-                            <td colspan="11" class="installment-empty-row">
-                                No records found
-                            </td>
+                            <th></th>
+                            <th>Action</th>
+                            <th>Branch Code</th>
+                            <th>Subject Code</th>
+                            <th>Borrower Name</th>
+                            <th>Contract Code</th>
+                            <th>Contract Type</th>
+                            <th>Contract Phase</th>
+                            <th>Contract Status</th>
+                            <th>Currency Code</th>
+                            <th>Sanction Limit</th>
                         </tr>
-                    }
-                </table>
 
-                <input type="hidden"
-                       name="PageIndex"
-                       value="@Model.PageIndex" />
-
-                <div class="pagination installment-pagination">
-                    @{
-                        var lastDisplayedPage = 0;
-                    }
-
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        var displayPage = i <= 3
-                            || i > Model.TotalPages - 3
-                            || Math.Abs(i - Model.PageIndex) <= 2;
-
-                        if (!displayPage)
+                        @if (Model.ContractList != null &&
+                             Model.ContractList.Any())
                         {
-                            continue;
-                        }
+                            @foreach (var c in Model.ContractList)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               name="SelectedCodes"
+                                               value="@c.FIContractCode" />
+                                    </td>
 
-                        if (lastDisplayedPage > 0 &&
-                            i > lastDisplayedPage + 1)
-                        {
-                            <span class="ellipsis">...</span>
-                        }
+                                    <td>
+                                        <a href="/Contract/AddInstalmentContract?contractCode=@Uri.EscapeDataString(c.FIContractCode ?? "")">
+                                            View/Edit
+                                        </a>
+                                    </td>
 
-                        if (i == Model.PageIndex)
-                        {
-                            <span class="current">@i</span>
+                                    <td>@c.BranchCode</td>
+                                    <td>@c.FISubjectCode</td>
+                                    <td>@c.BorrowerName</td>
+                                    <td>@c.FIContractCode</td>
+                                    <td>@c.ContractType</td>
+                                    <td>@c.ContractPhase</td>
+                                    <td>@c.ContractStatus</td>
+                                    <td>@c.CurrencyCode</td>
+                                    <td>@c.SanctionLimit</td>
+                                </tr>
+                            }
                         }
                         else
                         {
-                            <a href="/Contract/InstallmentContract?PageIndex=@i&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">@i</a>
+                            <tr>
+                                <td colspan="11" class="installment-empty-row">
+                                    No records found
+                                </td>
+                            </tr>
+                        }
+                    </table>
+
+                    <div class="pagination installment-pagination">
+                        @{
+                            var lastDisplayedPage = 0;
                         }
 
-                        lastDisplayedPage = i;
-                    }
-                </div>
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            var displayPage = i <= 3
+                                || i > Model.TotalPages - 3
+                                || Math.Abs(i - Model.PageIndex) <= 2;
 
-                <br />
+                            if (!displayPage)
+                            {
+                                continue;
+                            }
 
-                <a href="/Contract/AddInstalmentContract"
-                   class="btn-small">
-                    Add
-                </a>
+                            if (lastDisplayedPage > 0 &&
+                                i > lastDisplayedPage + 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
 
-                <button class="btn-small"
-                        type="button"
-                        data-installment-refresh>
-                    Refresh
-                </button>
+                            if (i == Model.PageIndex)
+                            {
+                                <span class="current">@i</span>
+                            }
+                            else
+                            {
+                                <a href="/Contract/InstallmentContract?PageIndex=@i&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">@i</a>
+                            }
 
-                <button type="button"
-                        class="btn-small"
-                        data-installment-delete-open>
-                    Delete
-                </button>
-            </form>
-        </fieldset>
-    </div>
+                            lastDisplayedPage = i;
+                        }
+                    </div>
+
+                    <br />
+
+                    <a href="/Contract/AddInstalmentContract"
+                       class="btn-small">
+                        Add
+                    </a>
+
+                    <button class="btn-small"
+                            type="button"
+                            data-installment-refresh>
+                        Refresh
+                    </button>
+
+                    <button type="button"
+                            class="btn-small"
+                            data-installment-delete-open>
+                        Delete
+                    </button>
+                </form>
+            </fieldset>
+        </div>
+    }
 
     @* Ordinary server message popup *@
     @if (!string.IsNullOrWhiteSpace(Model.SearchMessage))

@@ -106,159 +106,158 @@
                     Clear
                 </a>
 
-                <a asp-page="/Subject/InstitutionErrorList"
-                   asp-route-SearchSubmitted="true"
-                   asp-route-BranchCode="@Model.Subject.BranchCode"
-                   asp-route-SubjectCode="@Model.Subject.FISubjectCode"
-                   asp-route-SubjectName="@Model.Subject.TradeName">
+                <a asp-page="/Subject/InstitutionErrorList">
                     Go To Error List
                 </a>
             </fieldset>
         </div>
     </form>
 
-    <div class="section">
-        <fieldset>
-            <legend>Institution Information</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Institution Information</legend>
 
-            <h3>Total Count: @Model.TotalCount</h3>
+                <h3>Total Count: @Model.TotalCount</h3>
 
-            <form method="post"
-                  asp-page-handler="Delete"
-                  id="deleteForm">
+                <form method="post"
+                      asp-page-handler="Delete"
+                      id="deleteForm">
 
-                @Html.AntiForgeryToken()
+                    @Html.AntiForgeryToken()
 
-                <input type="hidden" asp-for="Subject.BranchCode" />
-                <input type="hidden" asp-for="Subject.FISubjectCode" />
-                <input type="hidden" asp-for="Subject.TradeName" />
-                <input type="hidden" asp-for="Subject.CifNo" />
+                    <input type="hidden" asp-for="Subject.BranchCode" />
+                    <input type="hidden" asp-for="Subject.FISubjectCode" />
+                    <input type="hidden" asp-for="Subject.TradeName" />
+                    <input type="hidden" asp-for="Subject.CifNo" />
 
-                <input type="hidden"
-                       name="Subject.BusinessAddress.Street"
-                       value="@Model.Subject.BusinessAddress?.Street" />
+                    <input type="hidden"
+                           name="Subject.BusinessAddress.Street"
+                           value="@Model.Subject.BusinessAddress?.Street" />
 
-                <input type="hidden" asp-for="PageIndex" />
-                <input type="hidden" asp-for="SearchSubmitted" />
+                    <input type="hidden" asp-for="PageIndex" />
+                    <input type="hidden" asp-for="SearchSubmitted" />
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Action</th>
-                            <th>Branch</th>
-                            <th>Subject Code</th>
-                            <th>Title</th>
-                            <th>Trade Name</th>
-                            <th>Legal Form</th>
-                            <th>CIF No</th>
-                            <th>Address</th>
-                        </tr>
-                    </thead>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Action</th>
+                                <th>Branch</th>
+                                <th>Subject Code</th>
+                                <th>Title</th>
+                                <th>Trade Name</th>
+                                <th>Legal Form</th>
+                                <th>CIF No</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        @if (Model.InstitutionList != null &&
-                             Model.InstitutionList.Any())
-                        {
-                            @foreach (var inst in Model.InstitutionList)
+                        <tbody>
+                            @if (Model.InstitutionList != null &&
+                                 Model.InstitutionList.Any())
+                            {
+                                @foreach (var inst in Model.InstitutionList)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox"
+                                                   name="SelectedCodes"
+                                                   value="@inst.FISubjectCode" />
+                                        </td>
+
+                                        <td>
+                                            <a href="/Subject/AddInstitutionInformation?fiSubjectCode=@Uri.EscapeDataString(inst.FISubjectCode ?? string.Empty)">
+                                                Edit/View
+                                            </a>
+                                        </td>
+
+                                        <td>@inst.BranchCode</td>
+                                        <td>@inst.FISubjectCode</td>
+                                        <td>@inst.Title</td>
+                                        <td>@inst.TradeName</td>
+                                        <td>@inst.LegalFormText</td>
+                                        <td>@inst.CifNo</td>
+                                        <td>@(inst.BusinessAddress?.Street ?? "")</td>
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
-                                    <td>
-                                        <input type="checkbox"
-                                               name="SelectedCodes"
-                                               value="@inst.FISubjectCode" />
+                                    <td colspan="9"
+                                        class="institution-information-empty">
+                                        No records found
                                     </td>
-
-                                    <td>
-                                        <a href="/Subject/AddInstitutionInformation?fiSubjectCode=@Uri.EscapeDataString(inst.FISubjectCode ?? string.Empty)">
-                                            Edit/View
-                                        </a>
-                                    </td>
-
-                                    <td>@inst.BranchCode</td>
-                                    <td>@inst.FISubjectCode</td>
-                                    <td>@inst.Title</td>
-                                    <td>@inst.TradeName</td>
-                                    <td>@inst.LegalFormText</td>
-                                    <td>@inst.CifNo</td>
-                                    <td>@(inst.BusinessAddress?.Street ?? "")</td>
                                 </tr>
                             }
+                        </tbody>
+                    </table>
+
+                    <div class="pagination institution-information-pagination">
+                        @{
+                            var lastDisplayedPage = 0;
                         }
-                        else
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
                         {
-                            <tr>
-                                <td colspan="9"
-                                    class="institution-information-empty">
-                                    No records found
-                                </td>
-                            </tr>
+                            var displayPage = i <= 3
+                                || i > Model.TotalPages - 3
+                                || Math.Abs(i - Model.PageIndex) <= 2;
+
+                            if (!displayPage)
+                            {
+                                continue;
+                            }
+
+                            if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
+
+                            if (i == Model.PageIndex)
+                            {
+                                <span class="current">@i</span>
+                            }
+                            else
+                            {
+                                <a asp-page="/Subject/InstitutionInformation"
+                                   asp-route-PageIndex="@i"
+                                   asp-route-SearchSubmitted="@Model.SearchSubmitted"
+                                   asp-route-Subject.BranchCode="@Model.Subject.BranchCode"
+                                   asp-route-Subject.FISubjectCode="@Model.Subject.FISubjectCode"
+                                   asp-route-Subject.TradeName="@Model.Subject.TradeName"
+                                   asp-route-Subject.CifNo="@Model.Subject.CifNo"
+                                   asp-route-Subject.BusinessAddress.Street="@Model.Subject.BusinessAddress?.Street">@i</a>
+                            }
+
+                            lastDisplayedPage = i;
                         }
-                    </tbody>
-                </table>
+                    </div>
 
-                <div class="pagination institution-information-pagination">
-                    @{
-                        var lastDisplayedPage = 0;
-                    }
+                    <br />
 
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        var displayPage = i <= 3
-                            || i > Model.TotalPages - 3
-                            || Math.Abs(i - Model.PageIndex) <= 2;
+                    <a href="/Subject/AddInstitutionInformation"
+                       class="btn-small">
+                        Add
+                    </a>
 
-                        if (!displayPage)
-                        {
-                            continue;
-                        }
+                    <button class="btn-small"
+                            data-institution-refresh
+                            type="button">
+                        Refresh
+                    </button>
 
-                        if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
-                        {
-                            <span class="ellipsis">...</span>
-                        }
-
-                        if (i == Model.PageIndex)
-                        {
-                            <span class="current">@i</span>
-                        }
-                        else
-                        {
-                            <a asp-page="/Subject/InstitutionInformation"
-                               asp-route-PageIndex="@i"
-                               asp-route-SearchSubmitted="@Model.SearchSubmitted"
-                               asp-route-Subject.BranchCode="@Model.Subject.BranchCode"
-                               asp-route-Subject.FISubjectCode="@Model.Subject.FISubjectCode"
-                               asp-route-Subject.TradeName="@Model.Subject.TradeName"
-                               asp-route-Subject.CifNo="@Model.Subject.CifNo"
-                               asp-route-Subject.BusinessAddress.Street="@Model.Subject.BusinessAddress?.Street">@i</a>
-                        }
-
-                        lastDisplayedPage = i;
-                    }
-                </div>
-
-                <br />
-
-                <a href="/Subject/AddInstitutionInformation"
-                   class="btn-small">
-                    Add
-                </a>
-
-                <button class="btn-small"
-                        data-institution-refresh
-                        type="button">
-                    Refresh
-                </button>
-
-                <button type="button"
-                        class="btn-small"
-                        data-institution-delete-open>
-                    Delete
-                </button>
-            </form>
-        </fieldset>
-    </div>
+                    <button type="button"
+                            class="btn-small"
+                            data-institution-delete-open>
+                        Delete
+                    </button>
+                </form>
+            </fieldset>
+        </div>
+    }
 
     <div id="deleteConfirmModal"
          class="message-overlay hidden"

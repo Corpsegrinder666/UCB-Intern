@@ -103,163 +103,168 @@
                     </tr>
                 </table>
 
-                <button type="submit" class="btn-small">Search</button>
+                <button type="submit" class="btn-small">
+                    Search
+                </button>
 
                 <a href="/Subject/PersonalInformation" class="btn-small">
                     Clear
                 </a>
 
-                <a asp-page="/Subject/PersonalInformationErrorList"
-                   asp-route-SearchSubmitted="true"
-                   asp-route-BranchCode="@Model.Subject.BranchCode"
-                   asp-route-SubjectCode="@Model.Subject.FISubjectCode"
-                   asp-route-SubjectName="@Model.Subject.Name">
+                <a asp-page="/Subject/PersonalInformationErrorList">
                     Goto Error List
                 </a>
             </fieldset>
         </div>
     </form>
 
-    <div class="section">
-        <fieldset>
-            <legend>Personal Information</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Personal Information</legend>
 
-            <h3>Total Count: @Model.TotalCount</h3>
+                <h3>Total Count: @Model.TotalCount</h3>
 
-            <form method="post" asp-page-handler="Delete" id="deleteForm">
-                @Html.AntiForgeryToken()
+                <form method="post" asp-page-handler="Delete" id="deleteForm">
+                    @Html.AntiForgeryToken()
 
-                @* Preserve search criteria when the delete form is submitted. *@
-                <input type="hidden" asp-for="Subject.BranchCode" />
-                <input type="hidden" asp-for="Subject.FISubjectCode" />
-                <input type="hidden" asp-for="Subject.Name" />
-                <input type="hidden" asp-for="Subject.FathersName" />
-                <input type="hidden" asp-for="Subject.DateOfBirth" />
-                <input type="hidden" asp-for="Subject.CifNo" />
-                <input type="hidden" asp-for="PageIndex" />
-                <input type="hidden" asp-for="SearchSubmitted" />
+                    <input type="hidden" asp-for="Subject.BranchCode" />
+                    <input type="hidden" asp-for="Subject.FISubjectCode" />
+                    <input type="hidden" asp-for="Subject.Name" />
+                    <input type="hidden" asp-for="Subject.FathersName" />
+                    <input type="hidden" asp-for="Subject.DateOfBirth" />
+                    <input type="hidden" asp-for="Subject.CifNo" />
+                    <input type="hidden" asp-for="PageIndex" />
+                    <input type="hidden" asp-for="SearchSubmitted" />
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Action</th>
-                            <th>Branch Code</th>
-                            <th>Subject Code</th>
-                            <th>Title</th>
-                            <th>Name</th>
-                            <th>Father's Title</th>
-                            <th>Father's Name</th>
-                            <th>Mother's Title</th>
-                            <th>Mother's Name</th>
-                            <th>Date Of Birth</th>
-                            <th>CIF No</th>
-                        </tr>
-                    </thead>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Action</th>
+                                <th>Branch Code</th>
+                                <th>Subject Code</th>
+                                <th>Title</th>
+                                <th>Name</th>
+                                <th>Father's Title</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Title</th>
+                                <th>Mother's Name</th>
+                                <th>Date Of Birth</th>
+                                <th>CIF No</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        @if (Model.PersonList != null && Model.PersonList.Any())
-                        {
-                            @foreach (var person in Model.PersonList)
+                        <tbody>
+                            @if (Model.PersonList != null && Model.PersonList.Any())
+                            {
+                                @foreach (var person in Model.PersonList)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox"
+                                                   name="SelectedCodes"
+                                                   value="@person.FISubjectCode" />
+                                        </td>
+
+                                        <td>
+                                            <a href="/Subject/AddPersonalInformation?fiSubjectCode=@Uri.EscapeDataString(person.FISubjectCode ?? string.Empty)">
+                                                Edit/View
+                                            </a>
+                                        </td>
+
+                                        <td>@person.BranchCode</td>
+                                        <td>@person.FISubjectCode</td>
+                                        <td>@person.Title</td>
+                                        <td>@person.Name</td>
+                                        <td>@person.FathersTitle</td>
+                                        <td>@person.FathersName</td>
+                                        <td>@person.MothersTitle</td>
+                                        <td>@person.MothersName</td>
+                                        <td>@person.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                                        <td>@person.CifNo</td>
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
-                                    <td>
-                                        <input type="checkbox"
-                                               name="SelectedCodes"
-                                               value="@person.FISubjectCode" />
+                                    <td colspan="12" class="personal-information-empty">
+                                        No records found
                                     </td>
-
-                                    <td>
-                                        <a href="/Subject/AddPersonalInformation?fiSubjectCode=@Uri.EscapeDataString(person.FISubjectCode ?? string.Empty)">
-                                            Edit/View
-                                        </a>
-                                    </td>
-
-                                    <td>@person.BranchCode</td>
-                                    <td>@person.FISubjectCode</td>
-                                    <td>@person.Title</td>
-                                    <td>@person.Name</td>
-                                    <td>@person.FathersTitle</td>
-                                    <td>@person.FathersName</td>
-                                    <td>@person.MothersTitle</td>
-                                    <td>@person.MothersName</td>
-                                    <td>@person.DateOfBirth.ToString("dd/MM/yyyy")</td>
-                                    <td>@person.CifNo</td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="12" class="personal-information-empty">
-                                    No records found
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
 
-                <div class="pagination personal-information-pagination">
-                    @{
-                        var lastDisplayedPage = 0;
-                    }
-
-                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    @if (Model.TotalPages > 1)
                     {
-                        var displayPage = i <= 3
-                            || i > Model.TotalPages - 3
-                            || Math.Abs(i - Model.PageIndex) <= 2;
+                        <div class="pagination personal-information-pagination">
+                            @{
+                                var lastDisplayedPage = 0;
+                            }
 
-                        if (!displayPage)
-                        {
-                            continue;
-                        }
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                var displayPage = i <= 3
+                                    || i > Model.TotalPages - 3
+                                    || Math.Abs(i - Model.PageIndex) <= 2;
 
-                        if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
-                        {
-                            <span class="ellipsis">...</span>
-                        }
+                                if (!displayPage)
+                                {
+                                    continue;
+                                }
 
-                        if (i == Model.PageIndex)
-                        {
-                            <span class="current">@i</span>
-                        }
-                        else
-                        {
-                            <a asp-page="/Subject/PersonalInformation"
-                               asp-route-PageIndex="@i"
-                               asp-route-SearchSubmitted="true"
-                               asp-route-Subject.BranchCode="@Model.Subject.BranchCode"
-                               asp-route-Subject.FISubjectCode="@Model.Subject.FISubjectCode"
-                               asp-route-Subject.Name="@Model.Subject.Name"
-                               asp-route-Subject.FathersName="@Model.Subject.FathersName"
-                               asp-route-Subject.DateOfBirth="@Model.Subject.DateOfBirth"
-                               asp-route-Subject.CifNo="@Model.Subject.CifNo">@i</a>
-                        }
+                                if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                                {
+                                    <span class="ellipsis">...</span>
+                                }
 
-                        lastDisplayedPage = i;
+                                if (i == Model.PageIndex)
+                                {
+                                    <span class="current">@i</span>
+                                }
+                                else
+                                {
+                                    <a asp-page="/Subject/PersonalInformation"
+                                       asp-route-PageIndex="@i"
+                                       asp-route-SearchSubmitted="true"
+                                       asp-route-Subject.BranchCode="@Model.Subject.BranchCode"
+                                       asp-route-Subject.FISubjectCode="@Model.Subject.FISubjectCode"
+                                       asp-route-Subject.Name="@Model.Subject.Name"
+                                       asp-route-Subject.FathersName="@Model.Subject.FathersName"
+                                       asp-route-Subject.DateOfBirth="@Model.Subject.DateOfBirth"
+                                       asp-route-Subject.CifNo="@Model.Subject.CifNo">
+                                        @i
+                                    </a>
+                                }
+
+                                lastDisplayedPage = i;
+                            }
+                        </div>
                     }
-                </div>
 
-                <br />
+                    <br />
 
-                <a href="/Subject/AddPersonalInformation" class="btn-small">
-                    Add
-                </a>
+                    <a href="/Subject/AddPersonalInformation" class="btn-small">
+                        Add
+                    </a>
 
-                <button class="btn-small"
-                        data-personal-refresh
-                        type="button">
-                    Refresh
-                </button>
+                    <button class="btn-small"
+                            data-personal-refresh
+                            type="button">
+                        Refresh
+                    </button>
 
-                <button type="button" class="btn-small"
-                        data-personal-delete-open>
-                    Delete
-                </button>
-            </form>
-        </fieldset>
-    </div>
+                    <button type="button" class="btn-small"
+                            data-personal-delete-open>
+                        Delete
+                    </button>
+                </form>
+            </fieldset>
+        </div>
+    }
 
     @* Delete confirmation popup *@
     <div id="deleteConfirmModal" class="message-overlay hidden"

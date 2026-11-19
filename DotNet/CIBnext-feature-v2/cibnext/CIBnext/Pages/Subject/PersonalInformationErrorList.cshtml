@@ -52,54 +52,83 @@
         </fieldset>
     </div>
 
-    <div class="section">
-        <fieldset>
-            <legend>Personal Information Errors</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Personal Information Errors</legend>
 
-            <h3>Total Count: @Model.ErrorList.Count</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Name</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Version No</th>
-                        <th>Reporting Period</th>
-                        <th>Subject Code</th>
-                        <th>Subject Name</th>
-                        <th>Error Code</th>
-                        <th>Error Description</th>
-                        <th>Made By</th>
-                        <th>Make Date</th>
-                    </tr>
-                </thead>
+                    <tbody>
+                        @if (Model.ErrorList.Any())
+                        {
+                            @foreach (var error in Model.PagedErrorList)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-page="/Subject/AddPersonalInformation"
+                                           asp-route-fiSubjectCode="@error.FiSubjectCode">
+                                            @error.FiSubjectCode
+                                        </a>
+                                    </td>
 
-                <tbody>
-                    @if (Model.ErrorList.Any())
-                    {
-                        @foreach (var error in Model.ErrorList)
+                                    <td>@error.FiSubjectName</td>
+
+                                    <td>@error.ErrorDescription</td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@error.VersionNo</td>
-                                <td>@error.ReportingPeriod.ToString("dd/MM/yyyy")</td>
-                                <td>@error.FiSubjectCode</td>
-                                <td>@error.FiSubjectName</td>
-                                <td>@error.ErrorCode</td>
-                                <td>@error.ErrorDescription</td>
-                                <td>@error.MakeBy</td>
-                                <td>@error.MakeDate.ToString("dd/MM/yyyy")</td>
+                                <td colspan="3" class="personal-information-empty">
+                                    No error records found
+                                </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="8" class="personal-information-empty">
-                                No error records found
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </fieldset>
-    </div>
+                    </tbody>
+                </table>
+
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="personal-information-pagination">
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            if (i == Model.PageNumber)
+                            {
+                                <strong>@i</strong>
+                            }
+                            else
+                            {
+                                <a asp-page="/Subject/PersonalInformationErrorList"
+                                   asp-route-SearchSubmitted="true"
+                                   asp-route-BranchCode="@Model.BranchCode"
+                                   asp-route-SubjectCode="@Model.SubjectCode"
+                                   asp-route-SubjectName="@Model.SubjectName"
+                                   asp-route-PageNumber="@i">
+                                    @i
+                                </a>
+                            }
+
+                            @if (i < Model.TotalPages)
+                            {
+                                <text> </text>
+                            }
+                        }
+
+                    </div>
+                }
+            </fieldset>
+        </div>
+    }
 
 </div>

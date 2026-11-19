@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,6 +17,7 @@ namespace CIBnext.Pages.Subject
     {
         private readonly ListOfValuesBLL _lovBLL;
         private readonly IConfiguration _configuration;
+        private const int PageSize = 15;
 
         public InstitutionErrorListModel(
             ListOfValuesBLL lovBLL,
@@ -37,19 +39,45 @@ namespace CIBnext.Pages.Subject
         [BindProperty(SupportsGet = true)]
         public bool SearchSubmitted { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
         public List<SelectListItem> BranchCodeList { get; set; }
             = new List<SelectListItem>();
 
         public List<SubjectError> ErrorList { get; set; }
             = new List<SubjectError>();
 
+        public List<SubjectError> PagedErrorList =>
+            ErrorList
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+        public int TotalPages =>
+            (int)Math.Ceiling((double)ErrorList.Count / PageSize);
+
         public void OnGet()
         {
             LoadDropdowns();
 
-            if (SearchSubmitted)
+            if (!SearchSubmitted)
             {
-                LoadErrorList();
+                ErrorList = new List<SubjectError>();
+                PageNumber = 1;
+                return;
+            }
+
+            LoadErrorList();
+
+            if (PageNumber < 1)
+            {
+                PageNumber = 1;
+            }
+
+            if (TotalPages > 0 && PageNumber > TotalPages)
+            {
+                PageNumber = TotalPages;
             }
         }
 

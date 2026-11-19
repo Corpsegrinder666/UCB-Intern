@@ -61,10 +61,20 @@ namespace CIBnext.Pages.Subject
         public void OnGet()
         {
             LoadDropdowns();
+
+            if (!SearchSubmitted)
+            {
+                InstitutionList = new List<Institution>();
+                TotalCount = 0;
+                TotalPages = 0;
+                PageIndex = 1;
+
+                return;
+            }
+
             LoadInstitutionList();
 
-            // Only warn when a submitted search returns no results.
-            if (SearchSubmitted && TotalCount == 0)
+            if (TotalCount == 0)
             {
                 PopupMessage =
                     "No institution found matching the provided search information.";
@@ -84,7 +94,11 @@ namespace CIBnext.Pages.Subject
 
                 PopupType = "warning";
 
-                LoadInstitutionList();
+                if (SearchSubmitted)
+                {
+                    LoadInstitutionList();
+                }
+
                 return Page();
             }
 
@@ -108,7 +122,11 @@ namespace CIBnext.Pages.Subject
 
                     PopupType = "warning";
 
-                    LoadInstitutionList();
+                    if (SearchSubmitted)
+                    {
+                        LoadInstitutionList();
+                    }
+
                     return Page();
                 }
 
@@ -141,7 +159,10 @@ namespace CIBnext.Pages.Subject
                 PopupType = "error";
             }
 
-            LoadInstitutionList();
+            if (SearchSubmitted)
+            {
+                LoadInstitutionList();
+            }
 
             return Page();
         }

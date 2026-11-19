@@ -1,3 +1,4 @@
+
 using CIBnext.BLL;
 using CIBnext.DAL;
 using CIBnext.DAO;
@@ -52,7 +53,8 @@ namespace CIBnext.Pages.Contract
 
         // Selected contract records for deletion
         [BindProperty]
-        public List<string> SelectedCodes { get; set; } = new List<string>();
+        public List<string> SelectedCodes { get; set; }
+            = new List<string>();
 
         // Popup messages
         public string DeleteMessage { get; set; } = string.Empty;
@@ -68,8 +70,10 @@ namespace CIBnext.Pages.Contract
 
         // Dropdown lists
         public List<SelectListItem> BranchCodeList { get; set; }
+            = new List<SelectListItem>();
 
         public List<SelectListItem> ContractPhaseList { get; set; }
+            = new List<SelectListItem>();
 
         // Contract records
         public List<InstalmentContract> ContractList { get; set; }
@@ -84,17 +88,14 @@ namespace CIBnext.Pages.Contract
         {
             LoadDropdowns();
 
-            // Show a warning only when Search was clicked
-            // and every search field is empty.
-            if (SearchSubmitted &&
-                string.IsNullOrWhiteSpace(BranchCode) &&
-                string.IsNullOrWhiteSpace(ContractCode) &&
-                string.IsNullOrWhiteSpace(FISubjectCode) &&
-                string.IsNullOrWhiteSpace(ContractPhase) &&
-                string.IsNullOrWhiteSpace(UbsAcNo))
+            if (!SearchSubmitted)
             {
-                SearchMessage =
-                    "Please enter or select at least one search option.";
+                ContractList = new List<InstalmentContract>();
+                TotalCount = 0;
+                TotalPages = 0;
+                PageIndex = 1;
+
+                return;
             }
 
             LoadContractList();
@@ -113,7 +114,11 @@ namespace CIBnext.Pages.Contract
                 DeleteMessageType = "warning";
                 DeleteMessageTitle = "Selection Required";
 
-                LoadContractList();
+                if (SearchSubmitted)
+                {
+                    LoadContractList();
+                }
+
                 return Page();
             }
 
@@ -160,7 +165,11 @@ namespace CIBnext.Pages.Contract
                 DeleteMessageTitle = "Delete failed";
             }
 
-            LoadContractList();
+            if (SearchSubmitted)
+            {
+                LoadContractList();
+            }
+
             return Page();
         }
 
@@ -196,6 +205,11 @@ namespace CIBnext.Pages.Contract
                     ContractCode,
                     ContractPhase,
                     UbsAcNo);
+
+            if (allResults == null)
+            {
+                allResults = new List<InstalmentContract>();
+            }
 
             TotalCount = allResults.Count;
 

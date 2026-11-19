@@ -12,7 +12,8 @@
             <legend>Search Option</legend>
 
             <form method="get">
-                <input type="hidden" asp-for="SearchSubmitted" value="true" />
+                <input type="hidden" name="SearchSubmitted" value="true" />
+                <input type="hidden" name="PageNumber" value="1" />
 
                 <table>
                     <tr>
@@ -52,56 +53,94 @@
         </fieldset>
     </div>
 
-    <div class="section">
-        <fieldset>
-            <legend>Institution Information Errors</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Institution Information Errors</legend>
 
-            <h3>Total Count: @Model.ErrorList.Count</h3>
+                <h3>Total Count: @Model.ErrorList.Count</h3>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Version No</th>
-                        <th>Reporting Period</th>
-                        <th>Subject Code</th>
-                        <th>Institution Name</th>
-                        <th>Error Code</th>
-                        <th>Error Description</th>
-                        <th>Made By</th>
-                        <th>Make Date</th>
-                    </tr>
-                </thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Institution Code</th>
+                            <th>Name</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    @if (Model.ErrorList.Any())
-                    {
-                        @foreach (var item in Model.ErrorList)
+                    <tbody>
+                        @if (Model.ErrorList.Any())
+                        {
+                            @foreach (var item in Model.PagedErrorList)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="/Subject/AddInstitutionInformation?fiSubjectCode=@Uri.EscapeDataString(item.FiSubjectCode ?? string.Empty)">
+                                            @item.FiSubjectCode
+                                        </a>
+                                    </td>
+
+                                    <td>@item.FiSubjectName</td>
+
+                                    <td>@item.ErrorDescription</td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@item.VersionNo</td>
-                                <td>@item.ReportingPeriod.ToString("dd-MMM-yyyy")</td>
-                                <td>@item.FiSubjectCode</td>
-                                <td>@item.FiSubjectName</td>
-                                <td>@item.ErrorCode</td>
-                                <td>@item.ErrorDescription</td>
-                                <td>@item.MakeBy</td>
-                                <td>@item.MakeDate.ToString("dd-MMM-yyyy")</td>
+                                <td colspan="3"
+                                    class="personal-information-empty">
+                                    No errors found.
+                                </td>
                             </tr>
                         }
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    @{
+                        var lastDisplayedPage = 0;
                     }
-                    else
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
                     {
-                        <tr>
-                            <td colspan="8" class="personal-information-empty">
-                                @(Model.SearchSubmitted
-                                    ? "No errors found."
-                                    : "Search to view institution errors.")
-                            </td>
-                        </tr>
+                        var displayPage = i <= 3
+                            || i > Model.TotalPages - 3
+                            || Math.Abs(i - Model.PageNumber) <= 2;
+
+                        if (!displayPage)
+                        {
+                            continue;
+                        }
+
+                        if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                        {
+                            <span class="ellipsis">...</span>
+                        }
+
+                        if (i == Model.PageNumber)
+                        {
+                            <span class="current">@i</span>
+                        }
+                        else
+                        {
+                            <a asp-page="/Subject/InstitutionErrorList"
+                               asp-route-PageNumber="@i"
+                               asp-route-SearchSubmitted="true"
+                               asp-route-BranchCode="@Model.BranchCode"
+                               asp-route-SubjectCode="@Model.SubjectCode"
+                               asp-route-SubjectName="@Model.SubjectName">@i</a>
+                        }
+
+                        lastDisplayedPage = i;
                     }
-                </tbody>
-            </table>
-        </fieldset>
-    </div>
+                </div>
+
+            </fieldset>
+        </div>
+    }
 
 </div>

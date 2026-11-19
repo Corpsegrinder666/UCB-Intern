@@ -66,16 +66,25 @@ namespace CIBnext.Pages.Subject
         public void OnGet()
         {
             LoadDropdowns();
-            LoadPersonList();
 
-            // Do not show a no-results popup on the initial page load.
-            // Show it only when the user has submitted a search.
-            if (SearchSubmitted && TotalCount == 0)
+            if (SearchSubmitted)
             {
-                PopupMessage =
-                    "No person found matching the provided search information.";
+                LoadPersonList();
 
-                PopupType = "warning";
+                if (TotalCount == 0)
+                {
+                    PopupMessage =
+                        "No person found matching the provided search information.";
+
+                    PopupType = "warning";
+                }
+            }
+            else
+            {
+                PersonList = new List<PersonalData>();
+                TotalCount = 0;
+                TotalPages = 0;
+                PageIndex = 1;
             }
         }
 
@@ -91,7 +100,11 @@ namespace CIBnext.Pages.Subject
 
                 PopupType = "warning";
 
-                LoadPersonList();
+                if (SearchSubmitted)
+                {
+                    LoadPersonList();
+                }
+
                 return Page();
             }
 
@@ -115,7 +128,11 @@ namespace CIBnext.Pages.Subject
 
                     PopupType = "warning";
 
-                    LoadPersonList();
+                    if (SearchSubmitted)
+                    {
+                        LoadPersonList();
+                    }
+
                     return Page();
                 }
 
@@ -148,8 +165,11 @@ namespace CIBnext.Pages.Subject
                 PopupType = "error";
             }
 
-            // Reload the list using the submitted search filters.
-            LoadPersonList();
+            // Reload the list only if a search was previously submitted.
+            if (SearchSubmitted)
+            {
+                LoadPersonList();
+            }
 
             return Page();
         }
@@ -208,4 +228,4 @@ namespace CIBnext.Pages.Subject
                 .ToList();
         }
     }
-} 
+}
