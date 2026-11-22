@@ -1,4 +1,3 @@
-
 using CIBnext.BLL;
 using CIBnext.DAL;
 using CIBnext.DAO;
@@ -56,14 +55,12 @@ namespace CIBnext.Pages.Contract
         public List<string> SelectedCodes { get; set; }
             = new List<string>();
 
-        // Popup messages
+        // Delete popup messages
         public string DeleteMessage { get; set; } = string.Empty;
 
         public string DeleteMessageType { get; set; } = "error";
 
         public string DeleteMessageTitle { get; set; } = "Delete failed";
-
-        public string SearchMessage { get; set; } = string.Empty;
 
         [TempData]
         public string SuccessMessage { get; set; }

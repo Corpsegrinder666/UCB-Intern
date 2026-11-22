@@ -56,6 +56,10 @@ namespace CIBnext.Pages.Contract
             {
                 LoadErrorList();
             }
+            else
+            {
+                ErrorList = new List<ContractError>();
+            }
         }
 
         private void LoadDropdowns()

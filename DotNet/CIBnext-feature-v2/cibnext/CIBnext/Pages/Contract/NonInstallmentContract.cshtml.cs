@@ -28,10 +28,7 @@ namespace CIBnext.Pages.Contract
             _configuration = configuration;
         }
 
-        // =========================
         // Search filters
-        // =========================
-
         [BindProperty(SupportsGet = true)]
         public string BranchCode { get; set; }
 
@@ -50,25 +47,17 @@ namespace CIBnext.Pages.Contract
         [BindProperty(SupportsGet = true)]
         public int PageIndex { get; set; } = 1;
 
-        // Determines whether Search was actually pressed.
+        // True only after Search has been submitted.
         [BindProperty(SupportsGet = true)]
         public bool SearchSubmitted { get; set; }
 
-        // =========================
         // Delete
-        // =========================
-
         [BindProperty]
         public List<string> SelectedCodes { get; set; }
             = new List<string>();
 
-        // =========================
         // Messages
-        // =========================
-
-        public string SearchMessage { get; set; }
-
-        public string DeleteMessage { get; set; }
+        public string DeleteMessage { get; set; } = string.Empty;
 
         public string DeleteMessageType { get; set; } = "warning";
 
@@ -77,18 +66,14 @@ namespace CIBnext.Pages.Contract
         [TempData]
         public string SuccessMessage { get; set; }
 
-        // =========================
         // Dropdowns
-        // =========================
-
         public List<SelectListItem> BranchCodeList { get; set; }
+            = new List<SelectListItem>();
 
         public List<SelectListItem> ContractPhaseList { get; set; }
+            = new List<SelectListItem>();
 
-        // =========================
         // Contract list
-        // =========================
-
         public List<NonInstalmentContract> ContractList { get; set; }
             = new List<NonInstalmentContract>();
 
@@ -96,33 +81,22 @@ namespace CIBnext.Pages.Contract
 
         public int TotalPages { get; set; }
 
-        // =========================
         // GET
-        // =========================
-
         public void OnGet()
         {
             LoadDropdowns();
 
-            /*
-             * Show the empty-search message only when the
-             * Search button was actually pressed.
-             *
-             * Initial page load should not show the message.
-             */
-            if (SearchSubmitted && IsSearchEmpty())
+            if (SearchSubmitted)
             {
-                SearchMessage =
-                    "Please enter at least one search criteria.";
+                LoadContractList();
             }
-
-            LoadContractList();
+            else
+            {
+                ClearContractList();
+            }
         }
 
-        // =========================
         // DELETE
-        // =========================
-
         public IActionResult OnPostDelete()
         {
             LoadDropdowns();
@@ -135,7 +109,7 @@ namespace CIBnext.Pages.Contract
                 DeleteMessageType = "warning";
                 DeleteMessageTitle = "Selection Required";
 
-                LoadContractList();
+                RestoreSearchResults();
 
                 return Page();
             }
@@ -143,6 +117,7 @@ namespace CIBnext.Pages.Contract
             try
             {
                 var toDelete = SelectedCodes
+                    .Where(code => !string.IsNullOrWhiteSpace(code))
                     .Select(code => new DAO.Contract
                     {
                         FIContractCode = code,
@@ -150,6 +125,19 @@ namespace CIBnext.Pages.Contract
                         MakeDate = DateTime.Now
                     })
                     .ToList();
+
+                if (!toDelete.Any())
+                {
+                    DeleteMessage =
+                        "No valid records were selected. Please select the records again.";
+
+                    DeleteMessageType = "warning";
+                    DeleteMessageTitle = "Invalid Selection";
+
+                    RestoreSearchResults();
+
+                    return Page();
+                }
 
                 var contractDAL = new ContractDAL(_configuration);
 
@@ -174,7 +162,7 @@ namespace CIBnext.Pages.Contract
                     DeleteMessageTitle = "Delete Failed";
                 }
             }
-            catch
+            catch (Exception)
             {
                 DeleteMessage =
                     "An error occurred while deleting the selected contract(s). Please try again.";
@@ -183,28 +171,12 @@ namespace CIBnext.Pages.Contract
                 DeleteMessageTitle = "Error";
             }
 
-            LoadContractList();
+            RestoreSearchResults();
 
             return Page();
         }
 
-        // =========================
-        // SEARCH CHECK
-        // =========================
-
-        private bool IsSearchEmpty()
-        {
-            return string.IsNullOrWhiteSpace(BranchCode)
-                && string.IsNullOrWhiteSpace(ContractCode)
-                && string.IsNullOrWhiteSpace(FISubjectCode)
-                && string.IsNullOrWhiteSpace(ContractPhase)
-                && string.IsNullOrWhiteSpace(UbsAcNo);
-        }
-
-        // =========================
         // DROPDOWNS
-        // =========================
-
         private void LoadDropdowns()
         {
             BranchCodeList = _lovBLL
@@ -226,10 +198,29 @@ namespace CIBnext.Pages.Contract
                 .ToList();
         }
 
-        // =========================
-        // CONTRACT LIST
-        // =========================
+        // RESTORE SEARCH RESULTS AFTER POST
+        private void RestoreSearchResults()
+        {
+            if (SearchSubmitted)
+            {
+                LoadContractList();
+            }
+            else
+            {
+                ClearContractList();
+            }
+        }
 
+        // CLEAR RESULTS
+        private void ClearContractList()
+        {
+            ContractList = new List<NonInstalmentContract>();
+            TotalCount = 0;
+            TotalPages = 0;
+            PageIndex = 1;
+        }
+
+        // CONTRACT LIST
         private void LoadContractList()
         {
             var contractDAL = new ContractDAL(_configuration);
@@ -249,9 +240,8 @@ namespace CIBnext.Pages.Contract
 
             TotalCount = allResults.Count;
 
-            TotalPages =
-                (int)Math.Ceiling(
-                    TotalCount / (double)PageSize);
+            TotalPages = (int)Math.Ceiling(
+                TotalCount / (double)PageSize);
 
             if (TotalPages < 1)
             {

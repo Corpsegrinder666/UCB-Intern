@@ -200,36 +200,8 @@
         </div>
     }
 
-    @* Ordinary server message popup *@
-    @if (!string.IsNullOrWhiteSpace(Model.SearchMessage))
-    {
-        <div id="messageModal"
-             class="message-overlay"
-             role="dialog"
-             aria-modal="true"
-             aria-labelledby="messageModalTitle">
-
-            <div class="message-dialog">
-                <div class="message-header warning">
-                    <h3 id="messageModalTitle">Search Option</h3>
-                    <button type="button"
-                            class="message-close"
-                            aria-label="Close message">
-                        &times;
-                    </button>
-                </div>
-
-                <div class="message-body warning">@Model.SearchMessage</div>
-
-                <div class="message-footer">
-                    <button type="button" class="message-button warning">
-                        OK
-                    </button>
-                </div>
-            </div>
-        </div>
-    }
-    else if (!string.IsNullOrWhiteSpace(Model.DeleteMessage))
+    @* Delete message popup *@
+    @if (!string.IsNullOrWhiteSpace(Model.DeleteMessage))
     {
         <div id="messageModal"
              class="message-overlay"

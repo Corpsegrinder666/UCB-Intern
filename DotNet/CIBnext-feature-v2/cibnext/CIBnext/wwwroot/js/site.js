@@ -422,37 +422,6 @@ document.addEventListener("DOMContentLoaded", function () {
      * Installment Contract page functionality
      */
 
-    const installmentSearchForm = document.getElementById("searchForm");
-
-    if (installmentSearchForm) {
-        installmentSearchForm.addEventListener("submit", function (event) {
-            const fields = [
-                "BranchCode",
-                "ContractCode",
-                "FISubjectCode",
-                "ContractPhase",
-                "UbsAcNo"
-            ];
-
-            const hasSearchValue = fields.some(function (name) {
-                const field = installmentSearchForm.querySelector(
-                    '[name="' + name + '"]'
-                );
-
-                return field && field.value.trim() !== "";
-            });
-
-            if (!hasSearchValue) {
-                event.preventDefault();
-
-                window.showSharedMessage(
-                    "warning",
-                    "Please enter or select at least one search option."
-                );
-            }
-        });
-    }
-
     const installmentDeleteOpen = document.querySelector(
         "[data-installment-delete-open]"
     );

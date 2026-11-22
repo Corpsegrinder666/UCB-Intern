@@ -61,58 +61,66 @@
         </fieldset>
     </div>
 
-    <div class="section">
-        <fieldset>
-            <legend>Non-Installment Contract Errors</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Non-Installment Contract Errors</legend>
 
-            <h3>Total Count: @Model.ErrorList.Count</h3>
+                <h3>Total Count: @Model.ErrorList.Count</h3>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Version No</th>
-                        <th>Reporting Period</th>
-                        <th>FI Contract Code</th>
-                        <th>FI Primary Code</th>
-                        <th>FI Primary Name</th>
-                        <th>Error Code</th>
-                        <th>Error Description</th>
-                        <th>Make By</th>
-                        <th>Make Date</th>
-                    </tr>
-                </thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Contract Code</th>
+                            <th>F.I. Subject Code / Primary Subject Code</th>
+                            <th>Primary Subject Name</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    @if (Model.ErrorList.Any())
-                    {
-                        @foreach (var item in Model.ErrorList)
+                    <tbody>
+                        @if (Model.ErrorList.Any())
+                        {
+                            @foreach (var item in Model.ErrorList)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-page="/Contract/AddNonInstallmentContract"
+                                           asp-route-contractCode="@item.FiContractCode">
+                                            @item.FiContractCode
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        <a asp-page="/Subject/AddPersonalInformation"
+                                           asp-route-fiSubjectCode="@item.FiPrimaryCode">
+                                            @item.FiPrimaryCode
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        @item.FiPrimaryName
+                                    </td>
+
+                                    <td>
+                                        @item.ErrorDescription
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@item.VersionNo</td>
-                                <td>@item.ReportingPeriod.ToString("dd/MM/yyyy")</td>
-                                <td>@item.FiContractCode</td>
-                                <td>@item.FiPrimaryCode</td>
-                                <td>@item.FiPrimaryName</td>
-                                <td>@item.ErrorCode</td>
-                                <td>@item.ErrorDescription</td>
-                                <td>@item.MakeBy</td>
-                                <td>@item.MakeDate.ToString("dd/MM/yyyy")</td>
+                                <td colspan="4" class="personal-information-empty">
+                                    No error records found.
+                                </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="9" class="personal-information-empty">
-                                @(Model.SearchSubmitted
-                                    ? "No error records found"
-                                    : "Search to view non-installment contract errors")
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </fieldset>
-    </div>
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+    }
 
 </div>

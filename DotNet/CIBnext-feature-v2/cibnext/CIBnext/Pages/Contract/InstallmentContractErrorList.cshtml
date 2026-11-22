@@ -16,6 +16,8 @@
             <legend>Search Option</legend>
 
             <form method="get">
+                <input type="hidden" name="SearchSubmitted" value="true" />
+
                 <table>
                     <tr>
                         <td>Branch Code:</td>
@@ -58,64 +60,67 @@
         </fieldset>
     </div>
 
-    <div class="section">
-        <fieldset>
-            <legend>Installment Contract Errors</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Installment Contract Errors</legend>
 
-            <h3>Total Count: @(Model.Errors?.Count ?? 0)</h3>
+                <h3>Total Count: @(Model.Errors?.Count ?? 0)</h3>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Version No</th>
-                        <th>Reporting Period</th>
-                        <th>Contract Code</th>
-                        <th>Primary Code</th>
-                        <th>Primary Name</th>
-                        <th>Error Code</th>
-                        <th>Error Description</th>
-                        <th>Make By</th>
-                        <th>Make Date</th>
-                    </tr>
-                </thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Contract Code</th>
+                            <th>Primary Subject Code</th>
+                            <th>Primary Subject Name</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    @if (Model.Errors != null && Model.Errors.Any())
-                    {
-                        @foreach (var error in Model.Errors)
+                    <tbody>
+                        @if (Model.Errors != null && Model.Errors.Any())
+                        {
+                            @foreach (var error in Model.Errors)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-page="/Contract/AddInstalmentContract"
+                                           asp-route-contractCode="@error.FiContractCode">
+                                            @error.FiContractCode
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        <a asp-page="/Subject/AddPersonalInformation"
+                                           asp-route-fiSubjectCode="@error.FiPrimaryCode">
+                                            @error.FiPrimaryCode
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        @error.FiPrimaryName
+                                    </td>
+
+                                    <td>
+                                        @error.ErrorDescription
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@error.VersionNo</td>
-                                <td>
-                                    @(error.ReportingPeriod == default(DateTime)
-                                        ? "-"
-                                        : error.ReportingPeriod.ToString("dd-MMM-yyyy"))
-                                </td>
-                                <td>@error.FiContractCode</td>
-                                <td>@error.FiPrimaryCode</td>
-                                <td>@error.FiPrimaryName</td>
-                                <td>@error.ErrorCode</td>
-                                <td>@error.ErrorDescription</td>
-                                <td>@error.MakeBy</td>
-                                <td>
-                                    @(error.MakeDate == default(DateTime)
-                                        ? "-"
-                                        : error.MakeDate.ToString("dd-MMM-yyyy"))
+                                <td colspan="4" class="personal-information-empty">
+                                    No errors found for this contract.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="9" class="personal-information-empty">
-                                No errors found for this contract.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </fieldset>
-    </div>
+                    </tbody>
+                </table>
+
+            </fieldset>
+        </div>
+    }
 
 </div>

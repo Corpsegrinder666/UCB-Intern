@@ -44,12 +44,18 @@
     <div class="page-title">Owner Link Information</div>
 
     <!-- Search Option -->
-    <form method="get">
+    <form method="get" id="searchForm">
         <div class="section">
             <fieldset>
                 <legend>Search Option</legend>
 
-                <input type="hidden" name="SearchSubmitted" value="true" />
+                <input type="hidden"
+                       name="SearchSubmitted"
+                       value="true" />
+
+                <input type="hidden"
+                       name="PageIndex"
+                       value="1" />
 
                 <table class="owner-search-table">
                     <tr>
@@ -86,6 +92,7 @@
                 </table>
 
                 <button type="submit" class="btn-small">Search</button>
+
                 <a href="/Subject/OwnerLinks" class="btn-small">Clear</a>
             </fieldset>
         </div>
@@ -128,136 +135,151 @@
         </div>
     </form>
 
-    <!-- Owner Information -->
-    <div class="section">
-        <fieldset>
-            <legend>Owner Information</legend>
+    <!-- Owner Information: visible only after Search -->
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Owner Information</legend>
 
-            <h3>Total Count: @Model.TotalCount</h3>
+                <h3>Total Count: @Model.TotalCount</h3>
 
-            <form method="post" asp-page-handler="Delete" id="deleteForm">
+                <form method="post"
+                      asp-page-handler="Delete"
+                      id="deleteForm">
 
-                <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
+                    <input type="hidden"
+                           name="PageIndex"
+                           value="@Model.PageIndex" />
 
-                <input type="hidden" name="SearchSubmitted"
-                       value="@Model.SearchSubmitted.ToString().ToLowerInvariant()" />
+                    <input type="hidden"
+                           name="SearchSubmitted"
+                           value="@Model.SearchSubmitted.ToString().ToLowerInvariant()" />
 
-                <input type="hidden" name="Subject.CibBranchCode"
-                       value="@Model.Subject.CibBranchCode" />
+                    <input type="hidden"
+                           name="Subject.CibBranchCode"
+                           value="@Model.Subject.CibBranchCode" />
 
-                <input type="hidden" name="Subject.OwnerFiSubjectCode"
-                       value="@Model.Subject.OwnerFiSubjectCode" />
+                    <input type="hidden"
+                           name="Subject.OwnerFiSubjectCode"
+                           value="@Model.Subject.OwnerFiSubjectCode" />
 
-                <input type="hidden" name="Subject.OwnerName"
-                       value="@Model.Subject.OwnerName" />
+                    <input type="hidden"
+                           name="Subject.OwnerName"
+                           value="@Model.Subject.OwnerName" />
 
-                <input type="hidden" name="Subject.InstitutionFiSubjectCode"
-                       value="@Model.Subject.InstitutionFiSubjectCode" />
+                    <input type="hidden"
+                           name="Subject.InstitutionFiSubjectCode"
+                           value="@Model.Subject.InstitutionFiSubjectCode" />
 
-                <input type="hidden" name="Subject.InstitutionName"
-                       value="@Model.Subject.InstitutionName" />
+                    <input type="hidden"
+                           name="Subject.InstitutionName"
+                           value="@Model.Subject.InstitutionName" />
 
-                <!-- Responsive table wrapper -->
-                <div class="owner-record-table-wrapper">
-                    <table class="owner-record-table">
-                        <tr>
-                            <th></th>
-                            <th>Actions</th>
-                            <th>Branch Code</th>
-                            <th>Inst. Subject Code</th>
-                            <th>Inst. Name</th>
-                            <th>Owner Subject Code</th>
-                            <th>Owner Name</th>
-                        </tr>
+                    <!-- Responsive table wrapper -->
+                    <div class="owner-record-table-wrapper">
+                        <table class="owner-record-table">
+                            <tr>
+                                <th></th>
+                                <th>Actions</th>
+                                <th>Branch Code</th>
+                                <th>Inst. Subject Code</th>
+                                <th>Inst. Name</th>
+                                <th>Owner Subject Code</th>
+                                <th>Owner Name</th>
+                            </tr>
 
-                        @if (Model.LinkList != null && Model.LinkList.Any())
-                        {
-                            @foreach (var link in Model.LinkList)
+                            @if (Model.LinkList != null && Model.LinkList.Any())
+                            {
+                                @foreach (var link in Model.LinkList)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox"
+                                                   name="SelectedLinks"
+                                                   value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" />
+                                        </td>
+
+                                        <td>
+                                            <a href="/Subject/OwnerLinks?instSubjectCode=@Uri.EscapeDataString(link.InstitutionFiSubjectCode ?? "")&ownerSubjectCode=@Uri.EscapeDataString(link.OwnerFiSubjectCode ?? "")&branchCode=@Uri.EscapeDataString(link.CibBranchCode ?? "")&role=@Uri.EscapeDataString(link.Role ?? "")">
+                                                Edit
+                                            </a>
+                                        </td>
+
+                                        <td>@link.CibBranchCode</td>
+                                        <td>@link.InstitutionFiSubjectCode</td>
+                                        <td>@link.InstitutionName</td>
+                                        <td>@link.OwnerFiSubjectCode</td>
+                                        <td>@link.OwnerName</td>
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
-                                    <td>
-                                        <input type="checkbox"
-                                               name="SelectedLinks"
-                                               value="@(link.InstitutionFiSubjectCode)|@(link.OwnerFiSubjectCode)" />
+                                    <td colspan="7" class="owner-empty-row">
+                                        No records found
                                     </td>
-
-                                    <td>
-                                        <a href="/Subject/OwnerLinks?instSubjectCode=@Uri.EscapeDataString(link.InstitutionFiSubjectCode ?? "")&ownerSubjectCode=@Uri.EscapeDataString(link.OwnerFiSubjectCode ?? "")&branchCode=@Uri.EscapeDataString(link.CibBranchCode ?? "")&role=@Uri.EscapeDataString(link.Role ?? "")">
-                                            Edit
-                                        </a>
-                                    </td>
-
-                                    <td>@link.CibBranchCode</td>
-                                    <td>@link.InstitutionFiSubjectCode</td>
-                                    <td>@link.InstitutionName</td>
-                                    <td>@link.OwnerFiSubjectCode</td>
-                                    <td>@link.OwnerName</td>
                                 </tr>
                             }
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination owner-pagination">
+                        @{
+                            var lastDisplayedPage = 0;
                         }
-                        else
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
                         {
-                            <tr>
-                                <td colspan="7" class="owner-empty-row">
-                                    No records found
-                                </td>
-                            </tr>
+                            var displayPage = i <= 3
+                                || i > Model.TotalPages - 3
+                                || Math.Abs(i - Model.PageIndex) <= 2;
+
+                            if (!displayPage)
+                            {
+                                continue;
+                            }
+
+                            if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
+
+                            if (i == Model.PageIndex)
+                            {
+                                <span class="current">@i</span>
+                            }
+                            else
+                            {
+                                <a href="/Subject/OwnerLinks?PageIndex=@i&SearchSubmitted=true&Subject.CibBranchCode=@Uri.EscapeDataString(Model.Subject.CibBranchCode ?? "")&Subject.OwnerFiSubjectCode=@Uri.EscapeDataString(Model.Subject.OwnerFiSubjectCode ?? "")&Subject.OwnerName=@Uri.EscapeDataString(Model.Subject.OwnerName ?? "")&Subject.InstitutionFiSubjectCode=@Uri.EscapeDataString(Model.Subject.InstitutionFiSubjectCode ?? "")&Subject.InstitutionName=@Uri.EscapeDataString(Model.Subject.InstitutionName ?? "")">
+                                    @i
+                                </a>
+                            }
+
+                            lastDisplayedPage = i;
                         }
-                    </table>
-                </div>
+                    </div>
 
-                <!-- Pagination -->
-                <div class="pagination owner-pagination">
-                    @{
-                        var lastDisplayedPage = 0;
-                    }
+                    <br />
 
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        var displayPage = i <= 3
-                            || i > Model.TotalPages - 3
-                            || Math.Abs(i - Model.PageIndex) <= 2;
+                    <button class="btn-small"
+                            type="button"
+                            data-owner-refresh>
+                        Refresh
+                    </button>
 
-                        if (!displayPage)
-                        {
-                            continue;
-                        }
+                    <button type="button"
+                            class="btn-small"
+                            data-owner-delete-open>
+                        Delete
+                    </button>
 
-                        if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
-                        {
-                            <span class="ellipsis">...</span>
-                        }
-
-                        if (i == Model.PageIndex)
-                        {
-                            <span class="current">@i</span>
-                        }
-                        else
-                        {
-                            <a href="/Subject/OwnerLinks?PageIndex=@i&SearchSubmitted=@Model.SearchSubmitted.ToString().ToLowerInvariant()&Subject.CibBranchCode=@Uri.EscapeDataString(Model.Subject.CibBranchCode ?? "")&Subject.OwnerFiSubjectCode=@Uri.EscapeDataString(Model.Subject.OwnerFiSubjectCode ?? "")&Subject.OwnerName=@Uri.EscapeDataString(Model.Subject.OwnerName ?? "")&Subject.InstitutionFiSubjectCode=@Uri.EscapeDataString(Model.Subject.InstitutionFiSubjectCode ?? "")&Subject.InstitutionName=@Uri.EscapeDataString(Model.Subject.InstitutionName ?? "")">@i</a>
-                        }
-
-                        lastDisplayedPage = i;
-                    }
-                </div>
-
-                <br />
-
-                <button class="btn-small"
-                        type="button"
-                        data-owner-refresh>
-                    Refresh
-                </button>
-
-                <button type="button"
-                        class="btn-small"
-                        data-owner-delete-open>
-                    Delete
-                </button>
-
-            </form>
-        </fieldset>
-    </div>
+                </form>
+            </fieldset>
+        </div>
+    }
 
 </div>
 

@@ -32,7 +32,7 @@ namespace CIBnext.Pages.Subject
             _configuration = configuration;
         }
 
-        // Search filter
+        // Search filters
         [BindProperty(SupportsGet = true)]
         public OwnerLink Subject { get; set; } = new OwnerLink();
 
@@ -43,7 +43,7 @@ namespace CIBnext.Pages.Subject
         [BindProperty(SupportsGet = true)]
         public int PageIndex { get; set; } = 1;
 
-        // True only when a search has been submitted.
+        // True only when Search has been submitted.
         [BindProperty(SupportsGet = true)]
         public bool SearchSubmitted { get; set; }
 
@@ -96,7 +96,18 @@ namespace CIBnext.Pages.Subject
                 AddLink.Role = role;
             }
 
-            LoadLinkList();
+            // Load records only after Search has been submitted.
+            if (SearchSubmitted)
+            {
+                LoadLinkList();
+            }
+            else
+            {
+                LinkList = new List<OwnerLink>();
+                TotalCount = 0;
+                TotalPages = 0;
+                PageIndex = 1;
+            }
         }
 
         public IActionResult OnPostSave()
@@ -130,7 +141,11 @@ namespace CIBnext.Pages.Subject
 
                 if (!string.IsNullOrEmpty(ValidationMessage))
                 {
-                    LoadLinkList();
+                    if (SearchSubmitted)
+                    {
+                        LoadLinkList();
+                    }
+
                     return Page();
                 }
 
@@ -147,7 +162,11 @@ namespace CIBnext.Pages.Subject
                     ValidationMessage =
                         "The owner link could not be saved. Please check the information and try again.";
 
-                    LoadLinkList();
+                    if (SearchSubmitted)
+                    {
+                        LoadLinkList();
+                    }
+
                     return Page();
                 }
 
@@ -180,7 +199,11 @@ namespace CIBnext.Pages.Subject
                     DeleteMessageType = "warning";
                     DeleteMessageTitle = "No record selected";
 
-                    LoadLinkList();
+                    if (SearchSubmitted)
+                    {
+                        LoadLinkList();
+                    }
+
                     return Page();
                 }
 
@@ -210,7 +233,11 @@ namespace CIBnext.Pages.Subject
                     DeleteMessageType = "warning";
                     DeleteMessageTitle = "Invalid selection";
 
-                    LoadLinkList();
+                    if (SearchSubmitted)
+                    {
+                        LoadLinkList();
+                    }
+
                     return Page();
                 }
 
@@ -227,14 +254,22 @@ namespace CIBnext.Pages.Subject
                     DeleteMessageType = "error";
                     DeleteMessageTitle = "Delete failed";
 
-                    LoadLinkList();
+                    if (SearchSubmitted)
+                    {
+                        LoadLinkList();
+                    }
+
                     return Page();
                 }
 
                 TempData["SuccessMessage"] =
                     "The selected owner link record(s) were deleted successfully.";
 
-                LoadLinkList();
+                if (SearchSubmitted)
+                {
+                    LoadLinkList();
+                }
+
                 return Page();
             }
             catch (Exception)
@@ -247,7 +282,11 @@ namespace CIBnext.Pages.Subject
                 DeleteMessageTitle = "Delete failed";
 
                 LoadDropdowns();
-                LoadLinkList();
+
+                if (SearchSubmitted)
+                {
+                    LoadLinkList();
+                }
 
                 return Page();
             }

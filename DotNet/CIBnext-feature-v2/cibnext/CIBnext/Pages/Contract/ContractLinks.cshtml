@@ -39,6 +39,9 @@
             <fieldset>
                 <legend>Search Option</legend>
 
+                <input type="hidden" name="SearchSubmitted" value="true" />
+                <input type="hidden" name="PageIndex" value="1" />
+
                 <table class="contract-links-search-table">
                     <tr>
                         <td>Branch Code:</td>
@@ -90,6 +93,16 @@
                 <legend>
                     @(Model.IsEdit ? "Edit Contract Link" : "Add Contract Link")
                 </legend>
+
+                @* Preserve the current search state if Add/Update validation fails. *@
+                <input type="hidden" name="SearchSubmitted" value="@Model.SearchSubmitted.ToString().ToLower()" />
+                <input type="hidden" name="SearchBranchCode" value="@Model.SearchBranchCode" />
+                <input type="hidden" name="SearchPrimaryCode" value="@Model.SearchPrimaryCode" />
+                <input type="hidden" name="SearchPrimaryName" value="@Model.SearchPrimaryName" />
+                <input type="hidden" name="SearchSecondaryCode" value="@Model.SearchSecondaryCode" />
+                <input type="hidden" name="SearchSecondaryName" value="@Model.SearchSecondaryName" />
+                <input type="hidden" name="SearchContractCode" value="@Model.SearchContractCode" />
+                <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
 
                 @if (Model.IsEdit)
                 {
@@ -162,119 +175,134 @@
         </div>
     </form>
 
-    <div class="section">
-        <fieldset>
-            <legend>Contract Link Information</legend>
+    @if (Model.SearchSubmitted)
+    {
+        <div class="section">
+            <fieldset>
+                <legend>Contract Link Information</legend>
 
-            <h3>Total Count: @Model.TotalCount</h3>
+                <h3>Total Count: @Model.TotalCount</h3>
 
-            <form method="post"
-                  asp-page-handler="Delete"
-                  id="deleteLinksForm">
+                <form method="post"
+                      asp-page-handler="Delete"
+                      id="deleteLinksForm">
 
-                <table>
-                    <tr>
-                        <th></th>
-                        <th>Action</th>
-                        <th>Branch Code</th>
-                        <th>Type</th>
-                        <th>Primary Sub. Code</th>
-                        <th>Primary Sub. Name</th>
-                        <th>Secondary Sub. Code</th>
-                        <th>Secondary Sub. Name</th>
-                        <th>Contract Code</th>
-                    </tr>
+                    @* Preserve search filters after Delete. *@
+                    <input type="hidden" name="SearchSubmitted" value="true" />
+                    <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
+                    <input type="hidden" name="SearchBranchCode" value="@Model.SearchBranchCode" />
+                    <input type="hidden" name="SearchPrimaryCode" value="@Model.SearchPrimaryCode" />
+                    <input type="hidden" name="SearchPrimaryName" value="@Model.SearchPrimaryName" />
+                    <input type="hidden" name="SearchSecondaryCode" value="@Model.SearchSecondaryCode" />
+                    <input type="hidden" name="SearchSecondaryName" value="@Model.SearchSecondaryName" />
+                    <input type="hidden" name="SearchContractCode" value="@Model.SearchContractCode" />
 
-                    @if (Model.LinkList != null && Model.LinkList.Any())
-                    {
-                        @foreach (var link in Model.LinkList)
-                        {
-                            <tr>
-                                <td>
-                                    <input type="checkbox"
-                                           name="SelectedLinks"
-                                           value="@(link.FIContractCode)|@(link.FISecondaryCode)" />
-                                </td>
-
-                                <td>
-                                    <a href="/Contract/ContractLinks?EditContract=@Uri.EscapeDataString(link.FIContractCode)&EditSecondary=@Uri.EscapeDataString(link.FISecondaryCode ?? "")">
-                                        Edit
-                                    </a>
-                                </td>
-
-                                <td>@link.BranchCode</td>
-                                <td>@link.TypeOfLink</td>
-                                <td>@link.FIPrimaryCode</td>
-                                <td>@link.FIPrimaryName</td>
-                                <td>@link.FISecondaryCode</td>
-                                <td>@link.FISecondaryName</td>
-                                <td>@link.FIContractCode</td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
+                    <table>
                         <tr>
-                            <td colspan="9" class="contract-links-empty-row">
-                                No records found
-                            </td>
+                            <th></th>
+                            <th>Action</th>
+                            <th>Branch Code</th>
+                            <th>Type</th>
+                            <th>Primary Sub. Code</th>
+                            <th>Primary Sub. Name</th>
+                            <th>Secondary Sub. Code</th>
+                            <th>Secondary Sub. Name</th>
+                            <th>Contract Code</th>
                         </tr>
-                    }
-                </table>
 
-                <div class="pagination contract-links-pagination">
-                    @{
-                        var lastDisplayedPage = 0;
-                    }
-
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        var displayPage = i <= 3
-                            || i > Model.TotalPages - 3
-                            || Math.Abs(i - Model.PageIndex) <= 2;
-
-                        if (!displayPage)
+                        @if (Model.LinkList != null && Model.LinkList.Any())
                         {
-                            continue;
-                        }
+                            @foreach (var link in Model.LinkList)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               name="SelectedLinks"
+                                               value="@(link.FIContractCode)|@(link.FISecondaryCode)" />
+                                    </td>
 
-                        if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
-                        {
-                            <span class="ellipsis">...</span>
-                        }
+                                    <td>
+                                        <a href="/Contract/ContractLinks?EditContract=@Uri.EscapeDataString(link.FIContractCode)&EditSecondary=@Uri.EscapeDataString(link.FISecondaryCode ?? "")&SearchSubmitted=true&SearchBranchCode=@Uri.EscapeDataString(Model.SearchBranchCode ?? "")&SearchPrimaryCode=@Uri.EscapeDataString(Model.SearchPrimaryCode ?? "")&SearchPrimaryName=@Uri.EscapeDataString(Model.SearchPrimaryName ?? "")&SearchSecondaryCode=@Uri.EscapeDataString(Model.SearchSecondaryCode ?? "")&SearchSecondaryName=@Uri.EscapeDataString(Model.SearchSecondaryName ?? "")&SearchContractCode=@Uri.EscapeDataString(Model.SearchContractCode ?? "")&PageIndex=@Model.PageIndex">
+                                            Edit
+                                        </a>
+                                    </td>
 
-                        if (i == Model.PageIndex)
-                        {
-                            <span class="current">@i</span>
+                                    <td>@link.BranchCode</td>
+                                    <td>@link.TypeOfLink</td>
+                                    <td>@link.FIPrimaryCode</td>
+                                    <td>@link.FIPrimaryName</td>
+                                    <td>@link.FISecondaryCode</td>
+                                    <td>@link.FISecondaryName</td>
+                                    <td>@link.FIContractCode</td>
+                                </tr>
+                            }
                         }
                         else
                         {
-                            <a href="/Contract/ContractLinks?PageIndex=@i&SearchBranchCode=@Model.SearchBranchCode&SearchPrimaryCode=@Model.SearchPrimaryCode&SearchPrimaryName=@Model.SearchPrimaryName&SearchSecondaryCode=@Model.SearchSecondaryCode&SearchSecondaryName=@Model.SearchSecondaryName&SearchContractCode=@Model.SearchContractCode">
-                                @i
-                            </a>
+                            <tr>
+                                <td colspan="9" class="contract-links-empty-row">
+                                    No records found
+                                </td>
+                            </tr>
                         }
+                    </table>
 
-                        lastDisplayedPage = i;
+                    @if (Model.TotalCount > 0)
+                    {
+                        <div class="pagination contract-links-pagination">
+                            @{
+                                var lastDisplayedPage = 0;
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                var displayPage = i <= 3
+                                    || i > Model.TotalPages - 3
+                                    || Math.Abs(i - Model.PageIndex) <= 2;
+
+                                if (!displayPage)
+                                {
+                                    continue;
+                                }
+
+                                if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                                {
+                                    <span class="ellipsis">...</span>
+                                }
+
+                                if (i == Model.PageIndex)
+                                {
+                                    <span class="current">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="/Contract/ContractLinks?PageIndex=@i&SearchSubmitted=true&SearchBranchCode=@Uri.EscapeDataString(Model.SearchBranchCode ?? "")&SearchPrimaryCode=@Uri.EscapeDataString(Model.SearchPrimaryCode ?? "")&SearchPrimaryName=@Uri.EscapeDataString(Model.SearchPrimaryName ?? "")&SearchSecondaryCode=@Uri.EscapeDataString(Model.SearchSecondaryCode ?? "")&SearchSecondaryName=@Uri.EscapeDataString(Model.SearchSecondaryName ?? "")&SearchContractCode=@Uri.EscapeDataString(Model.SearchContractCode ?? "")">
+                                        @i
+                                    </a>
+                                }
+
+                                lastDisplayedPage = i;
+                            }
+                        </div>
                     }
-                </div>
 
-                <br />
+                    <br />
 
+                    <button class="btn-small"
+                            data-contract-links-refresh
+                            type="button">
+                        Refresh
+                    </button>
 
-                <button class="btn-small"
-                        data-contract-links-refresh
-                        type="button">
-                    Refresh
-                </button>
-
-                <button type="button"
-                        class="btn-small"
-                        data-contract-links-delete-open>
-                    Delete
-                </button>
-            </form>
-        </fieldset>
-    </div>
+                    <button type="button"
+                            class="btn-small"
+                            data-contract-links-delete-open>
+                        Delete
+                    </button>
+                </form>
+            </fieldset>
+        </div>
+    }
 
     @if (showPopup)
     {

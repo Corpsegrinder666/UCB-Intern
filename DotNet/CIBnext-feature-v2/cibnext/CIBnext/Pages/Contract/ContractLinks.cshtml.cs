@@ -1,4 +1,3 @@
-
 using CIBnext.BLL;
 using CIBnext.DAO;
 using CIBnext.Validators;
@@ -50,6 +49,9 @@ namespace CIBnext.Pages.Contract
 
         [BindProperty(SupportsGet = true)]
         public string SearchContractCode { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public bool SearchSubmitted { get; set; }
 
         // Edit
         [BindProperty(SupportsGet = true)]
@@ -105,42 +107,27 @@ namespace CIBnext.Pages.Contract
         {
             LoadDropdowns();
 
-            bool searchSubmitted =
-                Request.Query.ContainsKey("SearchBranchCode") ||
-                Request.Query.ContainsKey("SearchPrimaryCode") ||
-                Request.Query.ContainsKey("SearchPrimaryName") ||
-                Request.Query.ContainsKey("SearchSecondaryCode") ||
-                Request.Query.ContainsKey("SearchSecondaryName") ||
-                Request.Query.ContainsKey("SearchContractCode");
+            IsEdit = !string.IsNullOrWhiteSpace(EditContract);
 
-            bool hasSearchCriteria =
-                !string.IsNullOrWhiteSpace(SearchBranchCode) ||
-                !string.IsNullOrWhiteSpace(SearchPrimaryCode) ||
-                !string.IsNullOrWhiteSpace(SearchPrimaryName) ||
-                !string.IsNullOrWhiteSpace(SearchSecondaryCode) ||
-                !string.IsNullOrWhiteSpace(SearchSecondaryName) ||
-                !string.IsNullOrWhiteSpace(SearchContractCode);
-
-            if (searchSubmitted && !hasSearchCriteria)
+            // Show results only after Search has been submitted.
+            if (SearchSubmitted)
             {
-                ValidationMessage =
-                    "Please provide at least one search option.";
-
-                ValidationMessageType = "warning";
-                ValidationMessageTitle = "Search Required";
+                LoadLinkList();
+            }
+            else
+            {
+                ClearLinkList();
             }
 
-            LoadLinkList();
-
             // Load the selected record for editing.
-            if (!string.IsNullOrEmpty(EditContract))
+            if (IsEdit)
             {
                 var contractBLL = new ContractBLL(_configuration);
 
                 var all = contractBLL.GetContractLinksFiltered(
                     null, null, null, null, null, null);
 
-                var existing = all.FirstOrDefault(l =>
+                var existing = all?.FirstOrDefault(l =>
                     l.FIContractCode == EditContract &&
                     (l.FISecondaryCode ?? string.Empty) ==
                     (EditSecondary ?? string.Empty));
@@ -148,7 +135,6 @@ namespace CIBnext.Pages.Contract
                 if (existing != null)
                 {
                     AddLink = existing;
-                    IsEdit = true;
                 }
                 else
                 {
@@ -194,6 +180,11 @@ namespace CIBnext.Pages.Contract
         // Retrieve the primary subject code from either contract type.
         private string GetPrimarySubjectCode(string contractCode)
         {
+            if (string.IsNullOrWhiteSpace(contractCode))
+            {
+                return null;
+            }
+
             var contractBLL = new ContractBLL(_configuration);
 
             // First, check Installment Contract.
@@ -223,6 +214,8 @@ namespace CIBnext.Pages.Contract
         {
             LoadDropdowns();
 
+            IsEdit = !string.IsNullOrWhiteSpace(EditContract);
+
             // Always retrieve the primary code from the actual contract.
             // Do not rely on a value submitted by the browser.
             AddLink.FIPrimaryCode =
@@ -236,7 +229,7 @@ namespace CIBnext.Pages.Contract
                 ValidationMessageType = "warning";
                 ValidationMessageTitle = "Contract Not Found";
 
-                LoadLinkList();
+                RestoreSearchResults();
                 return Page();
             }
 
@@ -260,7 +253,7 @@ namespace CIBnext.Pages.Contract
                 ValidationMessageType = "warning";
                 ValidationMessageTitle = "Validation Required";
 
-                LoadLinkList();
+                RestoreSearchResults();
                 return Page();
             }
 
@@ -282,7 +275,7 @@ namespace CIBnext.Pages.Contract
                 ValidationMessageType = "error";
                 ValidationMessageTitle = "Save Failed";
 
-                LoadLinkList();
+                RestoreSearchResults();
                 return Page();
             }
 
@@ -303,7 +296,7 @@ namespace CIBnext.Pages.Contract
                 DeleteMessageType = "warning";
                 DeleteMessageTitle = "Selection Required";
 
-                LoadLinkList();
+                RestoreSearchResults();
                 return Page();
             }
 
@@ -313,7 +306,8 @@ namespace CIBnext.Pages.Contract
             {
                 var parts = item.Split('|');
 
-                if (parts.Length == 2)
+                if (parts.Length == 2 &&
+                    !string.IsNullOrWhiteSpace(parts[0]))
                 {
                     toDelete.Add(new ContractLink
                     {
@@ -323,6 +317,18 @@ namespace CIBnext.Pages.Contract
                         MakeDate = DateTime.Now
                     });
                 }
+            }
+
+            if (!toDelete.Any())
+            {
+                DeleteMessage =
+                    "Please select at least one valid record to delete.";
+
+                DeleteMessageType = "warning";
+                DeleteMessageTitle = "Selection Required";
+
+                RestoreSearchResults();
+                return Page();
             }
 
             var contractBLL = new ContractBLL(_configuration);
@@ -346,7 +352,7 @@ namespace CIBnext.Pages.Contract
                 DeleteMessageTitle = "Success";
             }
 
-            LoadLinkList();
+            RestoreSearchResults();
             return Page();
         }
 
@@ -399,6 +405,26 @@ namespace CIBnext.Pages.Contract
                 .ToList();
         }
 
+        private void RestoreSearchResults()
+        {
+            if (SearchSubmitted)
+            {
+                LoadLinkList();
+            }
+            else
+            {
+                ClearLinkList();
+            }
+        }
+
+        private void ClearLinkList()
+        {
+            LinkList = new List<ContractLink>();
+            TotalCount = 0;
+            TotalPages = 0;
+            PageIndex = 1;
+        }
+
         private void LoadLinkList()
         {
             var contractBLL = new ContractBLL(_configuration);
@@ -410,6 +436,8 @@ namespace CIBnext.Pages.Contract
                 SearchSecondaryCode,
                 SearchSecondaryName,
                 SearchContractCode);
+
+            allResults ??= new List<ContractLink>();
 
             TotalCount = allResults.Count;
 

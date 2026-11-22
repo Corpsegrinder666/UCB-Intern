@@ -18,7 +18,8 @@ namespace CIBnext.Pages.Contract
             _contractBLL = new ContractBLL(configuration);
         }
 
-        public List<ContractError> Errors { get; set; } = new List<ContractError>();
+        public List<ContractError> Errors { get; set; }
+            = new List<ContractError>();
 
         [BindProperty(SupportsGet = true)]
         public string BranchCode { get; set; }
@@ -35,7 +36,22 @@ namespace CIBnext.Pages.Contract
         [BindProperty(SupportsGet = true)]
         public string UbsAcNo { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public bool SearchSubmitted { get; set; }
+
         public void OnGet()
+        {
+            if (SearchSubmitted)
+            {
+                LoadErrors();
+            }
+            else
+            {
+                Errors = new List<ContractError>();
+            }
+        }
+
+        private void LoadErrors()
         {
             Errors = _contractBLL.GetInstalmentContractError(
                 BranchCode,
