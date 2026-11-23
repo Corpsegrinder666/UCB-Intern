@@ -43,7 +43,6 @@
 
     <div class="page-title">Owner Link Information</div>
 
-    <!-- Search Option -->
     <form method="get" id="searchForm">
         <div class="section">
             <fieldset>
@@ -98,7 +97,6 @@
         </div>
     </form>
 
-    <!-- Add Owner Link Information -->
     <form method="post" asp-page-handler="Save">
         <div class="section">
             <fieldset>
@@ -135,26 +133,28 @@
         </div>
     </form>
 
-    <!-- Owner Information: visible only after Search -->
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Owner Information</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Owner Information</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.TotalCount</h3>
+            }
 
-                <form method="post"
-                      asp-page-handler="Delete"
-                      id="deleteForm">
+            <form method="post"
+                  asp-page-handler="Delete"
+                  id="deleteForm">
 
+                @if (Model.SearchSubmitted)
+                {
                     <input type="hidden"
                            name="PageIndex"
                            value="@Model.PageIndex" />
 
                     <input type="hidden"
                            name="SearchSubmitted"
-                           value="@Model.SearchSubmitted.ToString().ToLowerInvariant()" />
+                           value="true" />
 
                     <input type="hidden"
                            name="Subject.CibBranchCode"
@@ -176,7 +176,6 @@
                            name="Subject.InstitutionName"
                            value="@Model.Subject.InstitutionName" />
 
-                    <!-- Responsive table wrapper -->
                     <div class="owner-record-table-wrapper">
                         <table class="owner-record-table">
                             <tr>
@@ -225,42 +224,44 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination owner-pagination">
-                        @{
-                            var lastDisplayedPage = 0;
-                        }
-
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            var displayPage = i <= 3
-                                || i > Model.TotalPages - 3
-                                || Math.Abs(i - Model.PageIndex) <= 2;
-
-                            if (!displayPage)
-                            {
-                                continue;
+                    @if (Model.TotalCount > 0)
+                    {
+                        <div class="pagination owner-pagination">
+                            @{
+                                var lastDisplayedPage = 0;
                             }
 
-                            if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                            @for (int i = 1; i <= Model.TotalPages; i++)
                             {
-                                <span class="ellipsis">...</span>
-                            }
+                                var displayPage = i <= 3
+                                    || i > Model.TotalPages - 3
+                                    || Math.Abs(i - Model.PageIndex) <= 2;
 
-                            if (i == Model.PageIndex)
-                            {
-                                <span class="current">@i</span>
-                            }
-                            else
-                            {
-                                <a href="/Subject/OwnerLinks?PageIndex=@i&SearchSubmitted=true&Subject.CibBranchCode=@Uri.EscapeDataString(Model.Subject.CibBranchCode ?? "")&Subject.OwnerFiSubjectCode=@Uri.EscapeDataString(Model.Subject.OwnerFiSubjectCode ?? "")&Subject.OwnerName=@Uri.EscapeDataString(Model.Subject.OwnerName ?? "")&Subject.InstitutionFiSubjectCode=@Uri.EscapeDataString(Model.Subject.InstitutionFiSubjectCode ?? "")&Subject.InstitutionName=@Uri.EscapeDataString(Model.Subject.InstitutionName ?? "")">
-                                    @i
-                                </a>
-                            }
+                                if (!displayPage)
+                                {
+                                    continue;
+                                }
 
-                            lastDisplayedPage = i;
-                        }
-                    </div>
+                                if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                                {
+                                    <span class="ellipsis">...</span>
+                                }
+
+                                if (i == Model.PageIndex)
+                                {
+                                    <span class="current">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="/Subject/OwnerLinks?PageIndex=@i&SearchSubmitted=true&Subject.CibBranchCode=@Uri.EscapeDataString(Model.Subject.CibBranchCode ?? "")&Subject.OwnerFiSubjectCode=@Uri.EscapeDataString(Model.Subject.OwnerFiSubjectCode ?? "")&Subject.OwnerName=@Uri.EscapeDataString(Model.Subject.OwnerName ?? "")&Subject.InstitutionFiSubjectCode=@Uri.EscapeDataString(Model.Subject.InstitutionFiSubjectCode ?? "")&Subject.InstitutionName=@Uri.EscapeDataString(Model.Subject.InstitutionName ?? "")">
+                                        @i
+                                    </a>
+                                }
+
+                                lastDisplayedPage = i;
+                            }
+                        </div>
+                    }
 
                     <br />
 
@@ -275,15 +276,13 @@
                             data-owner-delete-open>
                         Delete
                     </button>
-
-                </form>
-            </fieldset>
-        </div>
-    }
+                }
+            </form>
+        </fieldset>
+    </div>
 
 </div>
 
-<!-- Information Modal -->
 @if (!string.IsNullOrWhiteSpace(popupMessage))
 {
     <div id="messageModal"
@@ -317,7 +316,6 @@
     </div>
 }
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteConfirmModal"
      class="message-overlay hidden"
      role="dialog"

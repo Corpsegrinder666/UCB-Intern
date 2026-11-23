@@ -118,26 +118,29 @@
         </div>
     </form>
 
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Personal Information</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Personal Information</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.TotalCount</h3>
+            }
 
-                <form method="post" asp-page-handler="Delete" id="deleteForm">
-                    @Html.AntiForgeryToken()
+            <form method="post" asp-page-handler="Delete" id="deleteForm">
+                @Html.AntiForgeryToken()
 
-                    <input type="hidden" asp-for="Subject.BranchCode" />
-                    <input type="hidden" asp-for="Subject.FISubjectCode" />
-                    <input type="hidden" asp-for="Subject.Name" />
-                    <input type="hidden" asp-for="Subject.FathersName" />
-                    <input type="hidden" asp-for="Subject.DateOfBirth" />
-                    <input type="hidden" asp-for="Subject.CifNo" />
-                    <input type="hidden" asp-for="PageIndex" />
-                    <input type="hidden" asp-for="SearchSubmitted" />
+                <input type="hidden" asp-for="Subject.BranchCode" />
+                <input type="hidden" asp-for="Subject.FISubjectCode" />
+                <input type="hidden" asp-for="Subject.Name" />
+                <input type="hidden" asp-for="Subject.FathersName" />
+                <input type="hidden" asp-for="Subject.DateOfBirth" />
+                <input type="hidden" asp-for="Subject.CifNo" />
+                <input type="hidden" asp-for="PageIndex" />
+                <input type="hidden" asp-for="SearchSubmitted" />
 
+                @if (Model.SearchSubmitted)
+                {
                     <table>
                         <thead>
                             <tr>
@@ -198,7 +201,7 @@
                         </tbody>
                     </table>
 
-                    @if (Model.TotalPages > 1)
+                    @if (Model.TotalCount > 0)
                     {
                         <div class="pagination personal-information-pagination">
                             @{
@@ -244,13 +247,16 @@
                             }
                         </div>
                     }
+                }
 
-                    <br />
+                <br />
 
-                    <a href="/Subject/AddPersonalInformation" class="btn-small">
-                        Add
-                    </a>
+                <a href="/Subject/AddPersonalInformation" class="btn-small">
+                    Add
+                </a>
 
+                @if (Model.SearchSubmitted)
+                {
                     <button class="btn-small"
                             data-personal-refresh
                             type="button">
@@ -261,12 +267,11 @@
                             data-personal-delete-open>
                         Delete
                     </button>
-                </form>
-            </fieldset>
-        </div>
-    }
+                }
+            </form>
+        </fieldset>
+    </div>
 
-    @* Delete confirmation popup *@
     <div id="deleteConfirmModal" class="message-overlay hidden"
          role="dialog" aria-modal="true"
          aria-labelledby="deleteConfirmTitle"

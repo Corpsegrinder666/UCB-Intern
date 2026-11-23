@@ -52,12 +52,12 @@
         </fieldset>
     </div>
 
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Personal Information Errors</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Personal Information Errors</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <table>
                     <thead>
                         <tr>
@@ -127,8 +127,8 @@
 
                     </div>
                 }
-            </fieldset>
-        </div>
-    }
+            }
+        </fieldset>
+    </div>
 
 </div>

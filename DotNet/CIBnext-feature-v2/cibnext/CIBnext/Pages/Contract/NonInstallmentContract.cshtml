@@ -78,18 +78,21 @@
     </form>
 
     <!-- Non-Installment Contract Information -->
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Non Installment Contract Information</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Non Installment Contract Information</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.TotalCount</h3>
+            }
 
-                <form method="post"
-                      asp-page-handler="Delete"
-                      id="deleteContractsForm">
+            <form method="post"
+                  asp-page-handler="Delete"
+                  id="deleteContractsForm">
 
+                @if (Model.SearchSubmitted)
+                {
                     <input type="hidden"
                            name="PageIndex"
                            value="@Model.PageIndex" />
@@ -175,51 +178,57 @@
                     </table>
 
                     <!-- Pagination -->
-                    <div class="pagination non-installment-pagination">
-                        @{
-                            var lastDisplayedPage = 0;
-                        }
-
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            var displayPage =
-                                i <= 3 ||
-                                i > Model.TotalPages - 3 ||
-                                Math.Abs(i - Model.PageIndex) <= 2;
-
-                            if (!displayPage)
-                            {
-                                continue;
+                    @if (Model.TotalCount > 0)
+                    {
+                        <div class="pagination non-installment-pagination">
+                            @{
+                                var lastDisplayedPage = 0;
                             }
 
-                            if (lastDisplayedPage > 0 &&
-                                i > lastDisplayedPage + 1)
+                            @for (int i = 1; i <= Model.TotalPages; i++)
                             {
-                                <span class="ellipsis">...</span>
+                                var displayPage =
+                                    i <= 3 ||
+                                    i > Model.TotalPages - 3 ||
+                                    Math.Abs(i - Model.PageIndex) <= 2;
+
+                                if (!displayPage)
+                                {
+                                    continue;
+                                }
+
+                                if (lastDisplayedPage > 0 &&
+                                    i > lastDisplayedPage + 1)
+                                {
+                                    <span class="ellipsis">...</span>
+                                }
+
+                                if (i == Model.PageIndex)
+                                {
+                                    <span class="current">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="/Contract/NonInstallmentContract?PageIndex=@i&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">
+                                        @i
+                                    </a>
+                                }
+
+                                lastDisplayedPage = i;
                             }
+                        </div>
+                    }
+                }
 
-                            if (i == Model.PageIndex)
-                            {
-                                <span class="current">@i</span>
-                            }
-                            else
-                            {
-                                <a href="/Contract/NonInstallmentContract?PageIndex=@i&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">
-                                    @i
-                                </a>
-                            }
+                <br />
 
-                            lastDisplayedPage = i;
-                        }
-                    </div>
+                <a href="/Contract/AddNonInstallmentContract"
+                   class="btn-small">
+                    Add
+                </a>
 
-                    <br />
-
-                    <a href="/Contract/AddNonInstallmentContract"
-                       class="btn-small">
-                        Add
-                    </a>
-
+                @if (Model.SearchSubmitted)
+                {
                     <button class="btn-small"
                             data-noninstallment-refresh
                             type="button">
@@ -231,11 +240,11 @@
                             id="deleteContractsButton">
                         Delete
                     </button>
+                }
 
-                </form>
-            </fieldset>
-        </div>
-    }
+            </form>
+        </fieldset>
+    </div>
 
     <!-- Messages -->
     @{

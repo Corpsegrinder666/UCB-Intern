@@ -175,12 +175,12 @@
         </div>
     </form>
 
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Contract Link Information</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Contract Link Information</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.TotalCount</h3>
 
                 <form method="post"
@@ -300,9 +300,9 @@
                         Delete
                     </button>
                 </form>
-            </fieldset>
-        </div>
-    }
+            }
+        </fieldset>
+    </div>
 
     @if (showPopup)
     {

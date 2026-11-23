@@ -66,18 +66,21 @@
         </div>
     </form>
 
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Installment Contract Information</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Installment Contract Information</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.TotalCount</h3>
+            }
 
-                <form method="post"
-                      asp-page-handler="Delete"
-                      id="deleteContractsForm">
+            <form method="post"
+                  asp-page-handler="Delete"
+                  id="deleteContractsForm">
 
+                @if (Model.SearchSubmitted)
+                {
                     <input type="hidden" asp-for="BranchCode" />
                     <input type="hidden" asp-for="ContractCode" />
                     <input type="hidden" asp-for="FISubjectCode" />
@@ -142,48 +145,54 @@
                         }
                     </table>
 
-                    <div class="pagination installment-pagination">
-                        @{
-                            var lastDisplayedPage = 0;
-                        }
-
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            var displayPage = i <= 3
-                                || i > Model.TotalPages - 3
-                                || Math.Abs(i - Model.PageIndex) <= 2;
-
-                            if (!displayPage)
-                            {
-                                continue;
+                    @if (Model.TotalCount > 0)
+                    {
+                        <div class="pagination installment-pagination">
+                            @{
+                                var lastDisplayedPage = 0;
                             }
 
-                            if (lastDisplayedPage > 0 &&
-                                i > lastDisplayedPage + 1)
+                            @for (int i = 1; i <= Model.TotalPages; i++)
                             {
-                                <span class="ellipsis">...</span>
+                                var displayPage = i <= 3
+                                    || i > Model.TotalPages - 3
+                                    || Math.Abs(i - Model.PageIndex) <= 2;
+
+                                if (!displayPage)
+                                {
+                                    continue;
+                                }
+
+                                if (lastDisplayedPage > 0 &&
+                                    i > lastDisplayedPage + 1)
+                                {
+                                    <span class="ellipsis">...</span>
+                                }
+
+                                if (i == Model.PageIndex)
+                                {
+                                    <span class="current">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="/Contract/InstallmentContract?PageIndex=@i&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">@i</a>
+                                }
+
+                                lastDisplayedPage = i;
                             }
+                        </div>
+                    }
+                }
 
-                            if (i == Model.PageIndex)
-                            {
-                                <span class="current">@i</span>
-                            }
-                            else
-                            {
-                                <a href="/Contract/InstallmentContract?PageIndex=@i&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">@i</a>
-                            }
+                <br />
 
-                            lastDisplayedPage = i;
-                        }
-                    </div>
+                <a href="/Contract/AddInstalmentContract"
+                   class="btn-small">
+                    Add
+                </a>
 
-                    <br />
-
-                    <a href="/Contract/AddInstalmentContract"
-                       class="btn-small">
-                        Add
-                    </a>
-
+                @if (Model.SearchSubmitted)
+                {
                     <button class="btn-small"
                             type="button"
                             data-installment-refresh>
@@ -195,10 +204,11 @@
                             data-installment-delete-open>
                         Delete
                     </button>
-                </form>
-            </fieldset>
-        </div>
-    }
+                }
+
+            </form>
+        </fieldset>
+    </div>
 
     @* Delete message popup *@
     @if (!string.IsNullOrWhiteSpace(Model.DeleteMessage))

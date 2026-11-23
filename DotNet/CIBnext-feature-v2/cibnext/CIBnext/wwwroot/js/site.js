@@ -282,13 +282,33 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    const personalRefresh = document.querySelector(
-        "[data-personal-refresh]"
-    );
+    const personalRefresh = document.querySelector("[data-personal-refresh]");
 
     if (personalRefresh) {
         personalRefresh.addEventListener("click", function () {
-            window.location.href = "/Subject/PersonalInformation";
+            const searchForm = document.querySelector('form[method="get"]');
+
+            if (!searchForm) {
+                return;
+            }
+
+            const currentUrl = new URL(window.location.href);
+            const currentPageIndex = currentUrl.searchParams.get("PageIndex") || "1";
+
+            let pageIndexInput = searchForm.querySelector(
+                'input[name="PageIndex"]'
+            );
+
+            if (!pageIndexInput) {
+                pageIndexInput = document.createElement("input");
+                pageIndexInput.type = "hidden";
+                pageIndexInput.name = "PageIndex";
+                searchForm.appendChild(pageIndexInput);
+            }
+
+            pageIndexInput.value = currentPageIndex;
+
+            searchForm.requestSubmit();
         });
     }
 

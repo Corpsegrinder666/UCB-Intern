@@ -61,12 +61,12 @@
         </fieldset>
     </div>
 
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Non-Installment Contract Errors</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Non-Installment Contract Errors</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.ErrorList.Count</h3>
 
                 <table>
@@ -119,8 +119,8 @@
                         }
                     </tbody>
                 </table>
-            </fieldset>
-        </div>
-    }
+            }
+        </fieldset>
+    </div>
 
 </div>

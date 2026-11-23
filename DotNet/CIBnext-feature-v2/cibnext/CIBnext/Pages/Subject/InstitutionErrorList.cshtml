@@ -53,12 +53,12 @@
         </fieldset>
     </div>
 
-    @if (Model.SearchSubmitted)
-    {
-        <div class="section">
-            <fieldset>
-                <legend>Institution Information Errors</legend>
+    <div class="section">
+        <fieldset>
+            <legend>Institution Information Errors</legend>
 
+            @if (Model.SearchSubmitted)
+            {
                 <h3>Total Count: @Model.ErrorList.Count</h3>
 
                 <table>
@@ -100,47 +100,49 @@
                     </tbody>
                 </table>
 
-                <div class="pagination">
-                    @{
-                        var lastDisplayedPage = 0;
-                    }
-
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        var displayPage = i <= 3
-                            || i > Model.TotalPages - 3
-                            || Math.Abs(i - Model.PageNumber) <= 2;
-
-                        if (!displayPage)
-                        {
-                            continue;
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="pagination">
+                        @{
+                            var lastDisplayedPage = 0;
                         }
 
-                        if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                        @for (int i = 1; i <= Model.TotalPages; i++)
                         {
-                            <span class="ellipsis">...</span>
-                        }
+                            var displayPage = i <= 3
+                                || i > Model.TotalPages - 3
+                                || Math.Abs(i - Model.PageNumber) <= 2;
 
-                        if (i == Model.PageNumber)
-                        {
-                            <span class="current">@i</span>
-                        }
-                        else
-                        {
-                            <a asp-page="/Subject/InstitutionErrorList"
-                               asp-route-PageNumber="@i"
-                               asp-route-SearchSubmitted="true"
-                               asp-route-BranchCode="@Model.BranchCode"
-                               asp-route-SubjectCode="@Model.SubjectCode"
-                               asp-route-SubjectName="@Model.SubjectName">@i</a>
-                        }
+                            if (!displayPage)
+                            {
+                                continue;
+                            }
 
-                        lastDisplayedPage = i;
-                    }
-                </div>
+                            if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
 
-            </fieldset>
-        </div>
-    }
+                            if (i == Model.PageNumber)
+                            {
+                                <span class="current">@i</span>
+                            }
+                            else
+                            {
+                                <a asp-page="/Subject/InstitutionErrorList"
+                                   asp-route-PageNumber="@i"
+                                   asp-route-SearchSubmitted="true"
+                                   asp-route-BranchCode="@Model.BranchCode"
+                                   asp-route-SubjectCode="@Model.SubjectCode"
+                                   asp-route-SubjectName="@Model.SubjectName">@i</a>
+                            }
+
+                            lastDisplayedPage = i;
+                        }
+                    </div>
+                }
+            }
+        </fieldset>
+    </div>
 
 </div>
