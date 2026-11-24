@@ -17,6 +17,7 @@
 
             <form method="get">
                 <input type="hidden" name="SearchSubmitted" value="true" />
+                <input type="hidden" name="PageNumber" value="1" />
 
                 <table>
                     <tr>
@@ -66,7 +67,7 @@
 
             @if (Model.SearchSubmitted)
             {
-                <h3>Total Count: @(Model.Errors?.Count ?? 0)</h3>
+                <h3>Total Count: @Model.TotalCount</h3>
 
                 <table>
                     <thead>
@@ -118,6 +119,66 @@
                         }
                     </tbody>
                 </table>
+
+                @if (Model.TotalCount > 0)
+                {
+                    <div class="pagination personal-information-pagination">
+
+                        @if (Model.PageNumber > 1)
+                        {
+                            <a href="/Contract/InstallmentContractErrorList?PageNumber=@(Model.PageNumber - 1)&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">
+                                Previous
+                            </a>
+                        }
+
+                        @{
+                            var lastDisplayedPage = 0;
+                        }
+
+                        @for (int pageNumber = 1;
+                              pageNumber <= Model.TotalPages;
+                              pageNumber++)
+                        {
+                            var displayPage =
+                                Model.TotalPages <= 7
+                                || pageNumber <= 3
+                                || pageNumber > Model.TotalPages - 3
+                                || Math.Abs(pageNumber - Model.PageNumber) <= 2;
+
+                            if (!displayPage)
+                            {
+                                continue;
+                            }
+
+                            if (lastDisplayedPage > 0 &&
+                                pageNumber > lastDisplayedPage + 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
+
+                            if (pageNumber == Model.PageNumber)
+                            {
+                                <span class="current">@pageNumber</span>
+                            }
+                            else
+                            {
+                                <a href="/Contract/InstallmentContractErrorList?PageNumber=@pageNumber&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">
+                                    @pageNumber
+                                </a>
+                            }
+
+                            lastDisplayedPage = pageNumber;
+                        }
+
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <a href="/Contract/InstallmentContractErrorList?PageNumber=@(Model.PageNumber + 1)&SearchSubmitted=true&BranchCode=@Uri.EscapeDataString(Model.BranchCode ?? "")&ContractCode=@Uri.EscapeDataString(Model.ContractCode ?? "")&FISubjectCode=@Uri.EscapeDataString(Model.FISubjectCode ?? "")&ContractPhase=@Uri.EscapeDataString(Model.ContractPhase ?? "")&UbsAcNo=@Uri.EscapeDataString(Model.UbsAcNo ?? "")">
+                                Next
+                            </a>
+                        }
+
+                    </div>
+                }
             }
         </fieldset>
     </div>

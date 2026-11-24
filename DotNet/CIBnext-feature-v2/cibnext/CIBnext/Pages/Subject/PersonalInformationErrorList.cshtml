@@ -97,32 +97,79 @@
                     </tbody>
                 </table>
 
-                @if (Model.TotalPages > 1)
+                @if (Model.TotalPages > 0)
                 {
-                    <div class="personal-information-pagination">
+                    <div class="pagination personal-information-pagination">
 
-                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        @if (Model.PageNumber > 1)
                         {
-                            if (i == Model.PageNumber)
+                            <a class="page-link"
+                               asp-page="/Subject/PersonalInformationErrorList"
+                               asp-route-SearchSubmitted="true"
+                               asp-route-BranchCode="@Model.BranchCode"
+                               asp-route-SubjectCode="@Model.SubjectCode"
+                               asp-route-SubjectName="@Model.SubjectName"
+                               asp-route-PageNumber="@(Model.PageNumber - 1)">
+                                Previous
+                            </a>
+                        }
+
+                        @{
+                            var lastDisplayedPage = 0;
+                        }
+
+                        @for (int pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+                        {
+                            var shouldDisplayPage =
+                                Model.TotalPages <= 7 ||
+                                pageNumber <= 3 ||
+                                pageNumber > Model.TotalPages - 3 ||
+                                Math.Abs(pageNumber - Model.PageNumber) <= 2;
+
+                            if (!shouldDisplayPage)
                             {
-                                <strong>@i</strong>
+                                continue;
+                            }
+
+                            if (lastDisplayedPage > 0 &&
+                                pageNumber > lastDisplayedPage + 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
+
+                            if (pageNumber == Model.PageNumber)
+                            {
+                                <span class="current" aria-current="page">
+                                    @pageNumber
+                                </span>
                             }
                             else
                             {
-                                <a asp-page="/Subject/PersonalInformationErrorList"
+                                <a class="page-link"
+                                   asp-page="/Subject/PersonalInformationErrorList"
                                    asp-route-SearchSubmitted="true"
                                    asp-route-BranchCode="@Model.BranchCode"
                                    asp-route-SubjectCode="@Model.SubjectCode"
                                    asp-route-SubjectName="@Model.SubjectName"
-                                   asp-route-PageNumber="@i">
-                                    @i
+                                   asp-route-PageNumber="@pageNumber">
+                                    @pageNumber
                                 </a>
                             }
 
-                            @if (i < Model.TotalPages)
-                            {
-                                <text> </text>
-                            }
+                            lastDisplayedPage = pageNumber;
+                        }
+
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <a class="page-link"
+                               asp-page="/Subject/PersonalInformationErrorList"
+                               asp-route-SearchSubmitted="true"
+                               asp-route-BranchCode="@Model.BranchCode"
+                               asp-route-SubjectCode="@Model.SubjectCode"
+                               asp-route-SubjectName="@Model.SubjectName"
+                               asp-route-PageNumber="@(Model.PageNumber + 1)">
+                                Next
+                            </a>
                         }
 
                     </div>

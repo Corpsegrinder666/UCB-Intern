@@ -227,39 +227,84 @@
                     @if (Model.TotalCount > 0)
                     {
                         <div class="pagination owner-pagination">
+
+                            @if (Model.PageIndex > 1)
+                            {
+                                <a class="page-link"
+                                   asp-page="/Subject/OwnerLinks"
+                                   asp-route-PageIndex="@(Model.PageIndex - 1)"
+                                   asp-route-SearchSubmitted="true"
+                                   asp-route-Subject.CibBranchCode="@Model.Subject.CibBranchCode"
+                                   asp-route-Subject.OwnerFiSubjectCode="@Model.Subject.OwnerFiSubjectCode"
+                                   asp-route-Subject.OwnerName="@Model.Subject.OwnerName"
+                                   asp-route-Subject.InstitutionFiSubjectCode="@Model.Subject.InstitutionFiSubjectCode"
+                                   asp-route-Subject.InstitutionName="@Model.Subject.InstitutionName">
+                                    Previous
+                                </a>
+                            }
+
                             @{
                                 var lastDisplayedPage = 0;
                             }
 
-                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            @for (int pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
                             {
-                                var displayPage = i <= 3
-                                    || i > Model.TotalPages - 3
-                                    || Math.Abs(i - Model.PageIndex) <= 2;
+                                var shouldDisplayPage =
+                                    Model.TotalPages <= 7 ||
+                                    pageNumber <= 3 ||
+                                    pageNumber > Model.TotalPages - 3 ||
+                                    Math.Abs(pageNumber - Model.PageIndex) <= 2;
 
-                                if (!displayPage)
+                                if (!shouldDisplayPage)
                                 {
                                     continue;
                                 }
 
-                                if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                                if (lastDisplayedPage > 0 &&
+                                    pageNumber > lastDisplayedPage + 1)
                                 {
                                     <span class="ellipsis">...</span>
                                 }
 
-                                if (i == Model.PageIndex)
+                                if (pageNumber == Model.PageIndex)
                                 {
-                                    <span class="current">@i</span>
+                                    <span class="current" aria-current="page">
+                                        @pageNumber
+                                    </span>
                                 }
                                 else
                                 {
-                                    <a href="/Subject/OwnerLinks?PageIndex=@i&SearchSubmitted=true&Subject.CibBranchCode=@Uri.EscapeDataString(Model.Subject.CibBranchCode ?? "")&Subject.OwnerFiSubjectCode=@Uri.EscapeDataString(Model.Subject.OwnerFiSubjectCode ?? "")&Subject.OwnerName=@Uri.EscapeDataString(Model.Subject.OwnerName ?? "")&Subject.InstitutionFiSubjectCode=@Uri.EscapeDataString(Model.Subject.InstitutionFiSubjectCode ?? "")&Subject.InstitutionName=@Uri.EscapeDataString(Model.Subject.InstitutionName ?? "")">
-                                        @i
+                                    <a class="page-link"
+                                       asp-page="/Subject/OwnerLinks"
+                                       asp-route-PageIndex="@pageNumber"
+                                       asp-route-SearchSubmitted="true"
+                                       asp-route-Subject.CibBranchCode="@Model.Subject.CibBranchCode"
+                                       asp-route-Subject.OwnerFiSubjectCode="@Model.Subject.OwnerFiSubjectCode"
+                                       asp-route-Subject.OwnerName="@Model.Subject.OwnerName"
+                                       asp-route-Subject.InstitutionFiSubjectCode="@Model.Subject.InstitutionFiSubjectCode"
+                                       asp-route-Subject.InstitutionName="@Model.Subject.InstitutionName">
+                                        @pageNumber
                                     </a>
                                 }
 
-                                lastDisplayedPage = i;
+                                lastDisplayedPage = pageNumber;
                             }
+
+                            @if (Model.PageIndex < Model.TotalPages)
+                            {
+                                <a class="page-link"
+                                   asp-page="/Subject/OwnerLinks"
+                                   asp-route-PageIndex="@(Model.PageIndex + 1)"
+                                   asp-route-SearchSubmitted="true"
+                                   asp-route-Subject.CibBranchCode="@Model.Subject.CibBranchCode"
+                                   asp-route-Subject.OwnerFiSubjectCode="@Model.Subject.OwnerFiSubjectCode"
+                                   asp-route-Subject.OwnerName="@Model.Subject.OwnerName"
+                                   asp-route-Subject.InstitutionFiSubjectCode="@Model.Subject.InstitutionFiSubjectCode"
+                                   asp-route-Subject.InstitutionName="@Model.Subject.InstitutionName">
+                                    Next
+                                </a>
+                            }
+
                         </div>
                     }
 

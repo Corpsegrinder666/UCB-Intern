@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +16,8 @@ namespace CIBnext.Pages.Contract
     {
         private readonly ContractBLL _contractBLL;
         private readonly ListOfValuesBLL _lovBLL;
+
+        private const int PageSize = 15;
 
         public NonInstallmentContractErrorListModel(
             IConfiguration configuration,
@@ -42,6 +45,13 @@ namespace CIBnext.Pages.Contract
         [BindProperty(SupportsGet = true)]
         public bool SearchSubmitted { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        public int TotalCount { get; set; }
+
+        public int TotalPages { get; set; }
+
         public List<SelectListItem> BranchCodeList { get; set; }
             = new List<SelectListItem>();
 
@@ -58,7 +68,7 @@ namespace CIBnext.Pages.Contract
             }
             else
             {
-                ErrorList = new List<ContractError>();
+                ClearErrorList();
             }
         }
 
@@ -75,11 +85,39 @@ namespace CIBnext.Pages.Contract
 
         private void LoadErrorList()
         {
-            ErrorList = _contractBLL.GetNonInstalmentContractError(
+            var allErrors = _contractBLL.GetNonInstalmentContractError(
                 BranchCode ?? "",
                 ContractCode ?? "",
                 FISubjectCode ?? ""
             ) ?? new List<ContractError>();
+
+            TotalCount = allErrors.Count;
+
+            TotalPages = (int)Math.Ceiling(
+                TotalCount / (double)PageSize);
+
+            if (PageNumber < 1)
+            {
+                PageNumber = 1;
+            }
+
+            if (TotalPages > 0 && PageNumber > TotalPages)
+            {
+                PageNumber = TotalPages;
+            }
+
+            ErrorList = allErrors
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+        }
+
+        private void ClearErrorList()
+        {
+            ErrorList = new List<ContractError>();
+            TotalCount = 0;
+            TotalPages = 0;
+            PageNumber = 1;
         }
     }
 }

@@ -94,7 +94,6 @@
                     @(Model.IsEdit ? "Edit Contract Link" : "Add Contract Link")
                 </legend>
 
-                @* Preserve the current search state if Add/Update validation fails. *@
                 <input type="hidden" name="SearchSubmitted" value="@Model.SearchSubmitted.ToString().ToLower()" />
                 <input type="hidden" name="SearchBranchCode" value="@Model.SearchBranchCode" />
                 <input type="hidden" name="SearchPrimaryCode" value="@Model.SearchPrimaryCode" />
@@ -187,7 +186,6 @@
                       asp-page-handler="Delete"
                       id="deleteLinksForm">
 
-                    @* Preserve search filters after Delete. *@
                     <input type="hidden" name="SearchSubmitted" value="true" />
                     <input type="hidden" name="PageIndex" value="@Model.PageIndex" />
                     <input type="hidden" name="SearchBranchCode" value="@Model.SearchBranchCode" />
@@ -250,39 +248,60 @@
                     @if (Model.TotalCount > 0)
                     {
                         <div class="pagination contract-links-pagination">
+
+                            @if (Model.PageIndex > 1)
+                            {
+                                <a href="/Contract/ContractLinks?PageIndex=@(Model.PageIndex - 1)&SearchSubmitted=true&SearchBranchCode=@Uri.EscapeDataString(Model.SearchBranchCode ?? "")&SearchPrimaryCode=@Uri.EscapeDataString(Model.SearchPrimaryCode ?? "")&SearchPrimaryName=@Uri.EscapeDataString(Model.SearchPrimaryName ?? "")&SearchSecondaryCode=@Uri.EscapeDataString(Model.SearchSecondaryCode ?? "")&SearchSecondaryName=@Uri.EscapeDataString(Model.SearchSecondaryName ?? "")&SearchContractCode=@Uri.EscapeDataString(Model.SearchContractCode ?? "")">
+                                    Previous
+                                </a>
+                            }
+
                             @{
                                 var lastDisplayedPage = 0;
                             }
 
-                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            @for (int pageNumber = 1;
+                                  pageNumber <= Model.TotalPages;
+                                  pageNumber++)
                             {
-                                var displayPage = i <= 3
-                                    || i > Model.TotalPages - 3
-                                    || Math.Abs(i - Model.PageIndex) <= 2;
+                                var displayPage =
+                                    Model.TotalPages <= 7
+                                    || pageNumber <= 3
+                                    || pageNumber > Model.TotalPages - 3
+                                    || Math.Abs(pageNumber - Model.PageIndex) <= 2;
 
                                 if (!displayPage)
                                 {
                                     continue;
                                 }
 
-                                if (lastDisplayedPage > 0 && i > lastDisplayedPage + 1)
+                                if (lastDisplayedPage > 0 &&
+                                    pageNumber > lastDisplayedPage + 1)
                                 {
                                     <span class="ellipsis">...</span>
                                 }
 
-                                if (i == Model.PageIndex)
+                                if (pageNumber == Model.PageIndex)
                                 {
-                                    <span class="current">@i</span>
+                                    <span class="current">@pageNumber</span>
                                 }
                                 else
                                 {
-                                    <a href="/Contract/ContractLinks?PageIndex=@i&SearchSubmitted=true&SearchBranchCode=@Uri.EscapeDataString(Model.SearchBranchCode ?? "")&SearchPrimaryCode=@Uri.EscapeDataString(Model.SearchPrimaryCode ?? "")&SearchPrimaryName=@Uri.EscapeDataString(Model.SearchPrimaryName ?? "")&SearchSecondaryCode=@Uri.EscapeDataString(Model.SearchSecondaryCode ?? "")&SearchSecondaryName=@Uri.EscapeDataString(Model.SearchSecondaryName ?? "")&SearchContractCode=@Uri.EscapeDataString(Model.SearchContractCode ?? "")">
-                                        @i
+                                    <a href="/Contract/ContractLinks?PageIndex=@pageNumber&SearchSubmitted=true&SearchBranchCode=@Uri.EscapeDataString(Model.SearchBranchCode ?? "")&SearchPrimaryCode=@Uri.EscapeDataString(Model.SearchPrimaryCode ?? "")&SearchPrimaryName=@Uri.EscapeDataString(Model.SearchPrimaryName ?? "")&SearchSecondaryCode=@Uri.EscapeDataString(Model.SearchSecondaryCode ?? "")&SearchSecondaryName=@Uri.EscapeDataString(Model.SearchSecondaryName ?? "")&SearchContractCode=@Uri.EscapeDataString(Model.SearchContractCode ?? "")">
+                                        @pageNumber
                                     </a>
                                 }
 
-                                lastDisplayedPage = i;
+                                lastDisplayedPage = pageNumber;
                             }
+
+                            @if (Model.PageIndex < Model.TotalPages)
+                            {
+                                <a href="/Contract/ContractLinks?PageIndex=@(Model.PageIndex + 1)&SearchSubmitted=true&SearchBranchCode=@Uri.EscapeDataString(Model.SearchBranchCode ?? "")&SearchPrimaryCode=@Uri.EscapeDataString(Model.SearchPrimaryCode ?? "")&SearchPrimaryName=@Uri.EscapeDataString(Model.SearchPrimaryName ?? "")&SearchSecondaryCode=@Uri.EscapeDataString(Model.SearchSecondaryCode ?? "")&SearchSecondaryName=@Uri.EscapeDataString(Model.SearchSecondaryName ?? "")&SearchContractCode=@Uri.EscapeDataString(Model.SearchContractCode ?? "")">
+                                    Next
+                                </a>
+                            }
+
                         </div>
                     }
 
