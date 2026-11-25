@@ -17,7 +17,7 @@ namespace CIBnext.Pages.Contract
         private readonly ContractBLL _contractBLL;
         private readonly ListOfValuesBLL _lovBLL;
 
-        private const int PageSize = 15;
+        private const int PageSize = 10;
 
         public NonInstallmentContractErrorListModel(
             IConfiguration configuration,

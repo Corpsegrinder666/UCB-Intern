@@ -17,7 +17,7 @@ namespace CIBnext.Pages.Subject
     {
         private readonly ListOfValuesBLL _lovBLL;
         private readonly IConfiguration _configuration;
-        private const int PageSize = 15;
+        private const int PageSize = 10;
 
         public InstitutionErrorListModel(
             ListOfValuesBLL lovBLL,

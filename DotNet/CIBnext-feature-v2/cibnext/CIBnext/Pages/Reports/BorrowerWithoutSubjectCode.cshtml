@@ -1,0 +1,31 @@
+﻿@page
+@model CIBnext.Pages.Reports.BorrowerWithoutSubjectCodeInfoModel
+
+<div class="borrower-page-title">
+    Borrowers Without Subject Codes
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ValidationMessage))
+{
+    <div class="cib-toast cib-toast-error" role="alert">
+        @Model.ValidationMessage
+    </div>
+}
+
+<form method="post" asp-page-handler="Download">
+    <div class="borrower-section">
+        <fieldset>
+            <legend>Search Option</legend>
+
+            <label asp-for="BranchCode">Branch</label>
+            <select asp-for="BranchCode" asp-items="Model.BranchCodeList">
+                <option value="">All Branch</option>
+            </select>
+
+            <label asp-for="LoanListDate">Loan List Date</label>
+            <input asp-for="LoanListDate" type="date" />
+
+            <button type="submit" class="borrower-btn">Download</button>
+        </fieldset>
+    </div>
+</form>

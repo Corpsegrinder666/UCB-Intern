@@ -2320,3 +2320,54 @@ button:disabled,
 }
 
 
+/* Borrower Without Subject Code */
+
+.borrower-page-title {
+    font-size: 22px;
+    font-weight: bold;
+    background: #fffbe6;
+    padding: 8px;
+    border-bottom: 1px solid #999;
+}
+
+.borrower-section {
+    border: 1px solid #b8b8a8;
+    background: #edf4ef;
+    padding: 15px;
+    margin-top: 10px;
+    width: 350px;
+}
+
+    .borrower-section fieldset {
+        border: 1px solid #b8b8a8;
+        padding: 10px;
+    }
+
+    .borrower-section legend {
+        font-size: 16px;
+        padding: 0 5px;
+    }
+
+    .borrower-section label {
+        display: block;
+        font-weight: bold;
+        margin-top: 8px;
+        margin-bottom: 3px;
+    }
+
+    .borrower-section select,
+    .borrower-section input {
+        width: 100%;
+        height: 26px;
+    }
+
+.borrower-btn {
+    margin-top: 10px;
+    padding: 4px 14px;
+}
+
+.borrower-validation-message {
+    color: red;
+    font-weight: bold;
+}
+
