@@ -5,10 +5,11 @@
     Borrowers Without Subject Codes
 </div>
 
-@if (!string.IsNullOrEmpty(Model.ValidationMessage))
+@if (!string.IsNullOrWhiteSpace(Model.ValidationMessage))
 {
-    <div class="cib-toast cib-toast-error" role="alert">
-        @Model.ValidationMessage
+    <div hidden
+         data-shared-message="@Model.ValidationMessage"
+         data-message-type="warning">
     </div>
 }
 

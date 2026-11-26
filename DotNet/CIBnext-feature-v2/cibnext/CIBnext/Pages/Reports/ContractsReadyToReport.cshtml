@@ -1,78 +1,45 @@
 ﻿@page
 @model CIBnext.Pages.Reports.ContractsReadyToReportModel
-@{
-    <style>
-        .page-title {
-            font-size: 22px;
-            font-weight: bold;
-            background: #fffbe6;
-            padding: 8px;
-            border-bottom: 1px solid #999;
-        }
 
-        .section {
-            border: 1px solid #b8b8a8;
-            background: #edf4ef;
-            padding: 15px;
-            margin-top: 10px;
-            width: 350px;
-        }
+<div class="contracts-ready-reported-page">
 
-        fieldset {
-            border: 1px solid #b8b8a8;
-            padding: 10px;
-        }
+    <div class="contracts-ready-reported-title">
+        List of Ready Error Free Accounts Being Submitted to Bangladesh Bank
+    </div>
 
-        legend {
-            font-size: 16px;
-            padding: 0 5px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-top: 8px;
-            margin-bottom: 3px;
-        }
-
-        select, input {
-            width: 100%;
-            height: 26px;
-        }
-
-        .btn {
-            margin-top: 10px;
-            padding: 4px 14px;
-        }
-    </style>
-
-    <div class="page-title">List of Ready Error Free Accounts Being Submitted to Bangladesh Bank</div>
-    @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+    @if (!string.IsNullOrWhiteSpace(Model.ValidationMessage))
     {
-        <div style="color:red; font-weight:bold;">@Model.ValidationMessage</div>
+        <div hidden
+             data-shared-message="@Model.ValidationMessage"
+             data-message-type="warning">
+        </div>
     }
+
     <form method="post" asp-page-handler="Download">
-        <div class="section">
+        <div class="contracts-ready-reported-section">
             <fieldset>
                 <legend>Search Option</legend>
 
-                <label>Branch</label>
+                <label asp-for="BranchCode">Branch</label>
                 <select asp-for="BranchCode" asp-items="Model.BranchCodeList">
                     <option value="">All Branch</option>
                 </select>
 
-                <label>Contract Phase</label>
+                <label asp-for="ContractPhase">Contract Phase</label>
                 <select asp-for="ContractPhase" asp-items="Model.ContractPhaseList">
                     <option value="">All</option>
                 </select>
 
-                <label>Contract Status</label>
+                <label asp-for="ContractStatus">Contract Status</label>
                 <select asp-for="ContractStatus" asp-items="Model.ContractStatusList">
                     <option value="">All</option>
                 </select>
 
-                <button type="submit" class="btn">Download</button>
+                <button type="submit" class="contracts-ready-reported-btn">
+                    Download
+                </button>
             </fieldset>
         </div>
     </form>
-}
+
+</div>

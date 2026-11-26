@@ -1,5 +1,4 @@
-﻿
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
 
     const messageSelector =
         "#validationModal, #messageModal, #clientMessageModal, " +
@@ -228,6 +227,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return overlay;
     };
+
+    /*
+     * Display server-side messages using the shared popup.
+     * Used by pages containing elements with data-shared-message.
+     */
+
+    document.querySelectorAll("[data-shared-message]").forEach(function (element) {
+        const message = element.getAttribute("data-shared-message");
+        const type = element.getAttribute("data-message-type") || "error";
+
+        if (
+            message &&
+            typeof window.showSharedMessage === "function"
+        ) {
+            window.showSharedMessage(type, message);
+        }
+
+        element.remove();
+    });
 
     /*
      * Personal Information page functionality
@@ -830,5 +848,3 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
-
-

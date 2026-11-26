@@ -2371,3 +2371,99 @@ button:disabled,
     font-weight: bold;
 }
 
+
+/* Contracts Need to Be Reported */
+
+.contracts-need-reported-page .contracts-need-reported-title {
+    font-size: 22px;
+    font-weight: bold;
+    background: #fffbe6;
+    padding: 8px;
+    border-bottom: 1px solid #999;
+}
+
+.contracts-need-reported-page .contracts-need-reported-section {
+    border: 1px solid #b8b8a8;
+    background: #edf4ef;
+    padding: 15px;
+    margin-top: 10px;
+    width: 350px;
+    max-width: 100%;
+}
+
+.contracts-need-reported-page fieldset {
+    border: 1px solid #b8b8a8;
+    padding: 10px;
+}
+
+.contracts-need-reported-page legend {
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+.contracts-need-reported-page label {
+    display: block;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 3px;
+}
+
+.contracts-need-reported-page select,
+.contracts-need-reported-page input {
+    width: 100%;
+    height: 26px;
+}
+
+.contracts-need-reported-page .contracts-need-reported-btn {
+    margin-top: 10px;
+    padding: 4px 14px;
+}
+
+
+
+/* Contracts Ready to Report */
+
+.contracts-ready-reported-page .contracts-ready-reported-title {
+    font-size: 22px;
+    font-weight: bold;
+    background: #fffbe6;
+    padding: 8px;
+    border-bottom: 1px solid #999;
+}
+
+.contracts-ready-reported-page .contracts-ready-reported-section {
+    border: 1px solid #b8b8a8;
+    background: #edf4ef;
+    padding: 15px;
+    margin-top: 10px;
+    width: 350px;
+    max-width: 100%;
+}
+
+.contracts-ready-reported-page fieldset {
+    border: 1px solid #b8b8a8;
+    padding: 10px;
+}
+
+.contracts-ready-reported-page legend {
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+.contracts-ready-reported-page label {
+    display: block;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 3px;
+}
+
+.contracts-ready-reported-page select,
+.contracts-ready-reported-page input {
+    width: 100%;
+    height: 26px;
+}
+
+.contracts-ready-reported-page .contracts-ready-reported-btn {
+    margin-top: 10px;
+    padding: 4px 14px;
+}
